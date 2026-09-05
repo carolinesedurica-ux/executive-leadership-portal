@@ -3,6 +3,7 @@ const { MILESTONES, nextMilestoneKey, validateWeekEvidence, validateAssessmentPa
 const { generateAccessToken, hashAccessToken, tokenExpiry } = require('./_tokens');
 const { storeCredential, readCredential, deleteCredential } = require('./_credential-store');
 const { sendMilestoneAccessToken } = require('./_email');
+const { scoreWeeklyTest } = require('./_weekly-tests');
 
 const PROGRAMME_SLUG = 'executive-leadership-readiness';
 
@@ -166,8 +167,31 @@ async function getSummary(context) {
     if (row.status === 'completed') completedKeys.push(milestone.milestone_key);
   }
 
+  const { data: weeklyRows, error: weeklyError } = await db().from('weekly_test_results')
+    .select('milestone_id,mcq_score,written_score,score,submitted_at')
+    .eq('participant_id', context.profile.id);
+  if (weeklyError) throw weeklyError;
+
+  const weeklyTests = {};
+  for (const row of weeklyRows || []) {
+    const key = milestoneById.get(row.milestone_id)?.milestone_key;
+    if (!['week1','week2','week3'].includes(key)) continue;
+    weeklyTests[key] = {
+      score: Number(row.score),
+      mcqScore: Number(row.mcq_score),
+      writtenScore: Number(row.written_score),
+      contribution: Math.round(Number(row.score) * 0.1 * 100) / 100,
+      submittedAt: row.submitted_at
+    };
+  }
+  const weeklyWeightedScore = Math.round(
+    ['week1','week2','week3'].reduce((sum, key) => sum + (weeklyTests[key]?.score || 0) * 0.1, 0) * 100
+  ) / 100;
+  const weeklyTestsComplete = ['week1','week2','week3'].every(key => weeklyTests[key]);
+
   const assessmentMilestone = milestoneByKey.get('assessment');
   let assessment = null;
+  let attempts = [];
   if (assessmentMilestone) {
     const { data } = await db().from('assessment_results')
       .select('scores,reflections,average_score,submitted_at')
@@ -175,8 +199,26 @@ async function getSummary(context) {
       .eq('milestone_id', assessmentMilestone.id)
       .maybeSingle();
     assessment = data || null;
+
+    const { data: attemptRows, error: attemptError } = await db().from('assessment_attempts')
+      .select('attempt_number,scores,reflections,final_assessment_percent,weekly_weighted_score,overall_score,passed,submitted_at')
+      .eq('participant_id', context.profile.id)
+      .eq('milestone_id', assessmentMilestone.id)
+      .order('attempt_number', { ascending: true });
+    if (attemptError) throw attemptError;
+    attempts = (attemptRows || []).map(row => ({
+      attemptNumber: row.attempt_number,
+      finalAssessmentPercent: Number(row.final_assessment_percent),
+      weeklyWeightedScore: Number(row.weekly_weighted_score),
+      overallScore: Number(row.overall_score),
+      passed: Boolean(row.passed),
+      submittedAt: row.submitted_at,
+      scores: row.scores,
+      reflections: row.reflections
+    }));
   }
 
+  const latestAttempt = attempts.length ? attempts[attempts.length - 1] : null;
   const now = new Date().toISOString();
 
   const { data: validatedRows, error: validatedError } = await db().from('milestone_access_tokens')
@@ -222,9 +264,19 @@ async function getSummary(context) {
     },
     completed: completedKeys,
     entitlements,
+    weeklyTests,
+    weeklyTestsComplete,
+    weeklyWeightedScore,
     assessmentComplete: completedKeys.includes('assessment'),
-    midScores: Array.isArray(assessment?.scores) ? assessment.scores : null,
-    assessmentReflection: assessment?.reflections || null,
+    assessmentAttempts: attempts.map(({ scores, reflections, ...attempt }) => attempt),
+    assessmentAttemptCount: attempts.length,
+    assessmentAttemptsRemaining: Math.max(0, 3 - attempts.length),
+    passMark: 80,
+    overallScore: latestAttempt?.overallScore ?? null,
+    finalAssessmentPercent: latestAttempt?.finalAssessmentPercent ?? null,
+    assessmentPassed: Boolean(latestAttempt?.passed || completedKeys.includes('assessment')),
+    midScores: Array.isArray(latestAttempt?.scores) ? latestAttempt.scores : (Array.isArray(assessment?.scores) ? assessment.scores : null),
+    assessmentReflection: latestAttempt?.reflections || assessment?.reflections || null,
     validatedCredentials,
     activeCredential,
     needsMigration: firstHalfCompleted.length === 0 && !assessment
@@ -235,7 +287,13 @@ function applySummaryToState(elrpState = {}, summary) {
   return {
     ...elrpState,
     completed: (summary.completed || []).filter(key => /^week\d+$/.test(key)),
+    weeklyTests: summary.weeklyTests || elrpState.weeklyTests || {},
+    weeklyWeightedScore: summary.weeklyWeightedScore ?? elrpState.weeklyWeightedScore,
     assessmentComplete: Boolean(summary.assessmentComplete),
+    assessmentAttemptCount: summary.assessmentAttemptCount ?? 0,
+    assessmentAttemptsRemaining: summary.assessmentAttemptsRemaining ?? 3,
+    overallScore: summary.overallScore ?? null,
+    finalAssessmentPercent: summary.finalAssessmentPercent ?? null,
     midScores: summary.midScores || elrpState.midScores,
     assessmentReflection: summary.assessmentReflection || elrpState.assessmentReflection
   };
@@ -243,8 +301,9 @@ function applySummaryToState(elrpState = {}, summary) {
 
 async function transition(context, currentKey, options = {}) {
   const nextKey = nextMilestoneKey(currentKey);
-  const generatedToken = nextKey ? generateAccessToken() : null;
-  const credentialReference = nextKey ? await storeCredential(generatedToken) : null;
+  const issueCredential = Boolean(options.issueCredential && nextKey);
+  const generatedToken = issueCredential ? generateAccessToken() : null;
+  const credentialReference = issueCredential ? await storeCredential(generatedToken) : null;
   const tokenHash = generatedToken ? hashAccessToken(generatedToken) : null;
   const expiresAt = generatedToken ? tokenExpiry().toISOString() : null;
 
@@ -307,10 +366,63 @@ async function transition(context, currentKey, options = {}) {
   }
 }
 
-async function completeMilestone(context, key, evidence, options = {}) {
+async function completeMilestone(context, key, evidence, testAnswers, options = {}) {
   const validation = validateWeekEvidence(key, evidence);
   if (!validation.ok) throw new Error(validation.error);
-  return transition(context, key, options);
+  if (!['week1','week2','week3'].includes(key)) throw new Error('This weekly test is not configured.');
+
+  const summaryBefore = await getSummary(context);
+  if (summaryBefore.weeklyTests?.[key]) {
+    throw new Error('This weekly test has already been submitted. Weekly tests can only be taken once.');
+  }
+
+  const testScore = scoreWeeklyTest(key, testAnswers || {});
+  const milestones = await getMilestones(context.programme.id);
+  const milestone = milestones.find(item => item.milestone_key === key);
+  if (!milestone) throw new Error('Weekly milestone was not found.');
+
+  const { data: inserted, error: insertError } = await db().from('weekly_test_results').insert({
+    participant_id: context.profile.id,
+    milestone_id: milestone.id,
+    answers: testAnswers || {},
+    mcq_score: testScore.mcqScore,
+    written_score: testScore.writtenScore,
+    score: testScore.score
+  }).select('id').single();
+  if (insertError) throw insertError;
+
+  await recordAudit(context.profile.id, 'weekly_test_submitted', milestone.id, {
+    milestoneKey: key,
+    score: testScore.score,
+    contribution: testScore.contribution
+  });
+
+  if (summaryBefore.completed.includes(key)) {
+    await db().from('milestone_progress').update({ score: testScore.score })
+      .eq('participant_id', context.profile.id)
+      .eq('milestone_id', milestone.id);
+    return {
+      summary: await getSummary(context),
+      weeklyTest: testScore,
+      credentialIssued: false,
+      emailSent: false,
+      emailError: null,
+      legacyCompletionPreserved: true
+    };
+  }
+
+  try {
+    const result = await transition(context, key, {
+      ...options,
+      score: testScore.score,
+      issueCredential: false,
+      sendEmail: false
+    });
+    return { ...result, weeklyTest: testScore };
+  } catch (error) {
+    await db().from('weekly_test_results').delete().eq('id', inserted.id);
+    throw error;
+  }
 }
 
 async function submitAssessment(context, payload, options = {}) {
@@ -318,75 +430,116 @@ async function submitAssessment(context, payload, options = {}) {
   if (!validation.ok) throw new Error(validation.error);
 
   const summary = await getSummary(context);
+  if (summary.assessmentComplete) {
+    throw new Error('The Mid-Course Assessment has already been passed.');
+  }
   if (!summary.completed.includes('week3')) {
-    throw new Error('Complete Week 3 before submitting the mandatory mid-course assessment.');
+    throw new Error('Complete Week 3 before submitting the Mid-Course Assessment.');
+  }
+  if (!summary.weeklyTestsComplete) {
+    throw new Error('Complete the Week 1, Week 2 and Week 3 tests before submitting the Mid-Course Assessment.');
   }
   if (!summary.entitlements.assessment) {
     throw new Error('The Mid-Course Assessment is not yet unlocked.');
   }
+  if (summary.assessmentAttemptCount >= 3) {
+    throw new Error('All three assessment attempts have been used. Please contact your facilitator for the next step.');
+  }
 
-  return transition(context, 'assessment', {
-    sendEmail: options.sendEmail,
-    score: validation.average,
-    assessmentScores: payload.scores.map(Number),
-    assessmentReflections: payload.reflections
+  const milestones = await getMilestones(context.programme.id);
+  const assessmentMilestone = milestones.find(item => item.milestone_key === 'assessment');
+  if (!assessmentMilestone) throw new Error('Assessment milestone was not found.');
+
+  const attemptNumber = summary.assessmentAttemptCount + 1;
+  const finalAssessmentPercent = Math.round(validation.average * 10 * 100) / 100;
+  const weeklyWeightedScore = summary.weeklyWeightedScore;
+  const overallScore = Math.round((weeklyWeightedScore + finalAssessmentPercent * 0.7) * 100) / 100;
+  const passed = overallScore >= 80;
+
+  const { error: attemptError } = await db().from('assessment_attempts').insert({
+    participant_id: context.profile.id,
+    milestone_id: assessmentMilestone.id,
+    attempt_number: attemptNumber,
+    scores: payload.scores.map(Number),
+    reflections: payload.reflections,
+    final_assessment_percent: finalAssessmentPercent,
+    weekly_weighted_score: weeklyWeightedScore,
+    overall_score: overallScore,
+    passed
   });
+  if (attemptError) throw attemptError;
+
+  const { error: resultError } = await db().from('assessment_results').upsert({
+    participant_id: context.profile.id,
+    milestone_id: assessmentMilestone.id,
+    scores: payload.scores.map(Number),
+    reflections: payload.reflections,
+    average_score: validation.average,
+    submitted_at: new Date().toISOString()
+  }, { onConflict: 'participant_id,milestone_id' });
+  if (resultError) throw resultError;
+
+  if (!passed) {
+    const now = new Date().toISOString();
+    await db().from('milestone_progress').update({
+      status: 'in_progress',
+      score: overallScore,
+      started_at: now
+    }).eq('participant_id', context.profile.id).eq('milestone_id', assessmentMilestone.id);
+
+    await recordAudit(context.profile.id, 'assessment_attempt_failed', assessmentMilestone.id, {
+      attemptNumber,
+      finalAssessmentPercent,
+      weeklyWeightedScore,
+      overallScore,
+      passMark: 80,
+      attemptsRemaining: Math.max(0, 3 - attemptNumber)
+    });
+
+    return {
+      summary: await getSummary(context),
+      passed: false,
+      attemptNumber,
+      attemptsRemaining: Math.max(0, 3 - attemptNumber),
+      finalAssessmentPercent,
+      weeklyWeightedScore,
+      overallScore,
+      passMark: 80,
+      credentialIssued: false,
+      emailSent: false,
+      emailError: null
+    };
+  }
+
+  const transitionResult = await transition(context, 'assessment', {
+    sendEmail: options.sendEmail,
+    score: overallScore,
+    issueCredential: true
+  });
+
+  await recordAudit(context.profile.id, 'assessment_passed', assessmentMilestone.id, {
+    attemptNumber,
+    finalAssessmentPercent,
+    weeklyWeightedScore,
+    overallScore,
+    passMark: 80
+  });
+
+  return {
+    ...transitionResult,
+    passed: true,
+    attemptNumber,
+    attemptsRemaining: Math.max(0, 3 - attemptNumber),
+    finalAssessmentPercent,
+    weeklyWeightedScore,
+    overallScore,
+    passMark: 80
+  };
 }
 
 async function importLegacyState(context, elrpState = {}) {
-  let imported = false;
-  let summary = await getSummary(context);
-  const declared = Array.isArray(elrpState.completed) ? elrpState.completed : [];
-
-  for (const key of ['week1', 'week2', 'week3']) {
-    if (summary.completed.includes(key)) continue;
-    if (!declared.includes(key)) break;
-    if (!summary.entitlements[key]) break;
-
-    const evidence = {
-      reflections: [0, 1, 2].map(i => elrpState.reflections?.[key + '-' + i] || ''),
-      checks: {
-        watch: elrpState[key + '-watch'] === true,
-        reflect: elrpState[key + '-reflect'] === true,
-        coach: elrpState[key + '-coach'] === true,
-        apply: elrpState[key + '-apply'] === true
-      }
-    };
-
-    const validation = validateWeekEvidence(key, evidence);
-    if (!validation.ok) break;
-    await completeMilestone(context, key, evidence, { sendEmail: false });
-    imported = true;
-    summary = await getSummary(context);
-  }
-
-  if (
-    elrpState.assessmentComplete &&
-    summary.completed.includes('week3') &&
-    !summary.assessmentComplete &&
-    summary.entitlements.assessment
-  ) {
-    const payload = { scores: elrpState.midScores, reflections: elrpState.assessmentReflection || {} };
-    const validation = validateAssessmentPayload(payload);
-    if (validation.ok) {
-      await submitAssessment(context, payload, { sendEmail: false });
-      imported = true;
-      summary = await getSummary(context);
-    }
-  }
-
-  if (imported) {
-    await recordAudit(context.profile.id, 'legacy_progress_imported', null, {
-      source: 'browser-localStorage',
-      completed: summary.completed
-    });
-    try {
-      await resendCurrentCredential(context, { bypassRateLimit: true, event: 'migration_credential_email' });
-      summary = await getSummary(context);
-    } catch {}
-  }
-
-  return { imported, summary };
+  const summary = await getSummary(context);
+  return { imported: false, summary };
 }
 
 async function resendCurrentCredential(context, options = {}) {
