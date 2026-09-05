@@ -15,3 +15,16 @@
 .wrv-admin-user-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .wrv-admin-user-controls label{display:flex;align-items:center;gap:8px}
 #participantSelect{max-width:320px;border:1px solid rgba(7,24,39,.18);border-radius:8px;background:#fff;padding:8px 10px;font:inherit;color:#071827}
+
+
+/* Participant password authentication */
+.wrv-auth-panel{overflow:auto}
+.wrv-auth-card .wrv-auth-field+.wrv-auth-field{margin-top:12px}
+.wrv-client-mode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:-8px 0 18px;padding:4px;border:1px solid #e1e7e8;border-radius:12px;background:#f5f7f7}
+.wrv-client-mode button{border:0;border-radius:9px;padding:9px 10px;background:transparent;color:#5f7079;font-weight:700;cursor:pointer}
+.wrv-client-mode button.active{background:#fff;color:#0b5966;box-shadow:0 3px 10px rgba(18,46,57,.09)}
+.wrv-auth-link{display:block;width:100%;margin:10px 0 0;border:0;background:transparent;color:#0b6975;text-align:left;padding:0;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.wrv-auth-link:hover{text-decoration:underline}
+.wrv-auth-link:disabled{opacity:.6;cursor:wait}
+.wrv-auth-field span small{font-weight:500;color:#7c8a91}
+.wrv-client-mode[hidden],.wrv-auth-link[hidden]{display:none!important}
