@@ -1,7 +1,7 @@
 (()=>{
 const cfg={
- week1:{week:'WEEK 1',mood:'becoming',title:'Leadership Identity & Confidence',subtitle:'Think Like a Leader Before You Have the Title',heroQuote:'A stronger leadership you starts here.',rail:'The way you lead tomorrow starts with the questions you ask yourself today.',cue:'Begin with possibility. Notice the leader you are becoming — not only the role you hold today.'},
- week2:{week:'WEEK 2',mood:'presence',title:'Executive Presence & Personal Authority',subtitle:'Your Presence Speaks Before You Do',heroQuote:'Presence is the message before the words.',rail:'Authority grows when your presence becomes calm, deliberate and grounded.',cue:'Slow the moment down. Notice your posture, pace and voice before deciding what you need to say.'},
+ week1:{week:'WEEK 1',mood:'becoming',title:'Leadership Identity & Confidence',subtitle:'Think Like a Leader Before You Have the Title',heroQuote:'A stronger leadership you starts here.',rail:'The way you lead tomorrow starts with the questions you ask yourself today.',cue:'Be honest and specific. Consider how you want to show up in your team, organisation and broader professional network.'},
+ week2:{week:'WEEK 2',mood:'presence',title:'Executive Presence & Personal Authority',subtitle:'Your Presence Speaks Before You Do',heroQuote:'Presence is the message before the words.',rail:'Authority grows when your presence becomes calm, deliberate and grounded.',cue:'Notice how your presence changes under pressure. Practise calm pace, clear structure and fewer words.'},
  week3:{week:'WEEK 3',mood:'courage',title:'Assertiveness & Difficult Conversations',subtitle:'Speak Clearly When the Conversation Is Difficult',heroQuote:'Clarity and courage can coexist.',rail:'Courage is not volume. It is the willingness to be clear when the conversation matters.',cue:'Choose clarity over avoidance. Name what matters, protect respect and stay anchored in the outcome you need.'}
 };
 function enhanceWeek(key){
