@@ -31,7 +31,9 @@ body[data-theme="wrv-dramatic"] .sidebar{
   height:100vh!important;
   position:sticky!important;
   top:0!important;
-  padding:20px 0 22px!important;
+  padding:20px 0 16px!important;
+  display:flex!important;
+  flex-direction:column!important;
   color:#fff!important;
   background:
     linear-gradient(180deg,rgba(5,20,35,.99) 0%,rgba(7,27,47,.98) 58%,rgba(7,27,47,.66) 73%,rgba(5,18,31,.94) 100%),
@@ -91,10 +93,15 @@ body[data-theme="wrv-dramatic"] .nav{
   position:relative!important;
   z-index:4!important;
   display:flex!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
   flex-direction:column!important;
   gap:0!important;
   margin:0!important;
   padding:15px 0 0!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin!important;
 }
 body[data-theme="wrv-dramatic"] .nav-link{
   min-height:58px!important;
@@ -128,14 +135,16 @@ body[data-theme="wrv-dramatic"] .nav-link small{
 body[data-theme="wrv-dramatic"] .nav-link.locked{opacity:.62!important}
 
 body[data-theme="wrv-dramatic"] .sidebar blockquote{
-  position:absolute!important;
-  left:30px!important;right:28px!important;bottom:150px!important;
-  margin:0!important;padding:0 0 0 33px!important;
+  position:relative!important;
+  left:auto!important;right:auto!important;bottom:auto!important;
+  flex:0 0 auto!important;
+  margin:14px 28px 0!important;
+  padding:0 0 0 28px!important;
   border:0!important;
   color:#f1e3d1!important;
   font-family:'Playfair Display',serif!important;
-  font-size:23px!important;
-  line-height:1.26!important;
+  font-size:17px!important;
+  line-height:1.35!important;
   font-style:normal!important;
   pointer-events:none!important;
 }
@@ -144,16 +153,15 @@ body[data-theme="wrv-dramatic"] .sidebar blockquote:before{
   font-size:50px;color:#64a8b3;font-family:Georgia,serif;
 }
 body[data-theme="wrv-dramatic"] .sidebar blockquote:after{
-  content:'STRONGER LEADERS\A BRIGHTER TOMORROWS';
-  white-space:pre;
+  content:'STRONGER LEADERS · BRIGHTER TOMORROWS';
   display:block;
-  margin-top:145px;
-  margin-left:-20px;
+  margin-top:10px;
+  margin-left:-27px;
   font-family:'DM Sans',sans-serif;
-  font-size:9px;line-height:1.8;
-  letter-spacing:.25em;
+  font-size:8px;line-height:1.5;
+  letter-spacing:.15em;
   font-weight:700;
-  color:#fff;
+  color:#c8d4d8;
 }
 
 /* ---------- top bar ---------- */
@@ -396,7 +404,7 @@ body[data-theme="wrv-dramatic"] #week3[data-week-mood="courage"] .mockup-week-he
 
 /* one natural two-column workspace: no negative-margin tricks */
 body[data-theme="wrv-dramatic"] .reflection-card-shell{
-  margin-top:-52px!important;
+  margin-top:20px!important;
   padding:0!important;
   border:0!important;
   background:transparent!important;
@@ -636,18 +644,21 @@ body[data-theme="wrv-dramatic"] .reflection-nav-row{
   margin-top:auto!important;
   padding:17px 0 0!important;
   border-top:1px solid #eee9e2!important;
-  display:flex!important;
-  justify-content:space-between!important;
+  display:grid!important;
+  grid-template-columns:auto minmax(120px,1fr) auto!important;
   align-items:center!important;
   gap:12px!important;
   position:relative!important;
-  pointer-events:none!important;
+  pointer-events:auto!important;
 }
-body[data-theme="wrv-dramatic"] .reflection-nav-row:before{
-  content:'✓  Auto-saved just now';
-  position:absolute;left:50%;transform:translateX(-50%);
-  color:#78878e;font-size:11px;white-space:nowrap;
-  pointer-events:none;
+body[data-theme="wrv-dramatic"] .reflection-nav-row:before{display:none!important}
+body[data-theme="wrv-dramatic"] .mockup-autosave{
+  min-width:0!important;
+  text-align:center!important;
+  color:#78878e!important;
+  font-size:11px!important;
+  line-height:1.35!important;
+  white-space:normal!important;
 }
 body[data-theme="wrv-dramatic"] .reflection-nav-btn{
   position:relative!important;z-index:2!important;
@@ -845,7 +856,7 @@ body[data-theme="wrv-dramatic"] .interactive-card{margin-top:2px!important}
  }
  body[data-theme="wrv-dramatic"] .mockup-week-hero h1{font-size:40px!important}
  body[data-theme="wrv-dramatic"] .mockup-hero-quote{display:none!important}
- body[data-theme="wrv-dramatic"] .reflection-card-shell{margin-top:-16px!important}
+ body[data-theme="wrv-dramatic"] .reflection-card-shell{margin-top:14px!important}
 
  body[data-theme="wrv-dramatic"] .mockup-step-strip{
    height:auto!important;grid-template-columns:1fr!important;border-radius:14px!important
@@ -863,4 +874,36 @@ body[data-theme="wrv-dramatic"] .interactive-card{margin-top:2px!important}
  body[data-theme="wrv-dramatic"] .reflection-nav-btn.next{min-width:0!important}
  body[data-theme="wrv-dramatic"] .mockup-reflection-side{grid-template-columns:1fr!important}
  body[data-theme="wrv-dramatic"] .week-side{grid-template-columns:1fr!important}
+}
+
+/* final no-overlap safety */
+body[data-theme="wrv-dramatic"] .mockup-workspace,
+body[data-theme="wrv-dramatic"] .mockup-workspace-main,
+body[data-theme="wrv-dramatic"] .mockup-reflection-body,
+body[data-theme="wrv-dramatic"] .mockup-reflection-center,
+body[data-theme="wrv-dramatic"] .mockup-reflection-side{position:relative!important;isolation:isolate!important}
+body[data-theme="wrv-dramatic"] .mockup-reflection-center{overflow:visible!important}
+body[data-theme="wrv-dramatic"] .reflection-summary-head,
+body[data-theme="wrv-dramatic"] .reflection-summary-list{position:relative!important;z-index:2!important}
+body[data-theme="wrv-dramatic"] .reflection-summary:before,
+body[data-theme="wrv-dramatic"] .reflection-summary:after{z-index:0!important}
+body[data-theme="wrv-dramatic"] .reflection-nav-btn{min-width:max-content!important}
+@media(max-height:820px) and (min-width:781px){
+  body[data-theme="wrv-dramatic"] .sidebar blockquote{display:none!important}
+}
+@media(max-width:980px){
+  body[data-theme="wrv-dramatic"] .reflection-nav-row{
+    grid-template-columns:auto 1fr auto!important;
+  }
+}
+@media(max-width:620px){
+  body[data-theme="wrv-dramatic"] .reflection-nav-row{
+    grid-template-columns:1fr 1fr!important;
+  }
+  body[data-theme="wrv-dramatic"] .mockup-autosave{
+    grid-column:1/-1!important;
+    grid-row:1!important;
+  }
+  body[data-theme="wrv-dramatic"] .reflection-nav-btn.prev{grid-column:1!important}
+  body[data-theme="wrv-dramatic"] .reflection-nav-btn.next{grid-column:2!important}
 }
