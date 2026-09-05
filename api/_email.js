@@ -96,6 +96,7 @@ async function sendProgrammeCompletion({ to, participantName }) {
 
 module.exports = {
   smtpConfigured,
+  sendMail,
   sendSignupConfirmation,
   sendMilestoneAccessToken,
   sendAssessmentResult,
