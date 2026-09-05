@@ -479,9 +479,9 @@ When `SUPABASE_SERVICE_ROLE_KEY` is configured and the migration has been applie
 
 Milestone credentials use cryptographically random `ELR-...` values. Supabase stores only a keyed SHA-256 hash plus an opaque credential reference. The raw credential is encrypted with AES-256-GCM and escrowed in the existing Vercel Blob store so an email failure can be securely resent without generating a duplicate credential.
 
-### Google Workspace SMTP over SSL
+### Titan Email SMTP over SSL
 
-Use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, the full Google Workspace mailbox for `SMTP_USER`, and a Google App Password for `SMTP_PASSWORD`. Set `SMTP_FROM` to the approved sender mailbox and `SMTP_FROM_NAME=FCA Executive Leadership Coaching`. Supabase Auth magic-link delivery must also have Custom SMTP configured in the Supabase Authentication email settings. Never commit SMTP passwords, database passwords or the Supabase service-role key.
+Use `SMTP_HOST=smtp.titan.email`, `SMTP_PORT=465`, and `SMTP_SECURE=true`. Set `SMTP_USER=info@academyfoundations.com`, `SMTP_FROM=info@academyfoundations.com`, and `SMTP_FROM_NAME=Foundations Counselling Academy`. Use the Titan mailbox password, or a Titan application password if 2FA is enabled. Supabase Auth magic-link delivery must also have Custom SMTP configured with the same Titan credentials. Never commit SMTP passwords, database passwords or the Supabase service-role key.
 
 ### Backend API additions
 
