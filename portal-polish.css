@@ -30,8 +30,8 @@ body{min-height:100vh;background:linear-gradient(180deg,#edf2f4 0,#f7f8f8 240px,
 .page-hero.compact h1{font-size:clamp(38px,4vw,58px);letter-spacing:-.02em}
 .content-grid,.week-layout{gap:24px}
 .step-card,.content-card,.callout,.assessment-form,.results-card,.locked-preview,.coming-soon{border-radius:22px}
-.week-view.view.active{width:100%!important;max-width:none!important;padding:0 38px 46px!important}
-.mockup-week-hero{margin:0 -38px 0!important;padding-left:max(52px,calc((100vw - 1500px)/2 + 52px))!important;padding-right:max(52px,calc((100vw - 1500px)/2 + 52px))!important}
+.week-view.view.active{width:100%!important;max-width:none!important}
+/* Desktop week geometry is intentionally owned by mockup-exact.css. */
 .mockup-step-strip,.mockup-reflection-grid{max-width:1424px;margin-left:auto!important;margin-right:auto!important}
 .week-layout{max-width:1424px;margin:0 auto}
 .mockup-reflection-grid{grid-template-columns:190px minmax(0,1fr) 320px}
