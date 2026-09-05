@@ -178,6 +178,17 @@ async function getSummary(context) {
   }
 
   const now = new Date().toISOString();
+
+  const { data: validatedRows, error: validatedError } = await db().from('milestone_access_tokens')
+    .select('milestone_id,used_at,revoked_at')
+    .eq('participant_id', context.profile.id)
+    .not('used_at', 'is', null)
+    .is('revoked_at', null);
+  if (validatedError) throw validatedError;
+  const validatedCredentials = [...new Set((validatedRows || [])
+    .map(row => milestoneById.get(row.milestone_id)?.milestone_key)
+    .filter(Boolean))];
+
   const { data: credentials } = await db().from('milestone_access_tokens')
     .select('id,milestone_id,issued_at,expires_at,used_at,status,email_sent_at,email_last_error')
     .eq('participant_id', context.profile.id)
@@ -214,6 +225,7 @@ async function getSummary(context) {
     assessmentComplete: completedKeys.includes('assessment'),
     midScores: Array.isArray(assessment?.scores) ? assessment.scores : null,
     assessmentReflection: assessment?.reflections || null,
+    validatedCredentials,
     activeCredential,
     needsMigration: firstHalfCompleted.length === 0 && !assessment
   };
