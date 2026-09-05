@@ -9,7 +9,7 @@ const { validateWeekEvidence, validateAssessmentPayload, nextMilestoneKey } = re
 test('milestone access tokens are random, human-readable and hashable', () => {
   const a = generateAccessToken();
   const b = generateAccessToken();
-  assert.match(a, /^ELR-(?:[A-Z2-9]{4}-){4}[A-Z2-9]{4}$/);
+  assert.match(a, /^[A-HJ-NP-Z2-9]{7}$/);
   assert.notEqual(a, b);
   assert.equal(hashAccessToken(a).length, 64);
   assert.notEqual(hashAccessToken(a), a);
