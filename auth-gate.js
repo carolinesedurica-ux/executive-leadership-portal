@@ -150,6 +150,7 @@ async function activateClient(el){
    }
  }catch(err){console.error('WRV cloud load failed',err);markSync('Sync error')}
  el.remove();
+ document.dispatchEvent(new CustomEvent('wrv:client-authenticated'));
  setTimeout(()=>{if(!document.querySelector('.wrv-sync-chip'))markSync(cloudAvailable?'Synced':'Local only');addLogout()},100);
  setInterval(()=>{if(cloudAvailable)push(false)},5000);
  document.addEventListener('visibilitychange',()=>{if(cloudAvailable&&document.visibilityState==='hidden')push(true)});

@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "dependencies": {
     "@vercel/blob": "^1.0.2",
-    "@supabase/supabase-js": "^2.57.4"
+    "@supabase/supabase-js": "^2.57.4",
+    "nodemailer": "^6.10.1"
+  },
+  "scripts": {
+    "test": "node --test"
   }
 }

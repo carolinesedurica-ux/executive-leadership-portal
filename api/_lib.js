@@ -46,8 +46,8 @@ function session(req) {
   return verify(getCookies(req)[COOKIE]);
 }
 
-function setSession(res, role) {
-  const token = sign({ role, exp: Date.now() + 1000 * 60 * 60 * 12 });
+function setSession(res, role, extra = {}) {
+  const token = sign({ ...extra, role, exp: Date.now() + 1000 * 60 * 60 * 12 });
   res.setHeader('Set-Cookie', `${COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=43200`);
 }
 

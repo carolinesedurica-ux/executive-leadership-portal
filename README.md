@@ -170,7 +170,7 @@ The API returns a successful local-only status rather than repeatedly throwing s
 
 Authentication is handled through serverless API routes and an HTTP-only session cookie.
 
-Client and administrator roles use separate access codes.
+Client access uses Supabase email magic links while the administrator route preserves the existing access-code flow. The portal continues to issue its existing HTTP-only signed session cookie after Supabase verifies the client identity.
 
 Required production environment variables:
 
@@ -179,6 +179,23 @@ SESSION_SECRET=
 CLIENT_ACCESS_CODE=
 ADMIN_ACCESS_CODE=
 BLOB_READ_WRITE_TOKEN=
+
+SUPABASE_URL=https://kretjuxsrviqrmnthfwe.supabase.co
+SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+CLIENT_LOGIN_EMAILS=
+SUPABASE_EMAIL_REDIRECT=https://coaching.workreadyvault.com/
+
+TOKEN_HASH_SECRET=
+MILESTONE_TOKEN_TTL_DAYS=90
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_FROM=
+SMTP_FROM_NAME=FCA Executive Leadership Coaching
 ```
 
 ### Important
@@ -452,6 +469,31 @@ A contribution is complete only when:
 - state persistence still works
 - the production deployment is verified
 - relevant README documentation is updated when architecture or setup changes
+
+---
+
+## Supabase milestone backend
+
+The repository now includes an additive Supabase backend migration at `supabase/migrations/20260905_backend_upgrade.sql`. It creates persistent profiles, programme enrollment, milestones, milestone progress, assessment results, hashed access-token records and audit logs. Row Level Security is enabled, and progression writes are performed by the Vercel server API with the Supabase service role; the service-role key is never exposed to browser code.
+
+When `SUPABASE_SERVICE_ROLE_KEY` is configured and the migration has been applied, Supabase becomes authoritative for milestone completion, unlock state, assessment completion and scores, current entitlement and access-credential validity. Browser `localStorage` remains for harmless working UI state and existing reflections, while the current encrypted Vercel Blob storage is preserved. `/api/data` overlays authoritative Supabase progression before storing or returning client state.
+
+Milestone credentials use cryptographically random `ELR-...` values. Supabase stores only a keyed SHA-256 hash plus an opaque credential reference. The raw credential is encrypted with AES-256-GCM and escrowed in the existing Vercel Blob store so an email failure can be securely resent without generating a duplicate credential.
+
+### Google Workspace SMTP over SSL
+
+Use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, the full Google Workspace mailbox for `SMTP_USER`, and a Google App Password for `SMTP_PASSWORD`. Set `SMTP_FROM` to the approved sender mailbox and `SMTP_FROM_NAME=FCA Executive Leadership Coaching`. Supabase Auth magic-link delivery must also have Custom SMTP configured in the Supabase Authentication email settings. Never commit SMTP passwords, database passwords or the Supabase service-role key.
+
+### Backend API additions
+
+- `GET /api/progress`
+- `POST /api/progress/import`
+- `POST /api/milestones/complete`
+- `POST /api/assessment/submit`
+- `POST /api/credentials/resend`
+- `POST /api/credentials/validate`
+
+The first authenticated backend sync can import existing browser progression only where the old completion declaration is supported by the existing reflection and end-of-week evidence; it does not blindly trust the old `completed` array.
 
 ---
 
