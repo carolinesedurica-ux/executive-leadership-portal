@@ -1,12 +1,14 @@
 const crypto = require('crypto');
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const TOKEN_LENGTH = 7;
 
 function generateAccessToken() {
-  const bytes = crypto.randomBytes(20);
-  let body = '';
-  for (const byte of bytes) body += ALPHABET[byte % ALPHABET.length];
-  return 'ELR-' + body.match(/.{1,4}/g).join('-');
+  let token = '';
+  for (let i = 0; i < TOKEN_LENGTH; i += 1) {
+    token += ALPHABET[crypto.randomInt(ALPHABET.length)];
+  }
+  return token;
 }
 
 function tokenSecret() {
