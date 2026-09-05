@@ -14,7 +14,7 @@ The portal is live and actively under development.
 
 ### Available now
 
-- Secure client and administrator sign-in
+- Secure participant email/password sign-in and administrator access-code sign-in
 - Executive coaching dashboard
 - Programme overview
 - Week 1 — Leadership Identity & Confidence
@@ -161,7 +161,7 @@ Vercel Blob is retained only for encrypted milestone credential escrow/resend. I
 
 Authentication is handled through serverless API routes and an HTTP-only session cookie.
 
-Client access uses Supabase passwordless email signup/sign-in while the administrator route preserves the existing access-code flow. The portal continues to issue its existing HTTP-only signed session cookie after Supabase verifies the client identity.
+New participant accounts use Supabase email + password signup with one-time email confirmation. Returning participants sign in with email + password, so no magic-link or verification email is sent on normal sign-in. Password recovery remains available on demand. The administrator route preserves the existing access-code flow, and the portal continues to issue its existing HTTP-only signed session cookie after Supabase verifies the participant identity.
 
 Required production environment variables:
 
@@ -485,7 +485,7 @@ Use `SMTP_HOST=smtp.titan.email`, `SMTP_PORT=465`, and `SMTP_SECURE=true`. Set `
 - `POST /api/credentials/resend`
 - `POST /api/credentials/validate`
 
-New participants can create an account with any valid email address through the same passwordless email field used by returning participants. After verified login, the backend creates or updates the participant profile and enrols the participant into the Executive Leadership Readiness Programme. The first authenticated backend sync can import existing browser progression only where the old completion declaration is supported by the existing reflection and end-of-week evidence; it does not blindly trust the old `completed` array.
+New participants create an account with full name, email and password, then confirm their email once. Returning participants use email + password. Existing participants who previously used passwordless email links can use the password-recovery control once to create a password without changing their profile, enrolment or progress. After verified login, the backend creates or updates the participant profile and enrols the participant into the Executive Leadership Readiness Programme. The first authenticated backend sync can import existing browser progression only where the old completion declaration is supported by the existing reflection and end-of-week evidence; it does not blindly trust the old `completed` array.
 
 ---
 
