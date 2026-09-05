@@ -188,3 +188,40 @@ body[data-theme="wrv-dramatic"] #week3[data-week-mood="courage"] .mockup-week-he
  body[data-theme="wrv-dramatic"] .mockup-reflection-side{grid-template-columns:1fr!important}
  body[data-theme="wrv-dramatic"] .week-side{grid-template-columns:1fr!important}
 }
+
+
+/* Interaction safety — keep decorative blueprint layers from intercepting clicks */
+body[data-theme="wrv-dramatic"] .brand-mark:before,
+body[data-theme="wrv-dramatic"] .sidebar blockquote,
+body[data-theme="wrv-dramatic"] .sidebar blockquote:before,
+body[data-theme="wrv-dramatic"] .sidebar blockquote:after,
+body[data-theme="wrv-dramatic"] .mockup-week-hero:before,
+body[data-theme="wrv-dramatic"] .mockup-week-hero:after,
+body[data-theme="wrv-dramatic"] .mockup-hero-quote:after,
+body[data-theme="wrv-dramatic"] .reflection-nav-row:before,
+body[data-theme="wrv-dramatic"] .reflection-nav-row:after,
+body[data-theme="wrv-dramatic"] .reflection-summary:before,
+body[data-theme="wrv-dramatic"] .reflection-summary:after{pointer-events:none!important}
+
+body[data-theme="wrv-dramatic"] .nav{position:relative!important;z-index:50!important}
+body[data-theme="wrv-dramatic"] .nav-link{position:relative!important;z-index:51!important;pointer-events:auto!important}
+body[data-theme="wrv-dramatic"] .topbar{z-index:70!important}
+body[data-theme="wrv-dramatic"] .menu-btn,
+body[data-theme="wrv-dramatic"] .user-chip,
+body[data-theme="wrv-dramatic"] .wrv-logout{position:relative!important;z-index:72!important;pointer-events:auto!important}
+
+body[data-theme="wrv-dramatic"] .mockup-step-strip{z-index:60!important;isolation:isolate!important;pointer-events:auto!important}
+body[data-theme="wrv-dramatic"] .mockup-step-strip button{position:relative!important;z-index:62!important;pointer-events:auto!important}
+
+body[data-theme="wrv-dramatic"] .mockup-reflection-center{position:relative!important;z-index:20!important}
+body[data-theme="wrv-dramatic"] .reflection-card-stage,
+body[data-theme="wrv-dramatic"] .reflection-card,
+body[data-theme="wrv-dramatic"] .reflection-card textarea{position:relative!important;z-index:22!important;pointer-events:auto!important}
+body[data-theme="wrv-dramatic"] .week-mood-cue{z-index:21!important;pointer-events:none!important}
+body[data-theme="wrv-dramatic"] .reflection-nav-row{position:relative!important;z-index:30!important;pointer-events:none!important}
+body[data-theme="wrv-dramatic"] .reflection-nav-btn{position:relative!important;z-index:32!important;pointer-events:auto!important}
+body[data-theme="wrv-dramatic"] .mockup-reflection-side{position:relative!important;z-index:10!important}
+
+body[data-theme="wrv-dramatic"] button,
+body[data-theme="wrv-dramatic"] input,
+body[data-theme="wrv-dramatic"] textarea{touch-action:manipulation}
