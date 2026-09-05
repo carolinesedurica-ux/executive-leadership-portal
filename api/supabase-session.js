@@ -35,6 +35,11 @@ module.exports = async function handler(req, res) {
       ok: true,
       role: 'client',
       email,
+      participant: participant ? {
+        id: participant.profile.id,
+        fullName: participant.profile.full_name,
+        email: participant.profile.email
+      } : null,
       backendAvailable: backendConfigured()
     });
   } catch (error) {
