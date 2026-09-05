@@ -437,6 +437,19 @@ async function resendCurrentCredential(context, options = {}) {
 }
 
 async function validateCredential(context, milestoneKey, rawToken) {
+  const now = new Date();
+  const since = new Date(now.getTime() - 10 * 60 * 1000).toISOString();
+
+  const { count: recentFailures, error: failureError } = await db().from('audit_logs')
+    .select('id', { count: 'exact', head: true })
+    .eq('participant_id', context.profile.id)
+    .eq('event', 'credential_validation_failed')
+    .gte('created_at', since);
+  if (failureError) throw failureError;
+  if (recentFailures >= 5) {
+    throw new Error('Too many incorrect credential attempts. Please wait 10 minutes and try again.');
+  }
+
   const milestones = await getMilestones(context.programme.id);
   const milestone = milestones.find(item => item.milestone_key === milestoneKey);
   if (!milestone) throw new Error('Milestone was not found.');
