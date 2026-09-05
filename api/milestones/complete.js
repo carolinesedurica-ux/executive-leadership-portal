@@ -9,7 +9,7 @@ module.exports = async function handler(req, res) {
     if (!backendConfigured()) return json(res, 503, { backendAvailable: false, error: 'Supabase backend is not configured.' });
     const key = String(req.body?.milestoneKey || '');
     const context = await contextFromSession(current);
-    const result = await completeMilestone(context, key, req.body?.evidence || {});
+    const result = await completeMilestone(context, key, req.body?.evidence || {}, req.body?.testAnswers || {});
     return json(res, 200, { ok: true, backendAvailable: true, ...result });
   } catch (error) {
     return json(res, 400, { backendAvailable: true, error: error.message || 'Milestone could not be completed.' });
