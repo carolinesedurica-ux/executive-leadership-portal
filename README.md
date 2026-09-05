@@ -28,7 +28,7 @@ The portal is live and actively under development.
 - Daily leadership practice / habit tracking
 - End-of-week completion tracking
 - Mandatory Mid-Course Leadership Assessment
-- Week 4 gating based on assessment completion
+- Week 4 gating based on assessment completion plus the emailed 7-character access credential
 - Administrator dashboard for reviewing client responses
 - Responsive desktop, tablet and mobile layouts
 - Multi-participant Supabase persistence with per-user progress, reflections, daily practice and priority-focus data
@@ -58,7 +58,7 @@ Focus areas include calm authority, communication under pressure, concise speaki
 Focus areas include assertiveness, boundaries, disagreement, difficult conversations and the CLEAR planning framework.
 
 ### Mid-Course Assessment
-The client completes a scored leadership assessment after Week 3. Submission unlocks Week 4.
+The client completes a scored leadership assessment after Week 3. Submission creates the Week 4 entitlement and emails a 7-character access credential. The participant enters that credential once to open Week 4.
 
 ### Weeks 4–6
 The current programme roadmap continues into:
