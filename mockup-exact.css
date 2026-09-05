@@ -1070,3 +1070,27 @@ body[data-theme="wrv-dramatic"] .video-pending p{
 .credential-entry span{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#586d78}
 .credential-entry input{width:100%;border:1px solid #cad6d9;border-radius:14px;padding:15px 16px;background:#fff;color:#10263b;font:700 22px/1 'DM Sans',sans-serif;letter-spacing:.22em;text-align:center;text-transform:uppercase;outline:none}
 .credential-entry input:focus{border-color:#0b7180;box-shadow:0 0 0 4px rgba(11,113,128,.09)}
+
+
+/* Weighted weekly assessments */
+.weekly-test-card{margin-top:24px}
+.weekly-test-card .tool-copy{max-width:760px}
+.weekly-test-form{display:grid;gap:24px;margin-top:22px}
+.weekly-test-section{display:grid;gap:18px}
+.weekly-test-section h3{margin:0;color:#10263b;font-family:"Playfair Display",serif}
+.weekly-question{border:1px solid #dce5e7;border-radius:16px;padding:18px;background:#fbfcfc}
+.weekly-question legend{padding:0 6px;font-weight:700;color:#18313d}
+.weekly-question label{display:flex;gap:10px;align-items:flex-start;margin-top:10px;cursor:pointer;color:#415761}
+.weekly-question input{margin-top:4px}
+.weekly-written{display:grid;gap:8px;font-weight:700;color:#18313d}
+.weekly-written textarea{min-height:120px;border:1px solid #d4dfe1;border-radius:14px;padding:14px;font:inherit;resize:vertical;background:#fff}
+.weekly-written textarea:focus{outline:none;border-color:#0b7180;box-shadow:0 0 0 4px rgba(11,113,128,.08)}
+.weekly-test-result{display:flex;justify-content:space-between;gap:24px;align-items:center}
+.weekly-score{min-width:180px;text-align:center;border-radius:16px;padding:18px;background:#f3f7f7}
+.weekly-score strong{display:block;font-size:28px;color:#0b5966}
+.weekly-score span{display:block;margin-top:5px;font-size:12px;color:#657983}
+.assessment-weight-summary{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.assessment-weight-summary>div{padding:16px;border:1px solid #dce5e7;border-radius:14px;background:#f8faf9;text-align:center}
+.assessment-weight-summary strong{display:block;font-size:22px;color:#0b5966}
+.assessment-weight-summary span{display:block;margin-top:5px;font-size:12px;color:#657983}
+@media(max-width:720px){.weekly-test-result{align-items:stretch;flex-direction:column}.weekly-score{min-width:0}.assessment-weight-summary{grid-template-columns:1fr}}
