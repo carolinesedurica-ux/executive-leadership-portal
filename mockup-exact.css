@@ -1063,3 +1063,10 @@ body[data-theme="wrv-dramatic"] .video-pending p{
     display:none!important;
   }
 }
+
+
+/* Week 4 credential gate */
+.credential-entry{display:grid;gap:8px;max-width:360px;margin:22px auto;text-align:left}
+.credential-entry span{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#586d78}
+.credential-entry input{width:100%;border:1px solid #cad6d9;border-radius:14px;padding:15px 16px;background:#fff;color:#10263b;font:700 22px/1 'DM Sans',sans-serif;letter-spacing:.22em;text-align:center;text-transform:uppercase;outline:none}
+.credential-entry input:focus{border-color:#0b7180;box-shadow:0 0 0 4px rgba(11,113,128,.09)}
