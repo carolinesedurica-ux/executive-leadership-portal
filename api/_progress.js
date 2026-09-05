@@ -1,4 +1,4 @@
-const { supabaseAdminClient, backendConfigured, configuredEmails } = require('./_supabase');
+const { supabaseAdminClient, backendConfigured } = require('./_supabase');
 const { MILESTONES, nextMilestoneKey, validateWeekEvidence, validateAssessmentPayload } = require('./_milestones');
 const { generateAccessToken, hashAccessToken, tokenExpiry } = require('./_tokens');
 const { storeCredential, readCredential, deleteCredential } = require('./_credential-store');
@@ -90,19 +90,12 @@ async function contextFromSession(current) {
 
 async function adminParticipantContext() {
   if (!backendConfigured()) return null;
-  const emails = configuredEmails();
-  let profile;
 
-  if (emails.length) {
-    const { data } = await db().from('profiles').select('*').eq('email', emails[0]).maybeSingle();
-    profile = data || null;
-  }
-
-  if (!profile) {
-    const { data } = await db().from('profiles').select('*').eq('role', 'client')
-      .order('created_at', { ascending: true }).limit(1).maybeSingle();
-    profile = data || null;
-  }
+  const { data: profile } = await db().from('profiles').select('*')
+    .eq('role', 'client')
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .maybeSingle();
 
   if (!profile) return null;
   const prog = await programme();
