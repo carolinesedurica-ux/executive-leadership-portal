@@ -20,7 +20,8 @@ function participantLabel(){
 }
 
 function stats(){
- const completed=(state().completed||[]).length;
+ const s=state();
+ const completed=(s.completed||[]).length;
  document.getElementById('adminStats').innerHTML=
    `<div class="wrv-stat"><span>Participant</span><strong style="font-size:17px">${esc(participantLabel())}</strong></div>
     <div class="wrv-stat"><span>Reflections captured</span><strong>${countReflections()}/9</strong></div>
