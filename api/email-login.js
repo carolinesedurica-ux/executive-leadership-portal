@@ -6,6 +6,7 @@ module.exports = async function handler(req, res) {
 
   try {
     const email = String(req.body?.email || '').trim().toLowerCase();
+    const fullName = String(req.body?.fullName || '').trim().slice(0, 120);
     if (!email || !email.includes('@')) {
       return json(res, 400, { error: 'Enter a valid email address.' });
     }
@@ -19,7 +20,8 @@ module.exports = async function handler(req, res) {
       email,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: redirectTo
+        emailRedirectTo: redirectTo,
+        ...(fullName ? { data: { full_name: fullName } } : {})
       }
     });
 
