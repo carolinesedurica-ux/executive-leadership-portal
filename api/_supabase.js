@@ -8,14 +8,39 @@ const SUPABASE_PUBLISHABLE_KEY =
   process.env.SUPABASE_PUBLISHABLE_KEY ||
   'sb_publishable_Qo0LCtmN1ldesHqGIykZOA_AiPcgbYM';
 
+let publicClient;
+let adminClient;
+
 function supabaseClient() {
-  return createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false
-    }
-  });
+  if (!publicClient) {
+    publicClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false
+      }
+    });
+  }
+  return publicClient;
+}
+
+function backendConfigured() {
+  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
+function supabaseAdminClient() {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY is not configured');
+  if (!adminClient) {
+    adminClient = createClient(SUPABASE_URL, key, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false
+      }
+    });
+  }
+  return adminClient;
 }
 
 function configuredEmails() {
@@ -35,6 +60,8 @@ module.exports = {
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY,
   supabaseClient,
+  supabaseAdminClient,
+  backendConfigured,
   configuredEmails,
   isAllowedEmail
 };
