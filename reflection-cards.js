@@ -41,7 +41,7 @@ function enhanceWeek(week){
    const raw=[...label.childNodes].filter(n=>n!==textarea).map(n=>n.textContent).join(' ').trim().replace(/^\d+\.\s*/,'');
    const card=document.createElement('section'); card.className='reflection-card'; card.dataset.index=String(i);
    card.innerHTML=`<div class="reflection-card-number">${i+1}</div><div class="reflection-question">${esc(raw)}</div><div class="reflection-cue">${esc((cues[week]||[])[i]||'Write what is most true for you right now. Keep it practical and specific.')}</div>`;
-   textarea.remove(); card.appendChild(textarea);
+   textarea.remove(); textarea.maxLength=1000; textarea.placeholder='Take a few moments to reflect and write your thoughts here…'; card.appendChild(textarea); const count=document.createElement('span');count.className='reflection-char-count';count.textContent=`${textarea.value.length}/1000`;card.appendChild(count);
    const state=document.createElement('div'); state.className='reflection-save-state';
    state.innerHTML='<span>Autosaves as you type</span><strong></strong>'; card.appendChild(state);
    stage.appendChild(card); cards.push(card);
@@ -57,7 +57,7 @@ function enhanceWeek(week){
  cards.forEach((_,i)=>{const b=document.createElement('button');b.type='button';b.className='reflection-dot';b.setAttribute('aria-label',`Reflection ${i+1}`);b.addEventListener('click',()=>{active=i;render()});dots.appendChild(b)});
  function render(){
    const state=getState();
-   cards.forEach((card,i)=>{const ta=card.querySelector('textarea'); const val=ta?.value||state.reflections?.[`${week}-${i}`]||''; if(ta&&ta.value!==val)ta.value=val; const done=isComplete(val); card.classList.toggle('active',i===active);card.classList.toggle('complete',done); const save=card.querySelector('.reflection-save-state strong'); if(save)save.textContent=done?'✓ Reflection captured':val.trim()?'Saving…':''; const dot=dots.children[i]; if(dot){dot.classList.toggle('active',i===active);dot.classList.toggle('complete',done)}});
+   cards.forEach((card,i)=>{const ta=card.querySelector('textarea'); const val=ta?.value||state.reflections?.[`${week}-${i}`]||''; if(ta&&ta.value!==val)ta.value=val; const done=isComplete(val); card.classList.toggle('active',i===active);card.classList.toggle('complete',done); const counter=card.querySelector('.reflection-char-count');if(counter)counter.textContent=`${val.length}/1000`; const save=card.querySelector('.reflection-save-state strong'); if(save)save.textContent=done?'✓ Reflection captured':val.trim()?'Saving…':''; const dot=dots.children[i]; if(dot){dot.classList.toggle('active',i===active);dot.classList.toggle('complete',done)}});
    nav.querySelector('.prev').disabled=active===0; nav.querySelector('.next').textContent=active===cards.length-1?'Review reflections ✓':'Next →';
    const completed=cards.filter(c=>isComplete(c.querySelector('textarea')?.value||'')).length;
    const bar=header.querySelector('.reflection-progress-bar span'); if(bar)bar.style.width=`${Math.round(completed/cards.length*100)}%`;
