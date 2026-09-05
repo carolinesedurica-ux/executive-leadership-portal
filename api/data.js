@@ -26,6 +26,8 @@ module.exports = async function handler(req, res) {
 
     return json(res, 405, { error: 'Method not allowed' });
   } catch (error) {
-    return json(res, 500, { error: error.message || 'Unable to access coaching data.' });
+    const message = error.message || 'Unable to access coaching data.';
+    if (message.includes('BLOB_READ_WRITE_TOKEN')) return json(res, 503, { error: message, code: 'storage_unavailable' });
+    return json(res, 500, { error: message });
   }
 };
