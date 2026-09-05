@@ -1094,3 +1094,61 @@ body[data-theme="wrv-dramatic"] .video-pending p{
 .assessment-weight-summary strong{display:block;font-size:22px;color:#0b5966}
 .assessment-weight-summary span{display:block;margin-top:5px;font-size:12px;color:#657983}
 @media(max-width:720px){.weekly-test-result{align-items:stretch;flex-direction:column}.weekly-score{min-width:0}.assessment-weight-summary{grid-template-columns:1fr}}
+
+
+/* Sidebar weekly test buttons */
+body[data-theme="wrv-dramatic"] .nav-test-link{
+  width:calc(100% - 34px)!important;
+  margin:-2px 12px 7px 22px!important;
+  padding:7px 11px!important;
+  border:1px solid rgba(213,168,77,.34)!important;
+  border-radius:9px!important;
+  background:rgba(213,168,77,.08)!important;
+  color:#e8c875!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  font:700 9px/1.2 'DM Sans',sans-serif!important;
+  letter-spacing:.12em!important;
+  text-transform:uppercase!important;
+  cursor:pointer!important;
+  text-align:left!important;
+}
+body[data-theme="wrv-dramatic"] .nav-test-link span{
+  color:#dce7ea!important;
+  font-size:10px!important;
+  letter-spacing:.02em!important;
+  text-transform:none!important;
+}
+body[data-theme="wrv-dramatic"] .nav-test-link:hover,
+body[data-theme="wrv-dramatic"] .nav-test-link.active{
+  background:rgba(213,168,77,.18)!important;
+  border-color:#d5a84d!important;
+}
+body[data-theme="wrv-dramatic"] .nav-test-link.completed{
+  background:rgba(84,168,135,.14)!important;
+  border-color:rgba(109,199,162,.45)!important;
+  color:#92d9bb!important;
+}
+body[data-theme="wrv-dramatic"] .nav-test-link.locked,
+body[data-theme="wrv-dramatic"] .nav-test-link:disabled{
+  opacity:.42!important;
+  cursor:not-allowed!important;
+}
+body[data-theme="wrv-dramatic"] .weekly-test-view.view.active{
+  padding:32px 46px 54px!important;
+}
+body[data-theme="wrv-dramatic"] .weekly-test-view .weekly-test-card{
+  max-width:980px!important;
+  margin:24px auto 0!important;
+}
+body[data-theme="wrv-dramatic"] .weekly-test-next{
+  max-width:980px!important;
+  margin:18px auto 0!important;
+  display:flex!important;
+  justify-content:flex-end!important;
+}
+@media(max-width:780px){
+  body[data-theme="wrv-dramatic"] .weekly-test-view.view.active{padding:20px 14px 36px!important}
+  body[data-theme="wrv-dramatic"] .nav-test-link{width:calc(100% - 34px)!important}
+}
