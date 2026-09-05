@@ -1,5 +1,5 @@
 const { setSession, json } = require('./_lib');
-const { supabaseClient, configuredEmails, isAllowedEmail, backendConfigured } = require('./_supabase');
+const { supabaseClient, backendConfigured } = require('./_supabase');
 const { ensureParticipantFromAuthUser } = require('./_progress');
 
 module.exports = async function handler(req, res) {
@@ -9,18 +9,15 @@ module.exports = async function handler(req, res) {
     const accessToken = String(req.body?.accessToken || '');
     if (!accessToken) return json(res, 400, { error: 'Missing Supabase access token.' });
 
-    if (!configuredEmails().length) {
-      return json(res, 503, {
-        error: 'Email login is not fully configured yet. Add CLIENT_LOGIN_EMAILS in Vercel.'
-      });
-    }
-
     const supabase = supabaseClient();
     const { data, error } = await supabase.auth.getUser(accessToken);
-    if (error || !data?.user) return json(res, 401, { error: 'Email session could not be verified.' });
+    if (error || !data?.user) {
+      return json(res, 401, { error: 'Email session could not be verified.' });
+    }
 
-    const email = String(data.user.email || '').toLowerCase();
-    if (!isAllowedEmail(email)) return json(res, 403, { error: 'This email is not authorised for this coaching portal.' });
+    const email = String(data.user.email || '').trim().toLowerCase();
+    if (!email) return json(res, 401, { error: 'Verified email address is missing.' });
+
     if (!data.user.email_confirmed_at && !data.user.confirmed_at) {
       return json(res, 403, { error: 'Confirm your email before entering the coaching portal.' });
     }
