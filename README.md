@@ -27,8 +27,9 @@ The portal is live and actively under development.
 - CLEAR difficult-conversation planner
 - Daily leadership practice / habit tracking
 - End-of-week completion tracking
-- Mandatory Mid-Course Leadership Assessment
-- Week 4 gating based on assessment completion plus the emailed 7-character access credential
+- Once-only 10-question test after each of Weeks 1–3 (5 multiple-choice + 5 written)
+- Weighted Mid-Course Leadership Assessment with up to three attempts
+- Week 4 gating at an 80% overall pass mark plus the emailed 7-character access credential
 - Administrator dashboard for reviewing client responses
 - Responsive desktop, tablet and mobile layouts
 - Multi-participant Supabase persistence with per-user progress, reflections, daily practice and priority-focus data
@@ -57,8 +58,17 @@ Focus areas include calm authority, communication under pressure, concise speaki
 
 Focus areas include assertiveness, boundaries, disagreement, difficult conversations and the CLEAR planning framework.
 
-### Mid-Course Assessment
-The client completes a scored leadership assessment after Week 3. Submission creates the Week 4 entitlement and emails a 7-character access credential. The participant enters that credential once to open Week 4.
+### Weekly tests and Mid-Course Assessment
+Each of Weeks 1–3 ends with a once-only 10-question test: 5 multiple-choice questions and 5 written application questions. The mark is stored permanently and the participant then continues to the next week.
+
+Assessment weighting:
+- Week 1 test: 10%
+- Week 2 test: 10%
+- Week 3 test: 10%
+- Mid-Course Assessment: 70%
+- Overall pass mark: 80%
+
+The three weekly tests therefore contribute up to 30 percentage points. The Mid-Course Assessment contributes up to 70 percentage points. If the overall result is below 80%, the participant can repeat the Mid-Course Assessment, with a maximum of three total attempts. Weekly tests are not repeated. A Week 4 access credential is generated only after the participant reaches the 80% overall pass mark. The participant then enters the emailed 7-character credential once to open Week 4.
 
 ### Weeks 4–6
 The current programme roadmap continues into:
@@ -470,7 +480,7 @@ The repository now includes an additive Supabase backend migration at `supabase/
 
 When `SUPABASE_SERVICE_ROLE_KEY` is configured and the migrations have been applied, Supabase is authoritative for participant identity, enrolment, milestone completion, unlock state, assessment completion, scores, entitlements and the participant coaching workspace. Browser `localStorage` remains only as a participant-isolated working cache. `/api/data` reads and writes the signed-in participant's `participant_workspace` row and overlays authoritative progression before returning state.
 
-Milestone credentials use cryptographically random 7-character values with ambiguous characters excluded. Supabase stores only a keyed SHA-256 hash plus an opaque credential reference. The raw credential is encrypted with AES-256-GCM and escrowed in the existing Vercel Blob store so an email failure can be securely resent without generating a duplicate credential.
+Milestone credentials use cryptographically random 7-character values with ambiguous characters excluded. Credentials for the next programme stage are issued only after the weighted assessment pass rule is satisfied. Supabase stores only a keyed SHA-256 hash plus an opaque credential reference. The raw credential is encrypted with AES-256-GCM and escrowed in the existing Vercel Blob store so an email failure can be securely resent without generating a duplicate credential.
 
 ### Titan Email SMTP over SSL
 
@@ -507,3 +517,16 @@ New participants create an account with full name, email and password, then conf
 People | Potential | Purpose
 
 Executive Leadership Coaching Portal
+
+
+## Weighted assessment data model
+
+Weekly test marks are stored in `weekly_test_results` with one result per participant per Week 1–3 milestone. The server holds the answer keys and written-answer concept rubrics; the browser receives question text and options only.
+
+Final assessment attempts are stored in `assessment_attempts`. A participant can make up to three attempts. Each attempt records the final-assessment percentage, the saved weekly weighted score, the overall score and whether the 80% pass mark was achieved.
+
+The weighting formula is:
+
+`overall = (week1 × 0.10) + (week2 × 0.10) + (week3 × 0.10) + (final assessment × 0.70)`
+
+No Week 4 credential is generated for a failed final-assessment attempt.
