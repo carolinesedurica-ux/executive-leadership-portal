@@ -470,7 +470,7 @@ The repository now includes an additive Supabase backend migration at `supabase/
 
 When `SUPABASE_SERVICE_ROLE_KEY` is configured and the migrations have been applied, Supabase is authoritative for participant identity, enrolment, milestone completion, unlock state, assessment completion, scores, entitlements and the participant coaching workspace. Browser `localStorage` remains only as a participant-isolated working cache. `/api/data` reads and writes the signed-in participant's `participant_workspace` row and overlays authoritative progression before returning state.
 
-Milestone credentials use cryptographically random `ELR-...` values. Supabase stores only a keyed SHA-256 hash plus an opaque credential reference. The raw credential is encrypted with AES-256-GCM and escrowed in the existing Vercel Blob store so an email failure can be securely resent without generating a duplicate credential.
+Milestone credentials use cryptographically random 7-character values with ambiguous characters excluded. Supabase stores only a keyed SHA-256 hash plus an opaque credential reference. The raw credential is encrypted with AES-256-GCM and escrowed in the existing Vercel Blob store so an email failure can be securely resent without generating a duplicate credential.
 
 ### Titan Email SMTP over SSL
 
