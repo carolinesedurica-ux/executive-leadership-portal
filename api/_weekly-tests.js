@@ -313,7 +313,7 @@ function validateTestAnswers(key, answers = {}) {
   const mcq = Array.isArray(answers.mcq) ? answers.mcq : [];
   const written = Array.isArray(answers.written) ? answers.written : [];
 
-  if (mcq.length !== 5 || mcq.some(v => !Number.isInteger(Number(v)) || Number(v) < 0 || Number(v) > 3)) {
+  if (mcq.length !== 5 || mcq.some(v => v === null || v === undefined || v === '' || !Number.isInteger(Number(v)) || Number(v) < 0 || Number(v) > 3)) {
     return { ok: false, error: 'Answer all five multiple-choice questions.' };
   }
   if (written.length !== 5 || written.some(v => String(v || '').trim().length < 20)) {
