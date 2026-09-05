@@ -1,11 +1,13 @@
 (()=>{
 const qs=new URLSearchParams(location.search);
 let role=qs.get('admin')==='1'?'admin':'client';
+let clientMode='signin';
 let lastSnapshot='';
 let syncing=false;
 let cloudAvailable=true;
 let supabaseClient=null;
 let currentParticipant=null;
+const recoveryMode=qs.get('recovery')==='1'||location.hash.includes('type=recovery');
 const $=(s,r=document)=>r.querySelector(s);
 
 function getSupabase(){
@@ -37,29 +39,87 @@ function isolateParticipant(participant){
   if(!id)return false;
   const previous=localStorage.getItem('elrpActiveParticipantId');
   if(previous===id)return false;
-
   ['elrpState','elrpDailyHabits','elrpPriorityFocus'].forEach(key=>localStorage.removeItem(key));
   localStorage.setItem('elrpActiveParticipantId',id);
   return true;
 }
 
+function authVisual(){
+ return `<section class="wrv-auth-visual">
+   <div class="wrv-auth-brand"><div class="wrv-auth-logo">Foundations Counselling Academy</div><small>Executive Leadership Coaching</small></div>
+   <div class="wrv-auth-copy"><span class="kicker">Reflect · Grow · Lead</span><h1>Build the leader your next chapter requires.</h1><p>A private coaching space for deliberate practice, reflection, communication growth and measurable leadership development.</p></div>
+ </section>`;
+}
+
+function recoveryOverlay(){
+ const el=document.createElement('div');
+ el.className='wrv-auth-overlay';
+ el.innerHTML=`${authVisual()}
+ <section class="wrv-auth-panel">
+   <form class="wrv-auth-card" id="wrvRecovery">
+     <h2>Create a new password</h2>
+     <p>Choose a password for future sign-ins. Once saved, you can return with your email and password without another sign-in link.</p>
+     <label class="wrv-auth-field"><span>New password</span><input type="password" name="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"></label>
+     <label class="wrv-auth-field"><span>Confirm new password</span><input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required placeholder="Repeat your password"></label>
+     <button class="wrv-auth-submit" type="submit">Save password & continue →</button>
+     <p class="wrv-auth-success" id="wrvAuthSuccess"></p>
+     <p class="wrv-auth-error" id="wrvAuthError"></p>
+     <p class="wrv-auth-foot">Foundations Counselling Academy · Executive Leadership Coaching</p>
+   </form>
+ </section>`;
+ document.body.prepend(el);
+
+ $('#wrvRecovery',el).onsubmit=async e=>{
+   e.preventDefault();
+   const error=$('#wrvAuthError',el),success=$('#wrvAuthSuccess',el),btn=$('.wrv-auth-submit',el);
+   error.textContent='';success.textContent='';
+   const password=String(e.target.password.value||'');
+   const confirmPassword=String(e.target.confirmPassword.value||'');
+   if(password.length<8){error.textContent='Use at least 8 characters.';return}
+   if(password!==confirmPassword){error.textContent='The passwords do not match.';return}
+   btn.disabled=true;btn.textContent='Saving password…';
+   try{
+     const client=getSupabase();
+     const {data:{session}}=await client.auth.getSession();
+     if(!session)throw new Error('This password-reset session has expired. Request a new reset email.');
+     const {error:updateError}=await client.auth.updateUser({password});
+     if(updateError)throw updateError;
+     success.textContent='Password saved. Opening your coaching portal…';
+     history.replaceState({},document.title,location.pathname);
+     const authState=await establishPortalSessionFromSupabase();
+     if(authState==='reloading')return;
+     if(authState!=='authenticated')throw new Error('Password saved, but the portal session could not be established.');
+     await activateClient(el);
+   }catch(err){
+     error.textContent=err.message||'Unable to save your new password.';
+     btn.disabled=false;btn.textContent='Save password & continue →';
+   }
+ };
+ return el;
+}
+
 function overlay(){
  const el=document.createElement('div');
  el.className='wrv-auth-overlay';
- el.innerHTML=`<section class="wrv-auth-visual">
-   <div class="wrv-auth-brand"><div class="wrv-auth-logo">Foundations Counselling Academy</div><small>Executive Leadership Coaching</small></div>
-   <div class="wrv-auth-copy"><span class="kicker">Reflect · Grow · Lead</span><h1>Build the leader your next chapter requires.</h1><p>A private coaching space for deliberate practice, reflection, communication growth and measurable leadership development.</p></div>
- </section>
+ el.innerHTML=`${authVisual()}
  <section class="wrv-auth-panel">
    <form class="wrv-auth-card" id="wrvLogin">
      <h2>Welcome</h2>
-     <p>Sign up or sign in to continue your Executive Leadership Readiness Programme.</p>
+     <p>Access your Executive Leadership Readiness Programme.</p>
      <div class="wrv-role-toggle"><button type="button" data-role="client">Participant</button><button type="button" data-role="admin">Administrator</button></div>
-     <label class="wrv-auth-field wrv-client-field"><span>Full name <small>(new participants)</small></span><input type="text" name="fullName" autocomplete="name" maxlength="120" placeholder="Your full name"></label>
+     <div class="wrv-client-mode wrv-client-field">
+       <button type="button" data-client-mode="signin">Sign in</button>
+       <button type="button" data-client-mode="signup">Create account</button>
+     </div>
+     <label class="wrv-auth-field wrv-client-field wrv-signup-only"><span>Full name</span><input type="text" name="fullName" autocomplete="name" maxlength="120" placeholder="Your full name"></label>
      <label class="wrv-auth-field wrv-client-field"><span>Email address</span><input type="email" name="email" autocomplete="email" placeholder="you@example.com"></label>
-     <p class="wrv-auth-helper wrv-client-field">First time here? Add your name and email. Returning participants can use the same email address to sign in. No password is required.</p>
-     <label class="wrv-auth-field wrv-admin-field"><span>Access code</span><input type="password" name="password" autocomplete="current-password" placeholder="Enter your private access code"></label>
-     <button class="wrv-auth-submit" type="submit">Email me a secure access link →</button>
+     <label class="wrv-auth-field wrv-client-field"><span>Password</span><input type="password" name="clientPassword" autocomplete="current-password" minlength="8" placeholder="Your password"></label>
+     <label class="wrv-auth-field wrv-client-field wrv-signup-only"><span>Confirm password</span><input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" placeholder="Repeat your password"></label>
+     <p class="wrv-auth-helper wrv-client-field wrv-signin-only">Returning participants sign in with email and password. No verification or magic-link email is sent.</p>
+     <p class="wrv-auth-helper wrv-client-field wrv-signup-only">New participants confirm their email once after creating an account. Future sign-ins use email and password.</p>
+     <button type="button" class="wrv-auth-link wrv-client-field wrv-signin-only" id="wrvForgotPassword">Forgot or need to create your password?</button>
+     <label class="wrv-auth-field wrv-admin-field"><span>Access code</span><input type="password" name="adminPassword" autocomplete="current-password" placeholder="Enter your private access code"></label>
+     <button class="wrv-auth-submit" type="submit">Sign in →</button>
      <p class="wrv-auth-success" id="wrvAuthSuccess"></p>
      <p class="wrv-auth-error" id="wrvAuthError"></p>
      <p class="wrv-auth-foot">Foundations Counselling Academy · Executive Leadership Coaching</p>
@@ -69,47 +129,125 @@ function overlay(){
 
  const paint=()=>{
    el.querySelectorAll('[data-role]').forEach(b=>b.classList.toggle('active',b.dataset.role===role));
+   el.querySelectorAll('[data-client-mode]').forEach(b=>b.classList.toggle('active',b.dataset.clientMode===clientMode));
    el.querySelectorAll('.wrv-client-field').forEach(x=>x.hidden=role!=='client');
    el.querySelectorAll('.wrv-admin-field').forEach(x=>x.hidden=role!=='admin');
-   const email=$('input[name="email"]',el),password=$('input[name="password"]',el),submit=$('.wrv-auth-submit',el);
+   el.querySelectorAll('.wrv-signup-only').forEach(x=>x.hidden=role!=='client'||clientMode!=='signup');
+   el.querySelectorAll('.wrv-signin-only').forEach(x=>x.hidden=role!=='client'||clientMode!=='signin');
+
+   const email=$('input[name="email"]',el);
+   const fullName=$('input[name="fullName"]',el);
+   const clientPassword=$('input[name="clientPassword"]',el);
+   const confirmPassword=$('input[name="confirmPassword"]',el);
+   const adminPassword=$('input[name="adminPassword"]',el);
+   const submit=$('.wrv-auth-submit',el);
+
    if(email)email.required=role==='client';
-   if(password)password.required=role==='admin';
-   submit.textContent=role==='client'?'Email me a secure access link →':'Sign in securely →';
+   if(fullName)fullName.required=role==='client'&&clientMode==='signup';
+   if(clientPassword){
+     clientPassword.required=role==='client';
+     clientPassword.autocomplete=clientMode==='signup'?'new-password':'current-password';
+   }
+   if(confirmPassword)confirmPassword.required=role==='client'&&clientMode==='signup';
+   if(adminPassword)adminPassword.required=role==='admin';
+
+   submit.textContent=role==='admin'?'Sign in securely →':clientMode==='signup'?'Create account →':'Sign in →';
    $('#wrvAuthError',el).textContent='';
    $('#wrvAuthSuccess',el).textContent='';
  };
  paint();
 
  el.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{role=b.dataset.role;paint()});
+ el.querySelectorAll('[data-client-mode]').forEach(b=>b.onclick=()=>{clientMode=b.dataset.clientMode;paint()});
+
+ $('#wrvForgotPassword',el).onclick=async()=>{
+   const error=$('#wrvAuthError',el),success=$('#wrvAuthSuccess',el);
+   const email=String($('input[name="email"]',el)?.value||'').trim().toLowerCase();
+   error.textContent='';success.textContent='';
+   if(!email||!email.includes('@')){error.textContent='Enter your email address first.';return}
+   const btn=$('#wrvForgotPassword',el);btn.disabled=true;btn.textContent='Sending password email…';
+   try{
+     const client=getSupabase();
+     const {error:resetError}=await client.auth.resetPasswordForEmail(email,{
+       redirectTo:location.origin+'/?recovery=1'
+     });
+     if(resetError)throw resetError;
+     success.textContent='Check your inbox for the password-reset email. This is only needed when you forget or have not yet created a password.';
+   }catch(err){
+     error.textContent=err.message||'Unable to send the password-reset email.';
+   }finally{
+     btn.disabled=false;btn.textContent='Forgot or need to create your password?';
+   }
+ };
 
  $('#wrvLogin',el).onsubmit=async e=>{
    e.preventDefault();
    const error=$('#wrvAuthError',el),success=$('#wrvAuthSuccess',el),btn=$('.wrv-auth-submit',el);
    error.textContent='';success.textContent='';
    btn.disabled=true;
-   btn.textContent=role==='client'?'Sending secure link…':'Signing in…';
    try{
-     if(role==='client'){
-       const email=String(e.target.email.value||'').trim().toLowerCase();
-       const fullName=String(e.target.fullName.value||'').trim();
-       const r=await fetch('/api/email-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,fullName})});
+     if(role==='admin'){
+       btn.textContent='Signing in…';
+       const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:'admin',password:e.target.adminPassword.value})});
        const data=await r.json();
-       if(!r.ok)throw new Error(data.error||'Unable to send sign-in email');
-       success.textContent='Check your inbox. New participants will confirm their email; returning participants will sign in with the same secure link.';
-       btn.textContent='Send access link again';
+       if(!r.ok)throw new Error(data.error||'Unable to sign in');
+       location.href='/admin.html';
        return;
      }
 
-     const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:'admin',password:e.target.password.value})});
-     const data=await r.json();
-     if(!r.ok)throw new Error(data.error||'Unable to sign in');
-     location.href='/admin.html';
+     const client=getSupabase();
+     if(!client)throw new Error('Participant authentication is temporarily unavailable.');
+     const email=String(e.target.email.value||'').trim().toLowerCase();
+     const password=String(e.target.clientPassword.value||'');
+
+     if(clientMode==='signup'){
+       btn.textContent='Creating account…';
+       const fullName=String(e.target.fullName.value||'').trim();
+       const confirmPassword=String(e.target.confirmPassword.value||'');
+       if(!fullName)throw new Error('Enter your full name.');
+       if(password.length<8)throw new Error('Use a password with at least 8 characters.');
+       if(password!==confirmPassword)throw new Error('The passwords do not match.');
+
+       const {data,error:signupError}=await client.auth.signUp({
+         email,
+         password,
+         options:{
+           data:{full_name:fullName},
+           emailRedirectTo:location.origin+'/'
+         }
+       });
+       if(signupError)throw signupError;
+
+       if(data?.session){
+         const authState=await establishPortalSessionFromSupabase();
+         if(authState==='reloading')return;
+         if(authState==='authenticated'){await activateClient(el);return}
+       }
+       success.textContent='Account created. Check your inbox once to confirm your email. After confirmation, future sign-ins use your email and password.';
+       btn.textContent='Create account →';
+       return;
+     }
+
+     btn.textContent='Signing in…';
+     const {error:signinError}=await client.auth.signInWithPassword({email,password});
+     if(signinError){
+       const msg=String(signinError.message||'');
+       if(/invalid login credentials/i.test(msg)){
+         throw new Error('Email or password is incorrect. If you previously used an email sign-in link and have not created a password yet, use “Forgot or need to create your password?” once.');
+       }
+       throw signinError;
+     }
+
+     const authState=await establishPortalSessionFromSupabase();
+     if(authState==='reloading')return;
+     if(authState!=='authenticated')throw new Error('Signed in, but the portal session could not be established.');
+     await activateClient(el);
    }catch(err){
-     error.textContent=err.message;
+     error.textContent=err.message||'Unable to sign in.';
    }finally{
      btn.disabled=false;
      if(role==='admin')btn.textContent='Sign in securely →';
-     else if(!success.textContent)btn.textContent='Email me a secure access link →';
+     else btn.textContent=clientMode==='signup'?'Create account →':'Sign in →';
    }
  };
  return el;
@@ -231,7 +369,7 @@ async function establishPortalSessionFromSupabase(){
    }
 
    if(location.hash||qs.has('code')){
-     history.replaceState({},document.title,location.pathname);
+     history.replaceState({},document.title,location.pathname+(recoveryMode?'?recovery=1':''));
    }
    return 'authenticated';
  }catch(err){
@@ -241,6 +379,10 @@ async function establishPortalSessionFromSupabase(){
 }
 
 async function boot(){
+ if(recoveryMode){
+   recoveryOverlay();
+   return;
+ }
  const gate=overlay();
  try{
    const authState=await establishPortalSessionFromSupabase();
