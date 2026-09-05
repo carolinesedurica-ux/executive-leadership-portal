@@ -27,12 +27,12 @@ function overlay(){
  <section class="wrv-auth-panel">
    <form class="wrv-auth-card" id="wrvLogin">
      <h2>Welcome back</h2>
-     <p>Sign in to continue your Executive Leadership Readiness Programme.</p>
+     <p>Sign up or sign in to continue your Executive Leadership Readiness Programme.</p>
      <div class="wrv-role-toggle"><button type="button" data-role="client">Client</button><button type="button" data-role="admin">Administrator</button></div>
      <label class="wrv-auth-field wrv-client-field"><span>Email address</span><input type="email" name="email" autocomplete="email" placeholder="you@example.com"></label>
-     <p class="wrv-auth-helper wrv-client-field">We’ll email you a secure sign-in link. No password is required.</p>
+     <p class="wrv-auth-helper wrv-client-field">New participants can sign up with their email. Returning participants use the same field to sign in. No password is required.</p>
      <label class="wrv-auth-field wrv-admin-field"><span>Access code</span><input type="password" name="password" autocomplete="current-password" placeholder="Enter your private access code"></label>
-     <button class="wrv-auth-submit" type="submit">Email me a secure sign-in link →</button>
+     <button class="wrv-auth-submit" type="submit">Email me a secure access link →</button>
      <p class="wrv-auth-success" id="wrvAuthSuccess"></p>
      <p class="wrv-auth-error" id="wrvAuthError"></p>
      <p class="wrv-auth-foot">Work Ready Vault · A division of Foundations Counselling Academy</p>
@@ -47,7 +47,7 @@ function overlay(){
    const email=$('input[name="email"]',el),password=$('input[name="password"]',el),submit=$('.wrv-auth-submit',el);
    if(email)email.required=role==='client';
    if(password)password.required=role==='admin';
-   submit.textContent=role==='client'?'Email me a secure sign-in link →':'Sign in securely →';
+   submit.textContent=role==='client'?'Email me a secure access link →':'Sign in securely →';
    $('#wrvAuthError',el).textContent='';
    $('#wrvAuthSuccess',el).textContent='';
  };
@@ -67,8 +67,8 @@ function overlay(){
        const r=await fetch('/api/email-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
        const data=await r.json();
        if(!r.ok)throw new Error(data.error||'Unable to send sign-in email');
-       success.textContent='Check your inbox. Use the secure sign-in link to return to this portal.';
-       btn.textContent='Send link again';
+       success.textContent='Check your inbox. New participants will confirm their email; returning participants will sign in with the same secure link.';
+       btn.textContent='Send access link again';
        return;
      }
 
@@ -81,7 +81,7 @@ function overlay(){
    }finally{
      btn.disabled=false;
      if(role==='admin')btn.textContent='Sign in securely →';
-     else if(!success.textContent)btn.textContent='Email me a secure sign-in link →';
+     else if(!success.textContent)btn.textContent='Email me a secure access link →';
    }
  };
  return el;
