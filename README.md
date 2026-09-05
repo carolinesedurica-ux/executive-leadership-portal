@@ -170,7 +170,7 @@ The API returns a successful local-only status rather than repeatedly throwing s
 
 Authentication is handled through serverless API routes and an HTTP-only session cookie.
 
-Client access uses Supabase email magic links while the administrator route preserves the existing access-code flow. The portal continues to issue its existing HTTP-only signed session cookie after Supabase verifies the client identity.
+Client access uses Supabase passwordless email signup/sign-in while the administrator route preserves the existing access-code flow. The portal continues to issue its existing HTTP-only signed session cookie after Supabase verifies the client identity.
 
 Required production environment variables:
 
@@ -183,7 +183,6 @@ BLOB_READ_WRITE_TOKEN=
 SUPABASE_URL=https://kretjuxsrviqrmnthfwe.supabase.co
 SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-CLIENT_LOGIN_EMAILS=
 SUPABASE_EMAIL_REDIRECT=https://coaching.workreadyvault.com/
 
 TOKEN_HASH_SECRET=
@@ -493,7 +492,7 @@ Use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=465`, `SMTP_SECURE=true`, the full Go
 - `POST /api/credentials/resend`
 - `POST /api/credentials/validate`
 
-The first authenticated backend sync can import existing browser progression only where the old completion declaration is supported by the existing reflection and end-of-week evidence; it does not blindly trust the old `completed` array.
+New participants can create an account with any valid email address through the same passwordless email field used by returning participants. After verified login, the backend creates or updates the participant profile and enrols the participant into the Executive Leadership Readiness Programme. The first authenticated backend sync can import existing browser progression only where the old completion declaration is supported by the existing reflection and end-of-week evidence; it does not blindly trust the old `completed` array.
 
 ---
 
