@@ -3,7 +3,7 @@ const { json } = require('./_lib');
 const { supabaseClient } = require('./_supabase');
 const { smtpConfigured, sendMail } = require('./_email');
 
-const ONE_TIME_HASH = 'e6c5092b0df970b8411de8fb604ec4ac31dc447c8c3ceea91f303502add30777';
+const ONE_TIME_HASH = 'a142b50c0bc2fcdd0deaaaff90a46181a2cfada359ddd1e312039875f79e9f4e';
 const ONE_TIME_EXPIRES = Date.parse('2026-09-05T15:30:00Z');
 
 function oneTimeAuthorized(req) {
