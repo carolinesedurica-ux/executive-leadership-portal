@@ -28,3 +28,11 @@
 .wrv-auth-link:disabled{opacity:.6;cursor:wait}
 .wrv-auth-field span small{font-weight:500;color:#7c8a91}
 .wrv-client-mode[hidden],.wrv-auth-link[hidden]{display:none!important}
+
+
+/* FCA master logo */
+.wrv-auth-logo{font-size:0!important}
+.wrv-auth-logo img{display:block;width:min(240px,72vw);height:auto;background:#fff;border-radius:16px;padding:8px;box-shadow:0 12px 32px rgba(3,18,30,.18)}
+.wrv-admin-sidebar .fca-admin-logo{font-size:0!important}
+.wrv-admin-sidebar .fca-admin-logo img{display:block;width:190px;max-width:100%;height:auto;background:#fff;border-radius:14px;padding:7px;box-shadow:0 10px 26px rgba(0,0,0,.18)}
+@media(max-width:760px){.wrv-auth-logo img{width:min(210px,70vw)}}
