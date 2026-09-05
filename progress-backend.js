@@ -86,6 +86,19 @@ async function completeWeek(milestoneKey,state){
   return out;
 }
 
+async function validateCredential(milestoneKey,token){
+  const r=await fetch('/api/credentials/validate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({milestoneKey,token})
+  });
+  let out={};try{out=await r.json()}catch{}
+  if(!r.ok)throw new Error(out.error||'Unable to validate access credential');
+  if(!out.valid)throw new Error('That access credential is not valid.');
+  await sync();
+  return out;
+}
+
 async function submitAssessment(scores,reflections){
   const r=await fetch('/api/assessment/submit',{
     method:'POST',
@@ -99,6 +112,6 @@ async function submitAssessment(scores,reflections){
   return out;
 }
 
-window.ELRP_PROGRESS={sync,completeWeek,submitAssessment};
+window.ELRP_PROGRESS={sync,completeWeek,submitAssessment,validateCredential};
 document.addEventListener('wrv:client-authenticated',()=>sync().catch(err=>console.error('Progress sync failed',err)));
 })();
