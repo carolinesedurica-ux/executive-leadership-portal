@@ -31,7 +31,7 @@ The portal is live and actively under development.
 - Week 4 gating based on assessment completion
 - Administrator dashboard for reviewing client responses
 - Responsive desktop, tablet and mobile layouts
-- Local browser persistence with optional Vercel Blob cloud sync
+- Multi-participant Supabase persistence with per-user progress, reflections, daily practice and priority-focus data
 
 Weeks 4–6 are currently staged for continued programme development.
 
@@ -132,39 +132,30 @@ Only final client-facing videos should be added to the portal. NotebookLM script
 
 ## Client data and persistence
 
-The client application stores working state in browser `localStorage`:
+The portal is now multi-user. Each verified Supabase participant has an independent profile, programme enrollment, milestone-progress record and coaching workspace.
+
+Working browser state still uses the existing keys:
 
 - `elrpState`
 - `elrpDailyHabits`
+- `elrpPriorityFocus`
 
-When cloud storage is available, `auth-gate.js` synchronises this state through:
+Those keys are isolated by the active Supabase participant ID so one participant cannot inherit another participant's browser state on a shared device. `auth-gate.js` synchronises all three data groups through `/api/data`.
 
-`/api/data`
+### Online storage
 
-### Cloud storage
+Participant coaching data is stored in Supabase table `participant_workspace`, keyed by `participant_id`. The Vercel serverless API uses the Supabase service role to read and update only the signed-in participant's workspace, while milestone completion and entitlements remain authoritative in the dedicated progression tables.
 
-Cloud persistence uses **Vercel Blob** via `@vercel/blob`.
+The participant workspace stores:
 
-Client coaching data is encrypted at the application layer using AES-256-GCM before being written to Blob. The encryption key is derived from `SESSION_SECRET`.
+- reflection and interactive-tool state
+- daily leadership practice notes and completion
+- priority-focus ratings
+- last online sync timestamp
 
-Current storage path:
+There is no longer a participant-facing "Local only" operating mode. If the Supabase backend is unavailable, the portal shows a sync error rather than silently treating browser-only data as the system of record.
 
-`private/client-data-current.enc`
-
-### Local-only fallback
-
-If `BLOB_READ_WRITE_TOKEN` is not configured, the portal intentionally continues in **Local only** mode.
-
-In this mode:
-
-- client work still saves in the current browser
-- the UI remains usable
-- cloud sync is disabled
-- administrator data will not update across devices
-
-The API returns a successful local-only status rather than repeatedly throwing server errors.
-
----
+Vercel Blob is retained only for encrypted milestone credential escrow/resend. It is no longer the coaching-data store.
 
 ## Authentication
 
@@ -220,7 +211,7 @@ It is read-only and currently provides visibility into:
 - assessment narrative responses
 - last successful client sync
 
-The current architecture is designed around one active coaching client record. A multi-client commercial version will require a client/account data model rather than the single `client-data-current.enc` record.
+The administrator dashboard is multi-participant. Administrators can select any enrolled participant and review that participant's read-only coaching workspace and progress.
 
 ---
 
@@ -248,10 +239,12 @@ Only the client role can update coaching responses through `POST /api/data`.
 - CSS
 - Vanilla JavaScript
 - Vercel Serverless Functions
-- Vercel Blob
+- Supabase PostgreSQL and Auth
+- Vercel Serverless Functions
+- Vercel Blob for encrypted milestone credential escrow
 - Node.js
 - `@vercel/blob`
-- Browser `localStorage`
+- Browser `localStorage` as a participant-isolated working cache
 
 There is currently no frontend framework or build framework.
 
@@ -314,7 +307,7 @@ Before considering a change complete, confirm:
 3. Avoid negative-margin positioning for primary layout geometry.
 4. Keep decorative layers from intercepting clicks.
 5. Keep the video window proportional and responsive.
-6. Preserve local fallback when cloud storage is unavailable.
+6. Keep Supabase participant storage authoritative and fail visibly if online sync is unavailable.
 7. Do not expose secrets in frontend code.
 8. Keep the administrator portal read-only unless the product scope changes.
 9. Test navigation, Previous/Next, reflection fields and assessment submission after significant UI changes.
@@ -383,7 +376,7 @@ At minimum, verify:
 - Week 4 unlock logic still works
 - Mobile navigation opens and closes correctly
 - No new browser console errors appear
-- Local-only mode still works when Blob storage is unavailable
+- Participant data syncs to the signed-in Supabase profile
 
 ### 6. UI contribution rules
 
@@ -410,7 +403,7 @@ When editing programme logic:
 - Do not expose access codes or secrets in frontend JavaScript.
 - Avoid replacing existing event delegation with duplicate listeners.
 - Test any DOM reconstruction against `reflection-cards.js` and `mockup-layout.js`.
-- Keep cloud sync optional so the client portal remains usable in local-only mode.
+- Keep participant coaching data isolated by signed-in Supabase identity.
 
 ### 8. Git workflow
 
@@ -473,9 +466,9 @@ A contribution is complete only when:
 
 ## Supabase milestone backend
 
-The repository now includes an additive Supabase backend migration at `supabase/migrations/20260905_backend_upgrade.sql`. It creates persistent profiles, programme enrollment, milestones, milestone progress, assessment results, hashed access-token records and audit logs. Row Level Security is enabled, and progression writes are performed by the Vercel server API with the Supabase service role; the service-role key is never exposed to browser code.
+The repository now includes an additive Supabase backend migration at `supabase/migrations/20260905_backend_upgrade.sql`. Multi-user coaching workspace persistence is added by `supabase/migrations/20260905_multi_user_workspace.sql`. It creates persistent profiles, programme enrollment, milestones, milestone progress, assessment results, hashed access-token records and audit logs. Row Level Security is enabled, and progression writes are performed by the Vercel server API with the Supabase service role; the service-role key is never exposed to browser code.
 
-When `SUPABASE_SERVICE_ROLE_KEY` is configured and the migration has been applied, Supabase becomes authoritative for milestone completion, unlock state, assessment completion and scores, current entitlement and access-credential validity. Browser `localStorage` remains for harmless working UI state and existing reflections, while the current encrypted Vercel Blob storage is preserved. `/api/data` overlays authoritative Supabase progression before storing or returning client state.
+When `SUPABASE_SERVICE_ROLE_KEY` is configured and the migrations have been applied, Supabase is authoritative for participant identity, enrolment, milestone completion, unlock state, assessment completion, scores, entitlements and the participant coaching workspace. Browser `localStorage` remains only as a participant-isolated working cache. `/api/data` reads and writes the signed-in participant's `participant_workspace` row and overlays authoritative progression before returning state.
 
 Milestone credentials use cryptographically random `ELR-...` values. Supabase stores only a keyed SHA-256 hash plus an opaque credential reference. The raw credential is encrypted with AES-256-GCM and escrowed in the existing Vercel Blob store so an email failure can be securely resent without generating a duplicate credential.
 
@@ -501,10 +494,9 @@ New participants can create an account with any valid email address through the 
 - Complete and polish Week 4
 - Build Week 5
 - Build Week 6
-- Reconnect/verify Vercel Blob production storage
+- Verify Vercel Blob milestone credential escrow in production
 - Complete desktop visual QA against the FCA blueprint
 - Complete mobile/tablet QA
-- Add a true multi-client data model before broader commercial rollout
 - Consider client profiles, programme assignment and CRM integration for future corporate deployments
 
 ---
