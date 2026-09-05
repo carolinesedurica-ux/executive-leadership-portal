@@ -29,15 +29,39 @@ async function ensureParticipantFromAuthUser(user) {
   if (!user?.id || !user?.email) throw new Error('Verified Supabase user is required');
   if (!user.email_confirmed_at && !user.confirmed_at) throw new Error('Confirm your email before entering the coaching portal.');
 
-  const fullName = user.user_metadata?.full_name || user.user_metadata?.name || String(user.email).split('@')[0];
-  const { data: profile, error: profileError } = await db().from('profiles').upsert({
-    user_id: user.id,
-    full_name: fullName,
-    email: String(user.email).toLowerCase(),
-    role: 'client',
-    email_verified_at: user.email_confirmed_at || user.confirmed_at || new Date().toISOString()
-  }, { onConflict: 'user_id' }).select('*').single();
-  if (profileError) throw profileError;
+  const email = String(user.email).trim().toLowerCase();
+  const metadataName = String(user.user_metadata?.full_name || user.user_metadata?.name || '').trim();
+  const fallbackName = email.split('@')[0];
+
+  const { data: existingProfile, error: existingError } = await db().from('profiles')
+    .select('*').eq('user_id', user.id).maybeSingle();
+  if (existingError) throw existingError;
+
+  let profile;
+  if (existingProfile) {
+    const updates = {
+      email,
+      role: 'client',
+      email_verified_at: user.email_confirmed_at || user.confirmed_at || existingProfile.email_verified_at || new Date().toISOString()
+    };
+    if (metadataName) updates.full_name = metadataName;
+    else if (!String(existingProfile.full_name || '').trim()) updates.full_name = fallbackName;
+
+    const { data, error } = await db().from('profiles')
+      .update(updates).eq('id', existingProfile.id).select('*').single();
+    if (error) throw error;
+    profile = data;
+  } else {
+    const { data, error } = await db().from('profiles').insert({
+      user_id: user.id,
+      full_name: metadataName || fallbackName,
+      email,
+      role: 'client',
+      email_verified_at: user.email_confirmed_at || user.confirmed_at || new Date().toISOString()
+    }).select('*').single();
+    if (error) throw error;
+    profile = data;
+  }
 
   const prog = await programme();
   const { data: enrollment, error: enrollmentError } = await db().from('participant_programmes').upsert({
@@ -88,16 +112,27 @@ async function contextFromSession(current) {
   return { profile, programme: prog, enrollment };
 }
 
-async function adminParticipantContext() {
+async function listParticipants() {
+  if (!backendConfigured()) return [];
+  const { data, error } = await db().from('profiles')
+    .select('id,full_name,email,created_at')
+    .eq('role', 'client')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+async function adminParticipantContext(participantId = null) {
   if (!backendConfigured()) return null;
 
-  const { data: profile } = await db().from('profiles').select('*')
-    .eq('role', 'client')
-    .order('created_at', { ascending: true })
-    .limit(1)
-    .maybeSingle();
+  let query = db().from('profiles').select('*').eq('role', 'client');
+  if (participantId) query = query.eq('id', participantId);
+  else query = query.order('created_at', { ascending: false }).limit(1);
 
+  const { data: profile, error } = await query.maybeSingle();
+  if (error) throw error;
   if (!profile) return null;
+
   const prog = await programme();
   const { data: enrollment } = await db().from('participant_programmes').select('*')
     .eq('participant_id', profile.id).eq('programme_id', prog.id).maybeSingle();
@@ -437,6 +472,7 @@ module.exports = {
   ensureParticipantFromAuthUser,
   contextFromSession,
   adminParticipantContext,
+  listParticipants,
   getSummary,
   applySummaryToState,
   completeMilestone,
