@@ -56,7 +56,15 @@ function enhanceWeek(key){
  const cue=document.createElement('div');
  cue.className='week-mood-cue';
  cue.innerHTML=`<strong>Coaching cue:</strong><span>${c.cue}</span>`;
- center.append(cue,nav);
+ center.append(cue);
+ const dots=nav.querySelector('.reflection-dots');
+ if(dots)dots.style.display='none';
+ const autosave=document.createElement('span');
+ autosave.className='mockup-autosave';
+ autosave.textContent='✓ Auto-saved just now';
+ const nextBtn=nav.querySelector('.reflection-nav-btn.next');
+ if(nextBtn)nav.insertBefore(autosave,nextBtn);else nav.append(autosave);
+ center.append(nav);
 
  body.append(rail,center);
  main.append(strip,body);
