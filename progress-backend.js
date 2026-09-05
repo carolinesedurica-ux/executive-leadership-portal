@@ -64,7 +64,7 @@ async function sync(){
   return out;
 }
 
-async function completeWeek(milestoneKey,state){
+async function completeWeek(milestoneKey,state,testAnswers){
   const evidence={
     reflections:[0,1,2].map(i=>state.reflections?.[milestoneKey+'-'+i]||''),
     checks:{
@@ -77,7 +77,7 @@ async function completeWeek(milestoneKey,state){
   const r=await fetch('/api/milestones/complete',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({milestoneKey,evidence})
+    body:JSON.stringify({milestoneKey,evidence,testAnswers})
   });
   let out={};try{out=await r.json()}catch{}
   if(r.status===503||out.backendAvailable===false)return {backendAvailable:false};
