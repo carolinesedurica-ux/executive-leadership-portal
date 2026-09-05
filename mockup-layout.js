@@ -4,26 +4,99 @@ const cfg={
  week2:{week:'WEEK 2',mood:'presence',title:'Executive Presence & Personal Authority',subtitle:'Your Presence Speaks Before You Do',heroQuote:'Presence is the message before the words.',rail:'Authority grows when your presence becomes calm, deliberate and grounded.',cue:'Notice how your presence changes under pressure. Practise calm pace, clear structure and fewer words.'},
  week3:{week:'WEEK 3',mood:'courage',title:'Assertiveness & Difficult Conversations',subtitle:'Speak Clearly When the Conversation Is Difficult',heroQuote:'Clarity and courage can coexist.',rail:'Courage is not volume. It is the willingness to be clear when the conversation matters.',cue:'Choose clarity over avoidance. Name what matters, protect respect and stay anchored in the outcome you need.'}
 };
+
 function enhanceWeek(key){
- const root=document.getElementById(key),c=cfg[key]; if(!root||!c)return; root.dataset.weekMood=c.mood;
+ const root=document.getElementById(key),c=cfg[key];
+ if(!root||!c)return;
+ root.dataset.weekMood=c.mood;
+
  const hero=root.querySelector('.page-hero');
- if(hero&&!hero.dataset.mockup){hero.dataset.mockup='1';hero.classList.add('mockup-week-hero');hero.innerHTML=`<div class="mockup-hero-copy"><div class="mockup-week-kicker">${c.week}<span></span></div><h1>${c.title}</h1><p>${c.subtitle}</p></div><div class="mockup-hero-quote">${c.heroQuote}</div>`;}
- const host=root.querySelector('.reflection-card-shell'); if(!host||host.dataset.mockup)return;
- const header=host.querySelector('.reflection-card-header'),stage=host.querySelector('.reflection-card-stage'),nav=host.querySelector('.reflection-nav-row'),summary=host.querySelector('.reflection-summary');
- if(!header||!stage||!nav||!summary)return; host.dataset.mockup='1';
- const strip=document.createElement('div');strip.className='mockup-step-strip';strip.innerHTML=`<button type="button" data-target="watch"><span class="step-icon">▶</span><div><strong>1. Watch</strong><small>Explainer video</small></div><i>✓</i></button><button type="button" class="active"><span class="step-icon">▣</span><div><strong>2. Reflect</strong><small>Question 1 of 3</small></div></button><button type="button" data-target="prepare"><span class="step-icon">♟</span><div><strong>3. Prepare</strong><small>Bring it to coaching</small></div><b>›</b></button>`;
- host.parentNode.insertBefore(strip,host);
+ if(hero&&!hero.dataset.mockup){
+   hero.dataset.mockup='1';
+   hero.classList.add('mockup-week-hero');
+   hero.innerHTML=`<div class="mockup-hero-copy"><div class="mockup-week-kicker">${c.week}<span></span></div><h1>${c.title}</h1><p>${c.subtitle}</p></div><div class="mockup-hero-quote">${c.heroQuote}</div>`;
+ }
+
+ const host=root.querySelector('.reflection-card-shell');
+ if(!host||host.dataset.mockup)return;
+ const header=host.querySelector('.reflection-card-header');
+ const stage=host.querySelector('.reflection-card-stage');
+ const nav=host.querySelector('.reflection-nav-row');
+ const summary=host.querySelector('.reflection-summary');
+ if(!header||!stage||!nav||!summary)return;
+ host.dataset.mockup='1';
+
+ const workspace=document.createElement('div');
+ workspace.className='mockup-workspace';
+
+ const main=document.createElement('div');
+ main.className='mockup-workspace-main';
+
+ const strip=document.createElement('div');
+ strip.className='mockup-step-strip';
+ strip.innerHTML=`
+   <button type="button" data-target="watch"><span class="step-icon">▶</span><div><strong>1. Watch</strong><small>Explainer video</small></div><i>✓</i></button>
+   <button type="button" class="active"><span class="step-icon">▣</span><div><strong>2. Reflect</strong><small>Question 1 of 3</small></div></button>
+   <button type="button" data-target="prepare"><span class="step-icon">♟</span><div><strong>3. Prepare</strong><small>Bring it to coaching</small></div><b>›</b></button>`;
+
  strip.querySelector('[data-target="watch"]').onclick=()=>root.querySelector('.premium-video')?.scrollIntoView({behavior:'smooth',block:'center'});
  strip.querySelector('[data-target="prepare"]').onclick=()=>root.querySelector('.interactive-card')?.scrollIntoView({behavior:'smooth',block:'center'});
- const grid=document.createElement('div');grid.className='mockup-reflection-grid';
- const rail=document.createElement('aside');rail.className='mockup-quote-rail';rail.innerHTML=`<strong>01</strong><span>/ 03</span><i></i><blockquote>“${c.rail}”</blockquote>`;
- const center=document.createElement('div');center.className='mockup-reflection-center'; center.append(header,stage,nav);
- const cue=document.createElement('div');cue.className='week-mood-cue';cue.innerHTML=`<strong>Coaching cue</strong><span>${c.cue}</span>`; const navParent=nav.parentNode;navParent.insertBefore(cue,nav);
- const side=document.createElement('aside');side.className='mockup-reflection-side';
- const progress=document.createElement('div');progress.className='mockup-mini-progress';progress.innerHTML=`<h3>Your Progress</h3><p class="mockup-progress-copy">0 of 3 reflections completed</p><div><span></span></div><strong>0%</strong>`;
- side.append(progress,summary); grid.append(rail,center,side);host.append(grid);
- const observer=new MutationObserver(()=>{const txt=header.querySelector('.reflection-progress > span')?.textContent||'';const m=txt.match(/(\d+) of (\d+)/);if(!m)return;const done=+m[1],total=+m[2],pct=Math.round(done/total*100);progress.querySelector('.mockup-progress-copy').textContent=`${done} of ${total} reflections completed`;progress.querySelector('div span').style.width=pct+'%';progress.querySelector(':scope > strong').textContent=pct+'%';strip.querySelector('.active small').textContent=`Question ${Math.min(done+1,total)} of ${total}`;}); observer.observe(header,{childList:true,subtree:true,characterData:true});
- const prompt=()=>{const active=stage.querySelector('.reflection-card.active');if(!active)return;const num=+active.dataset.index+1;rail.querySelector(':scope > strong').textContent=String(num).padStart(2,'0');strip.querySelector('.active small').textContent=`Question ${num} of 3`;}; new MutationObserver(prompt).observe(stage,{attributes:true,subtree:true,attributeFilter:['class']});prompt();
+
+ const body=document.createElement('div');
+ body.className='mockup-reflection-body';
+
+ const rail=document.createElement('aside');
+ rail.className='mockup-quote-rail';
+ rail.innerHTML=`<strong>01</strong><span>/ 03</span><i></i><blockquote>“${c.rail}”</blockquote>`;
+
+ const center=document.createElement('div');
+ center.className='mockup-reflection-center';
+ center.append(header,stage);
+
+ const cue=document.createElement('div');
+ cue.className='week-mood-cue';
+ cue.innerHTML=`<strong>Coaching cue:</strong><span>${c.cue}</span>`;
+ center.append(cue,nav);
+
+ body.append(rail,center);
+ main.append(strip,body);
+
+ const side=document.createElement('aside');
+ side.className='mockup-reflection-side';
+
+ const progress=document.createElement('div');
+ progress.className='mockup-mini-progress';
+ progress.innerHTML=`<h3>Your Progress</h3><p class="mockup-progress-copy">0 of 3 reflections completed</p><div class="mockup-progress-row"><span class="mockup-progress-track"><i></i></span><strong>0%</strong></div>`;
+
+ side.append(progress,summary);
+ workspace.append(main,side);
+ host.append(workspace);
+
+ const updateProgress=()=>{
+   const txt=header.querySelector('.reflection-progress > span')?.textContent||'';
+   const m=txt.match(/(\d+) of (\d+)/);
+   if(!m)return;
+   const done=+m[1],total=+m[2],pct=Math.round(done/total*100);
+   progress.querySelector('.mockup-progress-copy').textContent=`${done} of ${total} reflections completed`;
+   progress.querySelector('.mockup-progress-track i').style.width=pct+'%';
+   progress.querySelector('.mockup-progress-row > strong').textContent=pct+'%';
+ };
+ new MutationObserver(updateProgress).observe(header,{childList:true,subtree:true,characterData:true});
+
+ const updateQuestion=()=>{
+   const active=stage.querySelector('.reflection-card.active');
+   if(!active)return;
+   const num=+active.dataset.index+1;
+   rail.querySelector(':scope > strong').textContent=String(num).padStart(2,'0');
+   strip.querySelector('.active small').textContent=`Question ${num} of 3`;
+ };
+ new MutationObserver(updateQuestion).observe(stage,{attributes:true,subtree:true,attributeFilter:['class']});
+ updateProgress();
+ updateQuestion();
 }
-function enhance(){['week1','week2','week3'].forEach(enhanceWeek)}let t;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(enhance,80)}).observe(document.body,{childList:true,subtree:true});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance);else enhance();
+
+function enhance(){['week1','week2','week3'].forEach(enhanceWeek)}
+let t;
+new MutationObserver(()=>{clearTimeout(t);t=setTimeout(enhance,60)}).observe(document.body,{childList:true,subtree:true});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance);else enhance();
 })();
