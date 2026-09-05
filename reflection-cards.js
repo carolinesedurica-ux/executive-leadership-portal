@@ -32,7 +32,7 @@ function enhanceWeek(week){
  const eyebrow=host.querySelector('.eyebrow');
  if(eyebrow)eyebrow.textContent='02 · Reflect';
  const header=document.createElement('div'); header.className='reflection-card-header';
- header.innerHTML=`<div><h2>Reflect one question at a time</h2><p class="tool-copy">Take a few focused minutes. Your responses save automatically in this browser.</p></div><div class="reflection-progress"><span>Reflection progress</span><div class="reflection-progress-bar"><span></span></div></div>`;
+ header.innerHTML=`<div><h2>Reflect one question at a time</h2><p class="tool-copy">Take a few focused minutes. Your responses save automatically to your secure online coaching profile.</p></div><div class="reflection-progress"><span>Reflection progress</span><div class="reflection-progress-bar"><span></span></div></div>`;
  if(title)title.replaceWith(header); else host.prepend(header);
  const stage=document.createElement('div'); stage.className='reflection-card-stage';
  const cards=[];
