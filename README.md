@@ -306,6 +306,155 @@ Before considering a change complete, confirm:
 
 ---
 
+## Contributor setup
+
+This project is intentionally lightweight: there is no frontend framework and no compile step for the client UI. Contributors should keep changes small, readable and easy to verify.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/carolinesedurica-ux/executive-leadership-portal.git
+cd executive-leadership-portal
+```
+
+### 2. Install dependencies
+
+The serverless API uses `@vercel/blob`.
+
+```bash
+npm install
+```
+
+### 3. Configure local environment variables
+
+Create a local environment file for development and provide values for:
+
+```text
+SESSION_SECRET=
+CLIENT_ACCESS_CODE=
+ADMIN_ACCESS_CODE=
+BLOB_READ_WRITE_TOKEN=
+```
+
+Do not commit real secret values to the repository.
+
+For UI-only work, the portal can still operate in local browser storage mode if Blob storage is unavailable.
+
+### 4. Run locally
+
+For the most accurate local behaviour, use the Vercel development runtime so the `/api` serverless routes are available.
+
+```bash
+vercel dev
+```
+
+If working only on static UI, any local static server can be used for visual checks, but authentication and API sync will not behave exactly like production without the Vercel runtime.
+
+### 5. Test before committing
+
+At minimum, verify:
+
+- Dashboard loads without layout overlap
+- Sidebar navigation works
+- Week 1, Week 2 and Week 3 open correctly
+- Watch / Reflect / Prepare controls work
+- Video player remains proportional at 16:9
+- Reflection textarea accepts input
+- Previous / Next navigation works
+- Autosave status does not overlap buttons
+- Leadership activities remain interactive
+- Mid-Course Assessment submits correctly
+- Week 4 unlock logic still works
+- Mobile navigation opens and closes correctly
+- No new browser console errors appear
+- Local-only mode still works when Blob storage is unavailable
+
+### 6. UI contribution rules
+
+The current UI has already been through several conflict and overlap fixes. Please follow these rules:
+
+- Treat `mockup-exact.css` as the final FCA visual authority.
+- Do not reintroduce broad competing theme stylesheets.
+- Avoid negative margins for primary page geometry.
+- Avoid absolute positioning for major content blocks.
+- Decorative pseudo-elements must use `pointer-events: none`.
+- Keep navigation and form controls above decorative layers.
+- Preserve responsive behaviour at desktop, tablet and mobile widths.
+- Keep the video player proportional rather than assigning arbitrary fixed heights.
+- Prefer editing the stylesheet that owns a component instead of adding a new override layer.
+- Preserve existing programme state keys and localStorage behaviour.
+
+### 7. JavaScript contribution rules
+
+When editing programme logic:
+
+- Preserve `elrpState` and `elrpDailyHabits`.
+- Do not rename existing reflection keys without a migration plan.
+- Keep administrator views read-only.
+- Do not expose access codes or secrets in frontend JavaScript.
+- Avoid replacing existing event delegation with duplicate listeners.
+- Test any DOM reconstruction against `reflection-cards.js` and `mockup-layout.js`.
+- Keep cloud sync optional so the client portal remains usable in local-only mode.
+
+### 8. Git workflow
+
+The current project deploys directly from `main`.
+
+Recommended workflow:
+
+```bash
+git pull origin main
+git checkout -b feature/short-description
+
+# make and test changes
+
+git add .
+git commit -m "Describe the change clearly"
+git push origin feature/short-description
+```
+
+For small owner-approved fixes, changes may be committed directly to `main`. For larger or riskier changes, use a feature branch and pull request.
+
+### 9. Cache busting
+
+The portal uses version query strings in `index.html` for CSS and JavaScript assets.
+
+After significant UI or JavaScript updates, increment the relevant asset version so browsers do not continue serving stale files.
+
+Example:
+
+```html
+<link rel="stylesheet" href="mockup-exact.css?v=20260905-ui3">
+<script src="mockup-layout.js?v=20260905-ui3"></script>
+```
+
+Do not change version strings unnecessarily for unrelated files.
+
+### 10. Vercel deployment verification
+
+After a production change:
+
+1. Confirm the commit is present on GitHub `main`.
+2. Confirm Vercel created a deployment from that commit.
+3. Wait for deployment status `READY`.
+4. Confirm `coaching.workreadyvault.com` points to the latest deployment.
+5. Check runtime errors.
+6. Hard-refresh the browser and test the affected feature.
+
+### 11. Definition of done
+
+A contribution is complete only when:
+
+- the intended feature works
+- no existing interaction is broken
+- desktop and mobile layouts remain usable
+- there are no new console/runtime errors
+- state persistence still works
+- the production deployment is verified
+- relevant README documentation is updated when architecture or setup changes
+
+---
+
 ## Immediate roadmap
 
 - Complete and polish Week 4
