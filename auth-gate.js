@@ -46,7 +46,7 @@ function isolateParticipant(participant){
 
 function authVisual(){
  return `<section class="wrv-auth-visual">
-   <div class="wrv-auth-brand"><div class="wrv-auth-logo">Foundations Counselling Academy</div><small>Executive Leadership Coaching</small></div>
+   <div class="wrv-auth-brand"><div class="wrv-auth-logo"><img src="assets/fca-logo.webp" alt="Foundations Counselling Academy"></div><small>Executive Leadership Coaching</small></div>
    <div class="wrv-auth-copy"><span class="kicker">Reflect · Grow · Lead</span><h1>Build the leader your next chapter requires.</h1><p>A private coaching space for deliberate practice, reflection, communication growth and measurable leadership development.</p></div>
  </section>`;
 }
