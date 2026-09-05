@@ -26,6 +26,7 @@ function stats(){
     <div class="wrv-stat"><span>Reflections captured</span><strong>${countReflections()}/9</strong></div>
     <div class="wrv-stat"><span>Daily notes</span><strong>${countNotes()}/15</strong></div>
     <div class="wrv-stat"><span>Weeks completed</span><strong>${completed}/6</strong></div>
+    <div class="wrv-stat"><span>Weekly test marks</span><strong style="font-size:17px">${Number(s.weeklyWeightedScore||0).toFixed(1)}/30</strong></div>
     <div class="wrv-stat"><span>Last online sync</span><strong style="font-size:17px">${data?.updatedAt?new Date(data.updatedAt).toLocaleString():'No activity yet'}</strong></div>`;
 }
 
@@ -80,7 +81,10 @@ function assessment(){
  document.getElementById('adminView').innerHTML=
    `<h2>${esc(participantLabel())} · Mid-course assessment</h2>
     <div class="wrv-answer-grid">
-      ${answer('Assessment status',s.assessmentComplete?'Completed':'Not completed')}
+      ${answer('Assessment status',s.assessmentComplete?'Passed':'Not yet passed')}
+      ${answer('Weekly tests contribution',`${Number(s.weeklyWeightedScore||0).toFixed(1)}/30`)}
+      ${answer('Latest overall mark',s.overallScore!=null?`${Number(s.overallScore).toFixed(1)}%`:'—')}
+      ${answer('Assessment attempts used',`${Number(s.assessmentAttemptCount||0)}/3`)}
       ${s.midScores?dims.map((d,i)=>answer(d,`${s.midScores[i]??'—'}/10`)).join(''):''}
       ${answer('Where has the participant noticed the greatest improvement?',a.greatestImprovement)}
       ${answer('Evidence of handling a situation differently',a.evidenceSituation)}
