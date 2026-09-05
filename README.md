@@ -481,7 +481,7 @@ Milestone credentials use cryptographically random `ELR-...` values. Supabase st
 
 ### Titan Email SMTP over SSL
 
-Use `SMTP_HOST=smtp.titan.email`, `SMTP_PORT=465`, and `SMTP_SECURE=true`. Set `SMTP_USER=info@academyfoundations.com`, `SMTP_FROM=info@academyfoundations.com`, and `SMTP_FROM_NAME=Foundations Counselling Academy`. Use the Titan mailbox password, or a Titan application password if 2FA is enabled. Supabase Auth magic-link delivery must also have Custom SMTP configured with the same Titan credentials. Never commit SMTP passwords, database passwords or the Supabase service-role key.
+Use `SMTP_HOST=smtp.titan.email`, `SMTP_PORT=465`, and `SMTP_SECURE=true`. Set `SMTP_USER=training@academyfoundations.com`, `SMTP_FROM=training@academyfoundations.com`, and `SMTP_FROM_NAME=Foundations Counselling Academy`. Use the Titan mailbox password, or a Titan application password if 2FA is enabled. Supabase Auth magic-link delivery must also have Custom SMTP configured with the same Titan credentials. Never commit SMTP passwords, database passwords or the Supabase service-role key.
 
 ### Backend API additions
 
