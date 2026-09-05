@@ -1,39 +1,73 @@
-const { session, readData, writeData, json } = require('./_lib');
+const { session, json } = require('./_lib');
+const { supabaseAdminClient, backendConfigured } = require('./_supabase');
 const {
-  backendConfigured,
   contextFromSession,
   adminParticipantContext,
+  listParticipants,
   getSummary,
   applySummaryToState
 } = require('./_progress');
 
-async function authoritativeState(current, elrpState) {
-  if (!backendConfigured()) return elrpState || {};
-  const context = current.role === 'admin'
-    ? await adminParticipantContext()
-    : await contextFromSession(current);
-  if (!context) return elrpState || {};
+function db() {
+  return supabaseAdminClient();
+}
+
+async function readParticipantWorkspace(context) {
+  const { data: row, error } = await db().from('participant_workspace')
+    .select('elrp_state,daily_habits,priority_focus,updated_at')
+    .eq('participant_id', context.profile.id)
+    .maybeSingle();
+  if (error) throw error;
+
   const summary = await getSummary(context);
-  return applySummaryToState(elrpState || {}, summary);
+  const elrpState = applySummaryToState(row?.elrp_state || {}, summary);
+
+  return {
+    participantId: context.profile.id,
+    clientName: context.profile.full_name,
+    clientEmail: context.profile.email,
+    updatedAt: row?.updated_at || null,
+    elrpState,
+    elrpDailyHabits: row?.daily_habits || {},
+    elrpPriorityFocus: row?.priority_focus || {},
+    source: 'supabase-participant-workspace'
+  };
 }
 
 module.exports = async function handler(req, res) {
   try {
     const current = session(req);
     if (!current) return json(res, 401, { error: 'Sign in required.' });
+    if (!backendConfigured()) {
+      return json(res, 503, {
+        error: 'Online participant storage is not configured.',
+        cloudAvailable: false,
+        backendAvailable: false
+      });
+    }
 
     if (req.method === 'GET') {
-      if (!process.env.BLOB_READ_WRITE_TOKEN) {
-        return json(res, 200, { data: null, cloudAvailable: false, localOnly: true });
+      if (current.role === 'admin') {
+        const participants = await listParticipants();
+        const requestedId = String(req.query?.participantId || '');
+        const selectedId = requestedId || participants[0]?.id || null;
+        const context = selectedId ? await adminParticipantContext(selectedId) : null;
+        const data = context ? await readParticipantWorkspace(context) : null;
+        return json(res, 200, {
+          data,
+          participants,
+          selectedParticipantId: context?.profile?.id || null,
+          cloudAvailable: true,
+          backendAvailable: true
+        });
       }
-      const data = await readData();
-      if (data?.elrpState && backendConfigured()) {
-        data.elrpState = await authoritativeState(current, data.elrpState);
-      }
+
+      const context = await contextFromSession(current);
+      const data = await readParticipantWorkspace(context);
       return json(res, 200, {
         data,
         cloudAvailable: true,
-        backendAvailable: backendConfigured()
+        backendAvailable: true
       });
     }
 
@@ -41,32 +75,36 @@ module.exports = async function handler(req, res) {
       if (current.role !== 'client') {
         return json(res, 403, { error: 'Only the client portal can update coaching responses.' });
       }
-      if (!process.env.BLOB_READ_WRITE_TOKEN) {
-        return json(res, 200, { ok: false, cloudAvailable: false, localOnly: true });
-      }
 
+      const context = await contextFromSession(current);
       const body = req.body || {};
-      const value = {
-        clientName: 'Leadership Coaching Client',
-        updatedAt: new Date().toISOString(),
-        elrpState: await authoritativeState(current, body.elrpState || {}),
-        elrpDailyHabits: body.elrpDailyHabits || {},
-        source: 'work-ready-vault-portal'
-      };
-      await writeData(value);
+      const summary = await getSummary(context);
+      const elrpState = applySummaryToState(body.elrpState || {}, summary);
+      const updatedAt = new Date().toISOString();
+
+      const { error } = await db().from('participant_workspace').upsert({
+        participant_id: context.profile.id,
+        elrp_state: elrpState,
+        daily_habits: body.elrpDailyHabits || {},
+        priority_focus: body.elrpPriorityFocus || {},
+        updated_at: updatedAt
+      }, { onConflict: 'participant_id' });
+      if (error) throw error;
+
       return json(res, 200, {
         ok: true,
-        updatedAt: value.updatedAt,
-        backendAvailable: backendConfigured()
+        updatedAt,
+        participantId: context.profile.id,
+        cloudAvailable: true,
+        backendAvailable: true
       });
     }
 
     return json(res, 405, { error: 'Method not allowed' });
   } catch (error) {
-    const message = error.message || 'Unable to access coaching data.';
-    if (message.includes('BLOB_READ_WRITE_TOKEN')) {
-      return json(res, 200, { ok: false, data: null, cloudAvailable: false, localOnly: true });
-    }
-    return json(res, 500, { error: message });
+    return json(res, 500, {
+      error: error.message || 'Unable to access participant coaching data.',
+      cloudAvailable: false
+    });
   }
 };
