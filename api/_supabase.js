@@ -43,25 +43,10 @@ function supabaseAdminClient() {
   return adminClient;
 }
 
-function configuredEmails() {
-  return String(process.env.CLIENT_LOGIN_EMAILS || '')
-    .split(',')
-    .map(value => value.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-function isAllowedEmail(email) {
-  const allowed = configuredEmails();
-  if (!allowed.length) return false;
-  return allowed.includes(String(email || '').trim().toLowerCase());
-}
-
 module.exports = {
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY,
   supabaseClient,
   supabaseAdminClient,
-  backendConfigured,
-  configuredEmails,
-  isAllowedEmail
+  backendConfigured
 };
