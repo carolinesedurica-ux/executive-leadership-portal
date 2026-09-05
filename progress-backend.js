@@ -3,6 +3,10 @@ function readState(){try{return JSON.parse(localStorage.getItem('elrpState')||'{
 
 function emit(summary){
   if(!summary)return;
+  const participant=summary.participant||{};
+  const name=String(participant.fullName||participant.email||'Participant').trim();
+  const label=document.querySelector('.user-name');
+  if(label)label.textContent='Hello, '+(name.includes('@')?name.split('@')[0]:name)+'⌄';
   document.dispatchEvent(new CustomEvent('wrv:progress-authoritative',{detail:summary}));
   updateResend(summary);
 }
