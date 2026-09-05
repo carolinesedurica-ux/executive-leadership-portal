@@ -1152,3 +1152,26 @@ body[data-theme="wrv-dramatic"] .weekly-test-next{
   body[data-theme="wrv-dramatic"] .weekly-test-view.view.active{padding:20px 14px 36px!important}
   body[data-theme="wrv-dramatic"] .nav-test-link{width:calc(100% - 34px)!important}
 }
+
+
+/* Foundations Counselling Academy logo */
+body[data-theme="wrv-dramatic"] .sidebar .fca-brand{
+  min-height:156px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px 16px 16px!important;
+}
+body[data-theme="wrv-dramatic"] .fca-sidebar-logo{
+  display:block!important;
+  width:205px!important;
+  max-width:100%!important;
+  height:auto!important;
+  padding:7px!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.22)!important;
+}
+@media(max-width:1180px){
+  body[data-theme="wrv-dramatic"] .fca-sidebar-logo{width:180px!important}
+}
