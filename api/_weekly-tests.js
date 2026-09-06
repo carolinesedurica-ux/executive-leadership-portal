@@ -96,7 +96,7 @@ const WEEKLY_TESTS = {
         ]
       }
     ]
-  }
+  },
 
   week2: {
     title: 'Week 2 Knowledge & Application Test',
