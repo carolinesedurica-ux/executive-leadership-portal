@@ -59,11 +59,11 @@ test('a fully correct weekly test scores 100 and contributes 10 percent', () => 
   const answers = {
     mcq: WEEKLY_TESTS[key].mcq.map(q => q.answer),
     written: [
-      'Leadership identity is built from values and qualities shown through behaviour so other people experience consistent leadership.',
-      'Self-trust uses judgement supported by preparation and experience so a leader can act with confidence and make a decision.',
-      'I notice hesitation, pause, ask what the situation needs, and choose the leadership action required.',
-      'Self-esteem is personal worth beyond one performance result, while confidence is belief in ability and capability for a task.',
-      'Accountability means taking ownership and responsibility, following through on commitments and actions, and building team trust through results.'
+      'As a leader, I want people and my team to experience me as calm, clear and accountable. I will demonstrate those qualities through visible behaviour by making decisions clearly and following through on commitments.',
+      'I would gather the available evidence and facts, define the decision criteria, use my judgement to decide, identify the risk and uncertainty, then review and adjust if new information becomes available.',
+      'My personal worth and self-esteem do not depend on one performance result or mistake. I can own the outcome, review what happened, learn from it, correct the issue and remain accountable.',
+      'I tend to hesitate and over-explain when challenged. I would decide on my position and communicate it clearly and concisely: “My recommendation is that we proceed with option A because it best meets the agreed criteria.”',
+      'My leadership non-negotiable is accountability. The observable behaviour is taking ownership and following through on commitments; under pressure I will remain consistent and address any missed standard directly.'
     ]
   };
   const result = scoreWeeklyTest(key, answers);
