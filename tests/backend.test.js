@@ -81,3 +81,38 @@ test('weighted assessment uses 30 percent weekly tests and 70 percent final asse
   assert.equal(overall, 83);
   assert.equal(overall >= 80, true);
 });
+
+
+test('Week 2 executive communication assessment can award the full 10 percent contribution', () => {
+  const key = 'week2';
+  const answers = {
+    mcq: WEEKLY_TESTS[key].mcq.map(q => q.answer),
+    written: [
+      'My key message is that the project is two weeks late. The evidence shows supplier delay and testing risk. My recommendation is to approve the revised delivery date and the next step is to confirm it today. I will keep the update concise and clear.',
+      'I would pause, breathe and slow my pace so I regain composure. I would clarify the question before responding. My first sentence would be: The figure you are asking about is based on the latest verified data, and I can explain the assumption behind it.',
+      'I over-explain by giving too much background detail. I will lead with the key point and recommendation, add only the evidence and reason that support it, and keep the message concise with fewer words.',
+      'Personal authority means I listen to understand the disagreement, hold my position calmly and respectfully when the reasoning is sound, and adjust or reconsider if better evidence changes the decision.',
+      'I will prepare a clear structure and rehearse it. I will lead with the key point, slow my pace, pause rather than fill silence, use fewer words, and close with the next step or decision needed.'
+    ]
+  };
+  const result = scoreWeeklyTest(key, answers);
+  assert.equal(result.score, 100);
+  assert.equal(result.contribution, 10);
+});
+
+test('Week 3 difficult-conversation assessment can award the full 10 percent contribution', () => {
+  const key = 'week3';
+  const answers = {
+    mcq: WEEKLY_TESTS[key].mcq.map(q => q.answer),
+    written: [
+      'The last two agreed deadlines were missed, and the delay affected the team handover. I want us to discuss what happened and understand the issue so we can agree a clear way forward respectfully and specifically.',
+      'I will Clarify the issue using facts, Listen to understand their perspective, Explain my position and the impact, Agree the action and owner, and Review the follow-up at the agreed check-in.',
+      'My boundary is that requests received after the agreed cut-off need at least one working day of notice unless they are genuine emergencies. I will state that expectation clearly and professionally, and if it is not respected I will move the request to the next available slot and confirm that action.',
+      'I would acknowledge the concern and listen to understand it, stay calm and composed, then restate the specific fact, impact and expectation. I would hold the position and return to the required action or next step.',
+      'The next action is for the manager to revise the report. The owner is the manager, the required standard is the agreed template and complete data, the deadline is Thursday at 15:00, and we will review it together Friday morning.'
+    ]
+  };
+  const result = scoreWeeklyTest(key, answers);
+  assert.equal(result.score, 100);
+  assert.equal(result.contribution, 10);
+});
