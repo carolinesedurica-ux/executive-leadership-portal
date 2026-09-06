@@ -1,101 +1,102 @@
 const WEEKLY_TESTS = {
   week1: {
-    title: 'Week 1 Knowledge & Application Test',
+    title: 'Week 1 Leadership Judgement & Application Test',
     mcq: [
       {
-        prompt: 'Leadership identity is best understood as:',
+        prompt: 'You are asked to lead a project meeting and a more senior colleague openly challenges your recommendation. Which response best demonstrates leadership identity and self-trust?',
         options: [
-          'The title printed on your job description',
-          'The consistent experience people have of your leadership',
-          'How often you speak in meetings',
-          'How senior your position is'
-        ],
-        answer: 1
-      },
-      {
-        prompt: 'When you notice yourself hesitating in a leadership situation, the most useful question is:',
-        options: [
-          'How can I avoid making a mistake?',
-          'What will people think of me?',
-          'What does this situation need from me as a leader?',
-          'Who else can make the decision?'
+          'Withdraw the recommendation until you can check privately with your manager.',
+          'Defend the recommendation forcefully so your authority is not questioned.',
+          'Pause, state your recommendation and reasoning clearly, invite relevant evidence, then decide the next step.',
+          'Give a longer explanation so everyone can see how much preparation you did.'
         ],
         answer: 2
       },
       {
-        prompt: 'A practical way to strengthen leadership confidence is to:',
+        prompt: 'A decision you made produces a poor outcome. Which response best separates self-worth from performance while maintaining accountability?',
         options: [
-          'Wait until you feel completely certain',
-          'Build evidence by making prepared decisions and reflecting on outcomes',
-          'Avoid difficult situations',
-          'Speak more than everyone else'
-        ],
-        answer: 1
-      },
-      {
-        prompt: 'Healthy self-esteem in leadership means:',
-        options: [
-          'Your worth depends on every result being successful',
-          'You never doubt yourself',
-          'You can separate your personal worth from a single performance outcome',
-          'You do not need feedback'
+          'Avoid discussing it until the team has moved on.',
+          'Treat the result as proof that you are not ready to lead.',
+          'Own the outcome, review what happened factually, correct what you can and identify the lesson for the next decision.',
+          'Explain that the circumstances were outside your control.'
         ],
         answer: 2
       },
       {
-        prompt: 'The main purpose of a Leadership Compass is to:',
+        prompt: 'You have enough information to make a routine leadership decision, but you keep asking your manager for reassurance. What is the strongest confidence-building response?',
         options: [
-          'Choose the leadership title you want',
-          'Create an identity anchor around the qualities you want to demonstrate consistently',
-          'Measure how popular you are',
-          'Replace performance objectives'
+          'Wait until you feel completely certain.',
+          'Define the decision criteria, make the reasoned decision, record your assumptions and review the outcome afterwards.',
+          'Ask several colleagues what they would do and choose the most popular option.',
+          'Delay the decision so more information can arrive.'
         ],
         answer: 1
+      },
+      {
+        prompt: 'Your Leadership Compass includes Calm, Clear and Accountable. Which behaviour most strongly makes those qualities visible after a missed deadline?',
+        options: [
+          'Stay quiet so the team does not become anxious.',
+          'Acknowledge the delay calmly, clarify the impact and next action, take ownership and follow through.',
+          'Send a detailed explanation of every factor that caused the delay.',
+          'Focus on keeping everyone positive rather than discussing accountability.'
+        ],
+        answer: 1
+      },
+      {
+        prompt: 'Two stakeholders want different outcomes and both are pressuring you for an immediate answer. Which action best reflects values-based leadership judgement?',
+        options: [
+          'Choose the option supported by the most senior stakeholder.',
+          'Avoid making a decision until both stakeholders agree.',
+          'Use your role responsibilities and stated leadership principles to evaluate the trade-offs, decide and communicate the reasoning clearly.',
+          'Choose the option that is least likely to create conflict.'
+        ],
+        answer: 2
       }
     ],
     written: [
       {
-        prompt: 'In your own words, explain what leadership identity means and how other people should experience it.',
+        prompt: 'Write a 3–5 sentence leadership identity statement. Name at least two qualities you want people to experience from you and one behaviour that will make those qualities visible.',
         concepts: [
-          ['values','qualities','principles'],
-          ['behaviour','behavior','actions','conduct'],
-          ['experience','others','people','team']
+          ['quality','qualities','calm','clear','decisive','fair','courageous','empathetic','strategic','consistent','curious','accountable'],
+          ['experience','people','team','colleagues','others'],
+          ['behaviour','behavior','action','demonstrate','show','visible']
         ]
       },
       {
-        prompt: 'Explain how self-trust supports better leadership decisions.',
+        prompt: 'You need to make an important decision with incomplete information and you are worried about being criticised. Explain how you would use evidence and self-trust to decide responsibly without becoming reckless.',
         concepts: [
-          ['judgement','judgment','decision'],
-          ['evidence','preparation','experience'],
-          ['act','action','confidence','decisive']
+          ['evidence','information','facts','criteria'],
+          ['judgement','judgment','decision','decide'],
+          ['risk','assumption','uncertainty','trade-off','tradeoff'],
+          ['review','adjust','adapt','new information','follow-up']
         ]
       },
       {
-        prompt: 'Describe what you should do when you notice yourself hesitating in a leadership situation.',
+        prompt: 'Explain the difference between personal worth and performance. Then describe how that distinction should affect your response after making a mistake.',
         concepts: [
-          ['pause','notice','recognise','recognize'],
-          ['situation','need','requires'],
-          ['leader','leadership','action','decide']
+          ['worth','value','self-esteem','self esteem'],
+          ['performance','result','outcome','mistake'],
+          ['learn','review','correct','accountability','own']
         ]
       },
       {
-        prompt: 'Explain the difference between self-esteem and confidence in a leadership context.',
+        prompt: 'Choose one leadership situation in which you usually hesitate, over-check or over-explain. Describe what you would do differently and write one concise sentence you could actually say in that situation.',
         concepts: [
-          ['self-esteem','self esteem','worth','value'],
-          ['confidence','ability','capability'],
-          ['performance','outcome','result','task']
+          ['hesitate','over-check','overcheck','over-explain','over explain','doubt'],
+          ['action','decide','recommend','position','boundary'],
+          ['clear','concise','sentence','say','communicate']
         ]
       },
       {
-        prompt: 'Give one example of a behaviour that demonstrates accountability as a leader and explain why it matters.',
+        prompt: 'Name one leadership non-negotiable you want to protect. Describe the observable behaviour that proves it and what you will do when pressure makes that standard difficult to maintain.',
         concepts: [
-          ['ownership','responsibility','accountability'],
-          ['follow','action','deliver','commit'],
-          ['trust','result','outcome','team']
+          ['principle','value','standard','non-negotiable','non negotiable'],
+          ['behaviour','behavior','action','observable','demonstrate'],
+          ['pressure','consistent','accountability','follow-through','follow through']
         ]
       }
     ]
-  },
+  }
 
   week2: {
     title: 'Week 2 Knowledge & Application Test',
