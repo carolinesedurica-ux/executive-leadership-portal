@@ -59,13 +59,31 @@ The Week 1 assessment is a once-only 10-question **Leadership Judgement & Applic
 **Executive Presence & Personal Authority**  
 *Your Presence Speaks Before You Do*
 
-Focus areas include calm authority, communication under pressure, concise speaking and personal presence.
+Week 2 moves from internal leadership confidence to how the participant is experienced in senior conversations, meetings and decision-making environments. It includes explicit learning outcomes, a five-part Leadership Brief, the Presence Lab, guided reflection, five days of daily leadership practice, live coaching preparation and a practical executive output: **My 90-Second Executive Communication Brief**.
+
+Core learning covers:
+- executive presence as a set of trustworthy leadership signals rather than performance or personality
+- composure as a tool for protecting judgement under pressure
+- leading communication with the key point, recommendation and next step
+- holding personal authority without becoming rigid or defensive
+- shifting attention from approval-seeking to useful contribution
+
+The Week 2 assessment uses realistic executive communication scenarios and written application tasks requiring concise updates, pressure-management strategies, message restructuring and evidence-based personal authority.
 
 ### Week 3
 **Assertiveness & Difficult Conversations**  
 *Speak Clearly When the Conversation Is Difficult*
 
-Focus areas include assertiveness, boundaries, disagreement, difficult conversations and the CLEAR planning framework.
+Week 3 converts confidence and executive presence into clear leadership behaviour when conversations become uncomfortable. It includes explicit learning outcomes, a five-part Leadership Brief, the CLEAR Conversation Lab, guided reflection, five days of daily leadership practice, a workplace challenge, live coaching preparation and the executive output: **My Difficult Conversation Plan**.
+
+Core learning covers:
+- assertiveness as clarity and respect rather than avoidance or aggression
+- framing difficult issues with observable facts instead of character judgement
+- listening without surrendering a justified leadership position
+- setting clear, professional boundaries and expectations
+- closing the accountability loop with action, ownership, standards, deadlines and review
+
+The Week 3 assessment is scenario-based and requires practical application to missed deadlines, professional boundaries, disagreement with senior leaders, defensiveness and accountability follow-through.
 
 ### Weekly tests and Mid-Course Assessment
 Each of Weeks 1–3 ends with a once-only 10-question test: 5 multiple-choice questions and 5 written application questions. The mark is stored permanently and the participant then continues to the next week.
