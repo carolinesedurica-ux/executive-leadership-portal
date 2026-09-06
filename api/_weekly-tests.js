@@ -99,198 +99,208 @@ const WEEKLY_TESTS = {
   },
 
   week2: {
-    title: 'Week 2 Knowledge & Application Test',
+    title: 'Week 2 Executive Presence & Communication Test',
     mcq: [
       {
-        prompt: 'Executive presence is primarily built through:',
+        prompt: 'You have three minutes to update an executive committee on a delayed project. Which opening best demonstrates executive presence and message discipline?',
         options: [
-          'Being the loudest person in the room',
-          'Composure, clarity, communication and personal authority',
-          'Using technical language',
-          'Speaking first in every meeting'
-        ],
-        answer: 1
-      },
-      {
-        prompt: 'A deliberate pause before answering can communicate:',
-        options: [
-          'Uncertainty',
-          'Disinterest',
-          'Composure and authority',
-          'Lack of preparation'
+          'Begin with the full project history so everyone understands the background.',
+          'Apologise for the delay, then explain every factor that contributed to it.',
+          'State the current position, the key impact and your recommendation, then provide only the evidence needed for the decision.',
+          'Wait for the committee to ask questions before offering a recommendation.'
         ],
         answer: 2
       },
       {
-        prompt: 'When giving an executive update, the strongest structure usually begins with:',
+        prompt: 'A senior leader unexpectedly challenges your figures in a meeting. What is the strongest first response?',
         options: [
-          'Every detail in chronological order',
-          'Your recommendation or key point',
-          'An apology for taking time',
-          'A long background explanation'
+          'Answer immediately so you do not appear uncertain.',
+          'Pause, clarify the point being challenged, then respond with the relevant evidence or say what you will verify.',
+          'Give a longer explanation to demonstrate how much work went into the analysis.',
+          'Defer automatically to the senior leader because of their position.'
         ],
         answer: 1
       },
       {
-        prompt: 'When you feel evaluated or challenged, a useful leadership response is to:',
+        prompt: 'You notice that your updates become less clear when you are nervous. Which structure is most useful for a concise executive message?',
         options: [
-          'Rush your words',
-          'Over-explain to prove yourself',
-          'Slow down and focus on contributing effectively',
-          'Avoid eye contact'
+          'Background → history → detail → conclusion.',
+          'Position or recommendation → reason → evidence → next step.',
+          'Question → apology → context → several alternatives.',
+          'Evidence → more evidence → caveats → open discussion.'
+        ],
+        answer: 1
+      },
+      {
+        prompt: 'A stakeholder disagrees with your recommendation but has not presented new evidence. Which response best demonstrates personal authority?',
+        options: [
+          'Change your recommendation to preserve the relationship.',
+          'Repeat your position more loudly so the stakeholder knows you are confident.',
+          'Acknowledge the disagreement, restate your reasoning calmly and remain open to relevant evidence without abandoning a sound position.',
+          'End the discussion because further questions weaken your authority.'
         ],
         answer: 2
       },
       {
-        prompt: 'Personal authority is strengthened when you:',
+        prompt: 'Before presenting to senior colleagues, you become preoccupied with how they may judge you. Which mental shift is most likely to strengthen your presence?',
         options: [
-          'Hold your position calmly while remaining open to evidence',
-          'Refuse all feedback',
-          'Use a louder voice',
-          'Avoid disagreement'
+          'Focus on sounding impressive enough to gain approval.',
+          'Focus on what useful contribution, decision or clarity the situation needs from you.',
+          'Memorise every sentence so there is no possibility of hesitation.',
+          'Avoid making a recommendation until you know everyone agrees.'
         ],
-        answer: 0
+        answer: 1
       }
     ],
     written: [
       {
-        prompt: 'Describe what executive presence looks like in a high-pressure meeting.',
+        prompt: 'Write a 60–90 second executive update for a real or realistic issue. Lead with the key message, include concise evidence and finish with a recommendation or next step.',
         concepts: [
-          ['calm','composed','composure'],
-          ['clear','clarity','concise'],
-          ['authority','presence','confidence']
+          ['key message','position','recommendation','main point'],
+          ['evidence','reason','fact','data','risk'],
+          ['next step','action','decision','approve','recommend'],
+          ['concise','clear','brief','60','90']
         ]
       },
       {
-        prompt: 'Explain why pausing before answering can strengthen your leadership presence.',
+        prompt: 'You are challenged unexpectedly in a senior meeting and feel yourself beginning to rush. Describe the physical and communication reset you would use, then write the first sentence of your response.',
         concepts: [
-          ['pause','time','think'],
-          ['calm','composure','control'],
-          ['response','clarity','deliberate']
+          ['pause','breathe','breathing','slow'],
+          ['composure','calm','pace','posture'],
+          ['clarify','question','understand'],
+          ['response','sentence','evidence','point']
         ]
       },
       {
-        prompt: 'Explain how to make an executive update more concise and influential.',
+        prompt: 'Describe one habit that causes you to over-explain. Explain how you would restructure the same message so the audience hears the important point first.',
         concepts: [
-          ['point','recommendation','message'],
-          ['concise','brief','fewer','clear'],
-          ['evidence','detail','support']
+          ['over-explain','over explain','detail','background','rush'],
+          ['point','position','recommendation','message'],
+          ['evidence','reason','support'],
+          ['concise','short','fewer','structure']
         ]
       },
       {
-        prompt: 'What does personal authority mean, and how can a leader demonstrate it respectfully?',
+        prompt: 'Explain what personal authority looks like when someone disagrees with you. Include how you would listen, hold your position and respond if genuinely better evidence appears.',
         concepts: [
-          ['authority','position','judgement','judgment'],
-          ['calm','respect','respectful'],
-          ['hold','boundary','position','decision']
+          ['listen','understand','question'],
+          ['position','hold','recommendation','view'],
+          ['calm','respect','authority'],
+          ['evidence','adjust','change','reconsider']
         ]
       },
       {
-        prompt: 'Describe one practical behaviour you can use when you feel judged or evaluated at work.',
+        prompt: 'A senior colleague tells you that your updates are accurate but too long. Write a practical improvement plan for your next update, including how you will prepare, deliver and close.',
         concepts: [
-          ['slow','pause','breathe','composure'],
-          ['focus','contribute','message'],
-          ['clear','recommendation','response']
+          ['prepare','rehearse','structure'],
+          ['key point','recommendation','position'],
+          ['pace','pause','concise','fewer words'],
+          ['close','next step','action','decision']
         ]
       }
     ]
   },
 
   week3: {
-    title: 'Week 3 Knowledge & Application Test',
+    title: 'Week 3 Assertiveness & Difficult Conversations Test',
     mcq: [
       {
-        prompt: 'Assertiveness means:',
+        prompt: 'A team member has missed two agreed deadlines and becomes defensive when you raise it. Which opening best demonstrates assertive leadership?',
         options: [
-          'Avoiding disagreement to preserve harmony',
-          'Expressing your position clearly while respecting the other person',
-          'Winning the conversation',
-          'Speaking aggressively when challenged'
-        ],
-        answer: 1
-      },
-      {
-        prompt: 'In the CLEAR framework, the first step is to:',
-        options: [
-          'Agree the action',
-          'Clarify the issue',
-          'Review the outcome',
-          'Explain your position'
-        ],
-        answer: 1
-      },
-      {
-        prompt: 'A healthy workplace boundary should be:',
-        options: [
-          'Vague so nobody feels uncomfortable',
-          'Clear, respectful and connected to an expectation or action',
-          'Delivered only by email',
-          'Used only after conflict'
-        ],
-        answer: 1
-      },
-      {
-        prompt: 'When someone becomes defensive, an assertive leader should:',
-        options: [
-          'Become more aggressive',
-          'Withdraw immediately',
-          'Listen, stay calm and restate the issue or expectation clearly',
-          'Change the subject'
+          '“You are becoming unreliable and this attitude needs to stop.”',
+          '“I do not want this to become uncomfortable, so let us leave it for now.”',
+          '“The last two agreed deadlines were missed, which delayed the handover. I want us to understand what is happening and agree how the next deadline will be met.”',
+          '“Everyone is frustrated with you, so you need to fix this immediately.”'
         ],
         answer: 2
       },
       {
-        prompt: 'Avoiding a necessary difficult conversation usually:',
+        prompt: 'A colleague repeatedly sends urgent work late in the day and expects you to absorb it. Which response is the clearest professional boundary?',
         options: [
-          'Removes the issue permanently',
-          'Reduces accountability and allows the cost of the issue to continue',
-          'Builds trust',
-          'Makes expectations clearer'
+          'Say nothing and hope they notice the impact.',
+          'Refuse all future requests from that colleague.',
+          'Explain that same-day requests after the agreed cut-off cannot routinely be completed, state what notice you need and agree how true emergencies will be handled.',
+          'Complete the work but send a frustrated message afterwards.'
+        ],
+        answer: 2
+      },
+      {
+        prompt: 'You disagree with a senior executive’s proposed approach. What best demonstrates respectful assertiveness?',
+        options: [
+          'Remain silent because challenging a senior leader is inappropriate.',
+          'State your concern clearly, explain the evidence and impact, and offer a recommendation while remaining open to discussion.',
+          'Tell colleagues privately that the proposal is wrong.',
+          'Challenge the executive aggressively so your confidence is visible.'
         ],
         answer: 1
+      },
+      {
+        prompt: 'During a difficult conversation, the other person says, “You are blaming me for everything.” What is the strongest response?',
+        options: [
+          'Defend yourself immediately and list more examples.',
+          'End the conversation until they are less emotional.',
+          'Acknowledge the reaction, listen briefly, then return to the specific behaviour, impact and expectation that need to be addressed.',
+          'Withdraw the concern so the relationship is preserved.'
+        ],
+        answer: 2
+      },
+      {
+        prompt: 'Which ending best closes the accountability loop after a difficult conversation?',
+        options: [
+          '“Let us see how things go.”',
+          '“I think we understand each other now.”',
+          '“You will send the revised report by Thursday at 15:00, using the agreed format, and we will review progress together Friday morning.”',
+          '“Please try harder next time.”'
+        ],
+        answer: 2
       }
     ],
     written: [
       {
-        prompt: 'Explain the five steps of the CLEAR framework in your own words.',
+        prompt: 'Write the first 2–3 sentences you would use to open a real difficult workplace conversation. Use observable facts, name the impact and explain the purpose of the conversation without attacking the person.',
+        concepts: [
+          ['fact','happened','observed','specific','deadline','behaviour','behavior'],
+          ['impact','effect','result','delay','team','work'],
+          ['purpose','understand','address','discuss','agree'],
+          ['respect','clear','calm','specific']
+        ]
+      },
+      {
+        prompt: 'Use the CLEAR framework to outline a difficult conversation: Clarify the issue, Listen, Explain your position, Agree the action and Review the follow-up.',
         concepts: [
           ['clarify','issue'],
           ['listen','understand'],
           ['explain','position'],
           ['agree','action'],
-          ['review','follow']
+          ['review','follow','follow-up','follow up']
         ]
       },
       {
-        prompt: 'Describe how you can disagree respectfully while still being assertive.',
+        prompt: 'Write one respectful workplace boundary you need or could realistically need. State the expectation clearly and explain what you will do if the boundary is not respected.',
         concepts: [
-          ['clear','position','view'],
-          ['respect','listen'],
-          ['calm','boundary','evidence']
+          ['boundary','expectation','need','standard'],
+          ['clear','specific','notice','deadline','time'],
+          ['action','will','response','next step'],
+          ['respect','calm','professional']
         ]
       },
       {
-        prompt: 'Explain one cost of avoiding a necessary difficult conversation.',
+        prompt: 'The other person becomes defensive and says your concern is unfair. Describe how you would respond without surrendering the issue or escalating the conflict.',
         concepts: [
-          ['avoid','delay','unresolved'],
-          ['accountability','performance','trust','team'],
-          ['cost','impact','continue','worse']
+          ['listen','acknowledge','understand'],
+          ['calm','composed','pause'],
+          ['restate','issue','fact','expectation','impact'],
+          ['position','boundary','action','next step']
         ]
       },
       {
-        prompt: 'Write an example of a clear workplace boundary and explain why it is assertive rather than aggressive.',
+        prompt: 'Write the closing agreement for a difficult conversation, including the action, owner, standard or result, deadline and follow-up point.',
         concepts: [
-          ['boundary','expectation','need'],
-          ['clear','specific','action'],
-          ['respect','calm','aggressive']
-        ]
-      },
-      {
-        prompt: 'Describe how you should respond when the other person becomes defensive during a difficult conversation.',
-        concepts: [
-          ['listen','understand'],
-          ['calm','composed'],
-          ['restate','issue','expectation','position']
+          ['action','task','next step'],
+          ['owner','responsible','who'],
+          ['standard','result','outcome','quality'],
+          ['deadline','date','time'],
+          ['review','follow-up','follow up','check-in','check in']
         ]
       }
     ]
