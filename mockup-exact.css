@@ -1175,3 +1175,136 @@ body[data-theme="wrv-dramatic"] .fca-sidebar-logo{
 @media(max-width:1180px){
   body[data-theme="wrv-dramatic"] .fca-sidebar-logo{width:180px!important}
 }
+
+
+/* Week 1 premium learning depth */
+body[data-theme="wrv-dramatic"] .week-outcomes,
+body[data-theme="wrv-dramatic"] .leadership-brief,
+body[data-theme="wrv-dramatic"] .executive-output{
+  margin-top:24px!important;
+}
+body[data-theme="wrv-dramatic"] .outcome-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;
+  margin-top:18px!important;
+}
+body[data-theme="wrv-dramatic"] .outcome-item{
+  display:flex!important;
+  gap:12px!important;
+  align-items:flex-start!important;
+  padding:15px 16px!important;
+  border:1px solid #dce5e7!important;
+  border-radius:14px!important;
+  background:#f8faf9!important;
+}
+body[data-theme="wrv-dramatic"] .outcome-item>span{
+  flex:0 0 auto!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  letter-spacing:.12em!important;
+  color:#a47c29!important;
+}
+body[data-theme="wrv-dramatic"] .outcome-item p{
+  margin:0!important;
+  color:#314954!important;
+  font-size:13px!important;
+  line-height:1.55!important;
+}
+body[data-theme="wrv-dramatic"] .leadership-brief-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  margin-top:20px!important;
+}
+body[data-theme="wrv-dramatic"] .brief-card{
+  position:relative!important;
+  padding:19px!important;
+  border-radius:16px!important;
+  border:1px solid #dbe5e7!important;
+  background:linear-gradient(180deg,#fbfcfc,#f3f7f7)!important;
+}
+body[data-theme="wrv-dramatic"] .brief-card:last-child{
+  grid-column:1/-1!important;
+}
+body[data-theme="wrv-dramatic"] .brief-card>span{
+  font-size:10px!important;
+  font-weight:800!important;
+  letter-spacing:.15em!important;
+  color:#b08a3a!important;
+}
+body[data-theme="wrv-dramatic"] .brief-card h3{
+  margin:7px 0 8px!important;
+  color:#10263b!important;
+  font-family:'Playfair Display',serif!important;
+  font-size:20px!important;
+}
+body[data-theme="wrv-dramatic"] .brief-card p{
+  margin:0!important;
+  color:#50636d!important;
+  font-size:13px!important;
+  line-height:1.62!important;
+}
+body[data-theme="wrv-dramatic"] .executive-output{
+  border:1px solid rgba(176,138,58,.34)!important;
+  background:linear-gradient(145deg,#fffdf8,#f8f6ef)!important;
+}
+body[data-theme="wrv-dramatic"] .executive-output-grid{
+  display:grid!important;
+  gap:14px!important;
+  margin-top:20px!important;
+}
+body[data-theme="wrv-dramatic"] .executive-output-grid label{
+  display:grid!important;
+  gap:6px!important;
+}
+body[data-theme="wrv-dramatic"] .executive-output-grid label>span{
+  color:#17313c!important;
+  font-weight:800!important;
+  font-size:13px!important;
+}
+body[data-theme="wrv-dramatic"] .executive-output-grid label>small{
+  color:#74858d!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+}
+body[data-theme="wrv-dramatic"] .executive-output-grid textarea{
+  min-height:100px!important;
+  resize:vertical!important;
+  border:1px solid #d2dcde!important;
+  border-radius:13px!important;
+  padding:13px 14px!important;
+  background:#fff!important;
+  color:#18313d!important;
+  font:inherit!important;
+}
+body[data-theme="wrv-dramatic"] .executive-output-grid textarea:focus{
+  outline:none!important;
+  border-color:#0b7180!important;
+  box-shadow:0 0 0 4px rgba(11,113,128,.08)!important;
+}
+body[data-theme="wrv-dramatic"] .identity-statement-note{
+  margin-top:16px!important;
+  padding:14px 16px!important;
+  border-radius:13px!important;
+  background:#0b5966!important;
+  color:#fff!important;
+}
+body[data-theme="wrv-dramatic"] .identity-statement-note strong{
+  display:block!important;
+  margin-bottom:3px!important;
+  color:#f2d68e!important;
+}
+body[data-theme="wrv-dramatic"] .identity-statement-note p{
+  margin:0!important;
+  color:#e4eef0!important;
+  font-size:12px!important;
+  line-height:1.55!important;
+}
+@media(max-width:760px){
+  body[data-theme="wrv-dramatic"] .outcome-grid,
+  body[data-theme="wrv-dramatic"] .leadership-brief-grid{
+    grid-template-columns:1fr!important;
+  }
+  body[data-theme="wrv-dramatic"] .brief-card:last-child{grid-column:auto!important}
+}
