@@ -44,7 +44,16 @@ Weeks 4–6 are currently staged for continued programme development.
 **Leadership Identity & Confidence**  
 *Think Like a Leader Before You Have the Title*
 
-Focus areas include leadership identity, confidence, self-trust and how the client wants others to experience their leadership.
+Week 1 establishes the participant's internal leadership foundation before moving into executive presence. It now includes explicit learning outcomes, a five-part Leadership Brief, the interactive Leadership Compass, guided reflection, five days of leadership practice, a workplace application challenge, live coaching preparation and a substantive executive output: **My Leadership Identity Statement**.
+
+Core learning covers:
+- leadership identity before formal authority
+- separating personal worth from a single performance outcome
+- building confidence from evidence rather than reassurance
+- making responsible decisions under uncertainty
+- translating values and leadership qualities into observable behaviour
+
+The Week 1 assessment is a once-only 10-question **Leadership Judgement & Application Test**. Its multiple-choice questions use realistic leadership scenarios, while the written questions require the participant to apply the material to leadership identity, decision-making, mistakes, hesitation and personal leadership standards.
 
 ### Week 2
 **Executive Presence & Personal Authority**  
