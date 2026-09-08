@@ -44,11 +44,14 @@ test('milestone order matches the programme progression', () => {
   assert.equal(nextMilestoneKey('week2'), 'week3');
   assert.equal(nextMilestoneKey('week3'), 'assessment');
   assert.equal(nextMilestoneKey('assessment'), 'week4');
+  assert.equal(nextMilestoneKey('week4'), 'week5');
+  assert.equal(nextMilestoneKey('week5'), 'week6');
+  assert.equal(nextMilestoneKey('week6'), null);
 });
 
 
 test('weekly tests contain five multiple-choice and five written questions', () => {
-  for (const key of ['week1','week2','week3']) {
+  for (const key of ['week1','week2','week3','week4','week5','week6']) {
     assert.equal(WEEKLY_TESTS[key].mcq.length, 5);
     assert.equal(WEEKLY_TESTS[key].written.length, 5);
   }
@@ -110,6 +113,58 @@ test('Week 3 difficult-conversation assessment can award the full 10 percent con
       'My boundary is that requests received after the agreed cut-off need at least one working day of notice unless they are genuine emergencies. I will state that expectation clearly and professionally, and if it is not respected I will move the request to the next available slot and confirm that action.',
       'I would acknowledge the concern and listen to understand it, stay calm and composed, then restate the specific fact, impact and expectation. I would hold the position and return to the required action or next step.',
       'The next action is for the manager to revise the report. The owner is the manager, the required standard is the agreed template and complete data, the deadline is Thursday at 15:00, and we will review it together Friday morning.'
+    ]
+  };
+  const result = scoreWeeklyTest(key, answers);
+  assert.equal(result.score, 100);
+  assert.equal(result.contribution, 10);
+});
+
+
+test('Week 4 influence assessment can award the full 10 percent contribution', () => {
+  const key = 'week4';
+  const answers = {
+    mcq: WEEKLY_TESTS[key].mcq.map(q => q.answer),
+    written: [
+      'The situation is a proposed service redesign. It matters because delay increases cost and operational risk. My recommendation is a 30-day pilot. The organisational benefit is lower risk and better evidence, and the decision required is approval to begin.',
+      'My stakeholders are Finance, Operations and the Board. Finance may prioritise cost and risk, Operations may prioritise implementation and workload, and the Board may prioritise governance and strategic value. I would understand each concern before seeking support and buy-in.',
+      'I would pause and remain calm, ask questions to understand the concern, listen carefully, then respond with relevant evidence and return to the decision and next step required.',
+      'Ethical influence is transparent and honest about the intention, evidence and decision while respecting the other person’s agency and choice. Manipulation hides information, deceives or uses pressure to secure an outcome.',
+      'I will strengthen credibility by preparing evidence before meetings and by being consistent in follow-through. I will practise both behaviours on current projects so stakeholders experience me as reliable and trustworthy.'
+    ]
+  };
+  const result = scoreWeeklyTest(key, answers);
+  assert.equal(result.score, 100);
+  assert.equal(result.contribution, 10);
+});
+
+test('Week 5 resilience assessment can award the full 10 percent contribution', () => {
+  const key = 'week5';
+  const answers = {
+    mcq: WEEKLY_TESTS[key].mcq.map(q => q.answer),
+    written: [
+      'Under pressure my pattern is to rush and become controlling. Warning signs include speaking faster and taking work back from others. I want to replace that behaviour with a pause, clearer delegation and a deliberate response.',
+      'I would pause and breathe, name the emotion as frustration, evaluate the facts, assumptions and desired outcome, then respond with a calm leadership action rather than reacting defensively.',
+      'My recovery plan includes protected thinking time, delegation, clear boundaries and adequate rest. These practices protect energy, judgement and emotional regulation during demanding periods.',
+      'In the first 48 hours I would take accountability, review the facts with the team, communicate honestly with stakeholders, identify lessons and agree the corrective action and next step.',
+      'My boundary is protected decision time without routine interruptions. It supports performance because focused thinking improves judgement, reduces reactive decisions and helps me sustain energy over time. I will communicate the expectation clearly.'
+    ]
+  };
+  const result = scoreWeeklyTest(key, answers);
+  assert.equal(result.score, 100);
+  assert.equal(result.contribution, 10);
+});
+
+test('Week 6 sustainable-change assessment can award the full 10 percent contribution', () => {
+  const key = 'week6';
+  const answers = {
+    mcq: WEEKLY_TESTS[key].mcq.map(q => q.answer),
+    written: [
+      'The change is a stronger performance-management process. It needs to change now because missed accountability is affecting delivery. If nothing changes, risk and cost will continue; the opportunity is a clearer, more reliable future operating rhythm.',
+      'The stakeholders are employees, managers and the board. Employees may support clearer expectations but resist workload or uncertainty. Managers may support better performance but worry about time. The board may support governance while questioning implementation risk and impact.',
+      'Reality: delivery is inconsistent. Direction: we need a predictable accountability rhythm. Reason: performance and customer impact are at risk. Role: managers will hold weekly reviews and employees will own agreed actions. Confidence: the process is practical and progress is possible.',
+      'The owner is the operations director. The first action is to define the review standard by 15 September. Progress will be measured by completion and overdue actions. If progress stalls, we will review obstacles, correct the plan and escalate ownership where required.',
+      'I must model consistent follow-through. Credibility depends on visible behaviour, so I will attend reviews, close my own actions and reinforce the same standard consistently rather than asking others to do what I do not model.'
     ]
   };
   const result = scoreWeeklyTest(key, answers);
