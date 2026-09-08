@@ -175,7 +175,7 @@ async function getSummary(context) {
   const weeklyTests = {};
   for (const row of weeklyRows || []) {
     const key = milestoneById.get(row.milestone_id)?.milestone_key;
-    if (!['week1','week2','week3'].includes(key)) continue;
+    if (!['week1','week2','week3','week4','week5','week6'].includes(key)) continue;
     weeklyTests[key] = {
       score: Number(row.score),
       mcqScore: Number(row.mcq_score),
@@ -188,6 +188,10 @@ async function getSummary(context) {
     ['week1','week2','week3'].reduce((sum, key) => sum + (weeklyTests[key]?.score || 0) * 0.1, 0) * 100
   ) / 100;
   const weeklyTestsComplete = ['week1','week2','week3'].every(key => weeklyTests[key]);
+  const secondHalfWeeklyWeightedScore = Math.round(
+    ['week4','week5','week6'].reduce((sum, key) => sum + (weeklyTests[key]?.score || 0) * 0.1, 0) * 100
+  ) / 100;
+  const secondHalfWeeklyTestsComplete = ['week4','week5','week6'].every(key => weeklyTests[key]);
 
   const assessmentMilestone = milestoneByKey.get('assessment');
   let assessment = null;
@@ -267,6 +271,8 @@ async function getSummary(context) {
     weeklyTests,
     weeklyTestsComplete,
     weeklyWeightedScore,
+    secondHalfWeeklyTestsComplete,
+    secondHalfWeeklyWeightedScore,
     assessmentComplete: completedKeys.includes('assessment'),
     assessmentAttempts: attempts.map(({ scores, reflections, ...attempt }) => attempt),
     assessmentAttemptCount: attempts.length,
@@ -369,7 +375,7 @@ async function transition(context, currentKey, options = {}) {
 async function completeMilestone(context, key, evidence, testAnswers, options = {}) {
   const validation = validateWeekEvidence(key, evidence);
   if (!validation.ok) throw new Error(validation.error);
-  if (!['week1','week2','week3'].includes(key)) throw new Error('This weekly test is not configured.');
+  if (!['week1','week2','week3','week4','week5','week6'].includes(key)) throw new Error('This weekly test is not configured.');
 
   const summaryBefore = await getSummary(context);
   if (summaryBefore.weeklyTests?.[key]) {
