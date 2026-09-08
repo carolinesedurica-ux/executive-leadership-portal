@@ -3,9 +3,9 @@ const MILESTONES = {
   week2: { number: 2, title: 'Executive Presence & Personal Authority', next: 'week3' },
   week3: { number: 3, title: 'Assertiveness & Difficult Conversations', next: 'assessment' },
   assessment: { number: 4, title: 'Mid-Course Leadership Assessment', next: 'week4' },
-  week4: { number: 5, title: 'Leading People with Confidence', next: 'week5' },
-  week5: { number: 6, title: 'Workplace Dynamics, Influence & Executive Communication', next: 'week6' },
-  week6: { number: 7, title: 'Leadership Integration & Personal Action Plan', next: null }
+  week4: { number: 5, title: 'Influence & Impact', next: 'week5' },
+  week5: { number: 6, title: 'Resilience & Self-Leadership', next: 'week6' },
+  week6: { number: 7, title: 'Leading Sustainable Change', next: null }
 };
 
 function nextMilestoneKey(key) {
@@ -13,7 +13,7 @@ function nextMilestoneKey(key) {
 }
 
 function validateWeekEvidence(key, evidence = {}) {
-  if (!['week1', 'week2', 'week3'].includes(key)) {
+  if (!['week1', 'week2', 'week3', 'week4', 'week5', 'week6'].includes(key)) {
     return { ok: false, error: 'This milestone is not yet configured for server completion.' };
   }
 
