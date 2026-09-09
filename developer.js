@@ -15,7 +15,7 @@ const tools=()=>state().tools||{};
 
 async function api(){
  const suffix=participantId?'?participantId='+encodeURIComponent(participantId):'';
- const r=await fetch('/api/developer'+suffix,{cache:'no-store'});
+ const r=await fetch('/api/data?developer=1'+(selectedParticipantId?'&participantId='+encodeURIComponent(selectedParticipantId):''),{cache:'no-store'});
  const out=await r.json();
  if(!r.ok)throw new Error(out.error||'Unable to load developer data');
  participants=out.participants||[];
