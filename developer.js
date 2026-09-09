@@ -91,11 +91,49 @@ function previewUrl(view='home',focus=''){
  return u.pathname+u.search;
 }
 function openPreview(view,focus=''){
- section='preview';
  detail=null;
  recordParticipantId='';
- document.querySelectorAll('.dev-side [data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section==='preview'));
- preview(view,focus);
+ renderWeekWorkspace(view,focus);
+}
+
+function renderWeekWorkspace(view='week1',focus=''){
+ const weekMatch=String(view).match(/^(week[1-6])(?:-test)?$/);
+ const weekKey=weekMatch?.[1]||null;
+ const isTest=/-test$/.test(view);
+ const meta=programmeCatalog.find(x=>x.key===weekKey);
+ const title=view==='assessment'?'Mid-Course Leadership Assessment':meta?meta.week+' · '+meta.title:'Programme Preview';
+ const lessonNav=meta?`
+   <div class="workspace-lesson-nav">
+     ${lessonItems.map(([f,label])=>`<button type="button" data-workspace-target="${f==='test'?meta.key+'-test':meta.key}" data-workspace-focus="${f==='test'?'':f}" class="${(isTest&&f==='test')||(!isTest&&focus===f)?'active':''}">${label}</button>`).join('')}
+   </div>`:'';
+ document.getElementById('devView').innerHTML=`
+   <section class="developer-workspace">
+     <div class="workspace-toolbar">
+       <div class="workspace-title">
+         <button type="button" class="workspace-back" id="workspaceBack">← Programme & Lessons</button>
+         <span class="kicker">Developer Week Workspace</span>
+         <h1>${esc(title)}</h1>
+       </div>
+       <div class="workspace-actions">
+         <button type="button" id="workspaceReload">Reload</button>
+         <a href="${previewUrl(view,focus)}" target="_blank" rel="noopener">Open full screen ↗</a>
+       </div>
+     </div>
+     <div class="workspace-week-nav">
+       ${programmeCatalog.map(w=>`<button type="button" data-workspace-week="${w.key}" class="${w.key===weekKey?'active':''}">${w.week}</button>`).join('')}
+       <button type="button" data-workspace-week="assessment" class="${view==='assessment'?'active':''}">Mid-Course Assessment</button>
+     </div>
+     ${lessonNav}
+     <div class="workspace-frame-wrap">
+       <iframe id="workspaceFrame" class="workspace-frame" src="${previewUrl(view,focus)}" title="${esc(title)}"></iframe>
+     </div>
+   </section>`;
+ document.querySelectorAll('.dev-side [data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section==='programme'));
+ document.getElementById('workspaceBack').onclick=()=>{section='programme';programmeView()};
+ document.getElementById('workspaceReload').onclick=()=>document.getElementById('workspaceFrame').contentWindow.location.reload();
+ document.querySelectorAll('[data-workspace-week]').forEach(b=>b.onclick=()=>renderWeekWorkspace(b.dataset.workspaceWeek));
+ document.querySelectorAll('[data-workspace-target]').forEach(b=>b.onclick=()=>renderWeekWorkspace(b.dataset.workspaceTarget,b.dataset.workspaceFocus||''));
+ document.getElementById('devStatus').textContent='Developer mode · '+title+' · all lessons unlocked';
 }
 
 function bindRecordPicker(){
@@ -157,7 +195,7 @@ function programmeView(){
  </section>
  <div class="programme-catalog">
    ${programmeCatalog.map((w,i)=>`
-   <article class="programme-week-card" data-programme-week="${w.key}">
+   <article class="programme-week-card clickable-week-card" data-programme-week="${w.key}" role="button" tabindex="0" aria-label="Open full ${w.week}: ${esc(w.title)}">
      <div class="programme-week-head">
        <div><span class="week-chip">${w.week}</span><h2>${esc(w.title)}</h2><p>${esc(w.video)}</p></div>
        <div class="week-statuses"><span class="pill">Unlocked</span>${w.videoUrl?'<span class="pill video-linked">Video linked</span>':''}</div>
@@ -181,12 +219,21 @@ function programmeView(){
    <div><span class="week-chip assessment-chip">Mid-Course</span><h2>Leadership Assessment</h2><p>Weeks 1–3 tests contribute 30%; the assessment contributes 70%; 80% overall is required for the Week 4 credential.</p></div>
    <button type="button" class="primary-dev-btn" data-open-week="assessment">Open assessment →</button>
  </section>`;
- document.querySelectorAll('[data-open-week]').forEach(b=>b.onclick=()=>{
-   const view=b.dataset.openWeek;
-   const focus=b.dataset.focus||'';
-   openPreview(view,focus);
+ document.querySelectorAll('[data-open-week]').forEach(b=>b.onclick=e=>{
+   e.stopPropagation();
+   openPreview(b.dataset.openWeek,b.dataset.focus||'');
  });
- document.getElementById('devStatus').textContent='Developer mode · full programme and lessons · no participant attached';
+ document.querySelectorAll('[data-programme-week]').forEach(card=>{
+   const open=()=>openPreview(card.dataset.programmeWeek);
+   card.onclick=e=>{
+     if(e.target.closest('button,a'))return;
+     open();
+   };
+   card.onkeydown=e=>{
+     if((e.key==='Enter'||e.key===' ')&&!e.target.closest('button,a')){e.preventDefault();open()}
+   };
+ });
+ document.getElementById('devStatus').textContent='Developer mode · full programme and lessons · click any week card to open the complete lesson';
 }
 
 function results(){
