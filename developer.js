@@ -101,11 +101,11 @@ function preview(){
  <div class="section-title"><div><span class="kicker">Programme preview</span><h1>All-access developer view</h1></div><span class="pill">No participant attached</span></div>
  <div class="danger-note" style="margin-bottom:12px"><strong>Developer access:</strong> This preview ignores all learner progression, score and credential locks. Participant access rules remain unchanged.</div>
  <div class="tabs dev-module-jump">${modules.map(([view,label,title])=>`<button data-dev-view="${view}"><strong>${label}</strong> · ${title}</button>`).join('')}</div>
- <div class="preview-tools"><a href="/?developer=1" target="_blank">Open full programme ↗</a><button id="reloadPreview">Reload preview</button></div>
- <iframe class="preview-frame" id="previewFrame" src="/?developer=1" title="Executive Leadership Developer Preview"></iframe>`;
+ <div class="preview-tools"><a href="/developer-preview.html" target="_blank">Open full programme ↗</a><button id="reloadPreview">Reload preview</button></div>
+ <iframe class="preview-frame" id="previewFrame" src="/developer-preview.html" title="Executive Leadership Developer Preview"></iframe>`;
  document.getElementById('reloadPreview').onclick=()=>document.getElementById('previewFrame').contentWindow.location.reload();
  document.querySelectorAll('[data-dev-view]').forEach(b=>b.onclick=()=>{
-   document.getElementById('previewFrame').src='/?developer=1&view='+encodeURIComponent(b.dataset.devView);
+   document.getElementById('previewFrame').src='/developer-preview.html?view='+encodeURIComponent(b.dataset.devView);
  });
  document.getElementById('devStatus').textContent='Developer mode · programme preview · no participant attached';
 }
