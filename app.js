@@ -225,6 +225,42 @@ function updateProgress(){if(developerPreview){
   return}const completedWeeks=state.completed.filter(x=>['week1','week2','week3','week4','week5','week6'].includes(x)).length;const units=completedWeeks+(state.assessmentComplete?1:0);const percent=Math.round((units/7)*100),deg=percent*3.6;const ring=document.getElementById('progressRing');if(ring)ring.style.background=`conic-gradient(var(--green) ${deg}deg,#e3e9ee ${deg}deg)`;const topRing=document.getElementById('topProgressRing');if(topRing)topRing.style.background=`radial-gradient(circle at center,#fff 0 66%,transparent 67%),conic-gradient(var(--green) ${deg}deg,#dce6e7 ${deg}deg)`;if(document.getElementById('topProgressPercent'))document.getElementById('topProgressPercent').textContent=`${percent}%`;if(document.getElementById('progressPercent'))document.getElementById('progressPercent').textContent=`${percent}%`;if(document.getElementById('progressBar'))document.getElementById('progressBar').style.width=`${percent}%`;const credentialValidated=backendValidatedCredentials.includes('week4');let progressCopy=`${completedWeeks} of 6 modules completed.`;if(!state.assessmentComplete)progressCopy=`${Math.min(completedWeeks,3)} of 3 first-half modules completed · weekly tests contribute ${Number(state.weeklyWeightedScore||0).toFixed(1)}/30.`;else if(!credentialValidated&&backendAuthoritative)progressCopy='Assessment passed. Enter your access credential to open Week 4.';else if(completedWeeks===6)progressCopy='All six leadership modules completed.';if(document.getElementById('progressText'))document.getElementById('progressText').textContent=progressCopy;['week4','week5','week6'].forEach(key=>{const nav=document.querySelector(`.nav-link[data-view="${key}"]`);const entitled=!backendAuthoritative||(key==='week4'?Boolean(state.assessmentComplete):Boolean(backendEntitlements[key]));const open=key==='week4'?entitled&&(credentialValidated||!backendAuthoritative):entitled;if(nav){nav.classList.toggle('locked',!open);const icon=nav.firstChild;if(icon&&icon.nodeType===3)icon.textContent=open?'✓ ':'🔒 '}});document.querySelectorAll('[data-go="week5"]').forEach(el=>el.classList.toggle('locked',backendAuthoritative&&!backendEntitlements.week5));document.querySelectorAll('[data-go="week6"]').forEach(el=>el.classList.toggle('locked',backendAuthoritative&&!backendEntitlements.week6));if(document.getElementById('week4Status'))document.getElementById('week4Status').textContent=state.assessmentComplete?(credentialValidated||!backendAuthoritative?'Unlocked.':'Enter emailed access credential.'):'Score 80% overall to unlock.';updateTestNav()}
 
 function renderAssessmentResults(){if(!state.assessmentComplete||!state.midScores)return;const result=document.getElementById('assessmentResults');result.classList.remove('hidden');const avg=state.midScores.reduce((a,b)=>a+b,0)/state.midScores.length,base=state.baseline.reduce((a,b)=>a+b,0)/state.baseline.length,movement=avg-base;document.getElementById('averageScore').textContent=`${avg.toFixed(1)} / 10`;document.getElementById('scoreMovement').textContent=`${movement>=0?'+':''}${movement.toFixed(1)}`;const priorities=assessmentDimensions.map((d,i)=>({d,s:state.midScores[i]})).sort((a,b)=>a.s-b.s).slice(0,3);document.getElementById('priorityList').innerHTML=`<div class="movement-chart"><div class="movement-summary"><span>Baseline</span><strong>${base.toFixed(1)}</strong></div><div class="movement-line"><span style="width:${base*10}%"></span><i style="left:${avg*10}%"></i></div><div class="movement-summary current"><span>Mid-course</span><strong>${avg.toFixed(1)}</strong></div></div><h3>Your three current priorities</h3>${priorities.map(p=>`<div class="priority-item"><span>${p.d}</span><strong>${p.s}/10</strong></div>`).join('')}`}
+function isParticipantAnswerField(target){
+ if(developerPreview||!target||typeof target.matches!=='function')return false;
+ return target.matches(
+   'textarea[data-reflection], textarea[data-toolfield], [data-week-test] textarea, #assessmentForm textarea'
+ );
+}
+function protectParticipantAnswers(){
+ const warn=()=>toast('Copy and paste are disabled for participant responses. Please type your answer in your own words.');
+ ['copy','cut','paste'].forEach(type=>{
+  document.addEventListener(type,e=>{
+    if(!isParticipantAnswerField(e.target))return;
+    e.preventDefault();
+    warn();
+  });
+ });
+ document.addEventListener('drop',e=>{
+  if(!isParticipantAnswerField(e.target))return;
+  e.preventDefault();
+  warn();
+ });
+ document.addEventListener('beforeinput',e=>{
+  if(!isParticipantAnswerField(e.target))return;
+  if(['insertFromPaste','insertFromDrop','insertFromPasteAsQuotation'].includes(e.inputType)){
+    e.preventDefault();
+    warn();
+  }
+ });
+ document.addEventListener('keydown',e=>{
+  if(!isParticipantAnswerField(e.target))return;
+  if((e.ctrlKey||e.metaKey)&&['c','x','v'].includes(String(e.key||'').toLowerCase())){
+    e.preventDefault();
+    warn();
+  }
+ });
+}
+
 function setupEvents(){
  document.querySelectorAll('.nav-link').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.view)));
  document.querySelectorAll('.nav-test-link').forEach(n=>n.addEventListener('click',()=>showView(n.dataset.testWeek+'-test')));
@@ -281,5 +317,5 @@ function setupEvents(){
   finally{renderAssessment()}
  });
 }
-renderWeeks();renderWeeklyTests();renderAssessment();renderWeek4();attachGoButtons();setupEvents();renderAssessmentResults();updateProgress();
+renderWeeks();renderWeeklyTests();renderAssessment();renderWeek4();attachGoButtons();setupEvents();protectParticipantAnswers();renderAssessmentResults();updateProgress();
 if(developerPreview){const banner=document.createElement('div');banner.className='developer-preview-banner';banner.innerHTML='<strong>Developer Preview</strong><span>Weeks 1–6, every lesson, weekly tests and assessment are unlocked for development. Participant progression rules remain unchanged.</span><a href="/admin.html" target="_top">Back to Developer Portal</a>';document.body.prepend(banner);enforceDeveloperRoute();document.addEventListener('DOMContentLoaded',enforceDeveloperRoute,{once:true});document.addEventListener('wrv:developer-preview-authenticated',enforceDeveloperRoute);window.addEventListener('load',enforceDeveloperRoute,{once:true});setTimeout(enforceDeveloperRoute,100);setTimeout(enforceDeveloperRoute,500);setTimeout(enforceDeveloperRoute,1200);}
