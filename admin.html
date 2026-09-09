@@ -2,20 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
-<title>Work Ready Vault · Coaching Admin</title>
+<title>FCA · Executive Leadership Developer Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="auth.css?v=20260905-fca-logo">
+<link rel="stylesheet" href="developer.css?v=20260909-dev1">
 </head>
-<body class="wrv-admin-body">
-<div class="wrv-admin-shell">
-<aside class="wrv-admin-sidebar"><div class="logo fca-admin-logo"><img src="assets/fca-logo.webp" alt="Foundations Counselling Academy"></div><div class="sub">Executive Leadership Coaching Administration</div><nav><button class="active" data-section="overview">Overview</button><button data-section="responses">Client responses</button><button data-section="daily">Daily notes</button><button data-section="assessment">Assessment</button></nav><div style="margin-top:auto;padding-top:32px;font-size:10px;line-height:1.7;color:#aac0ca;text-transform:uppercase;letter-spacing:.14em">Foundations Counselling Academy<br>People | Potential | Purpose</div></aside>
-<main class="wrv-admin-main">
-<header class="wrv-admin-topbar"><strong>Executive Leadership Coaching · Admin Portal</strong><div class="wrv-admin-user-controls"><label class="wrv-admin-meta">Participant <select id="participantSelect"><option>Loading participants…</option></select></label> <span id="adminStatus" class="wrv-admin-meta">Checking access…</span> <button id="adminLogout" class="wrv-logout">Sign out</button></div></header>
-<div class="wrv-admin-content">
-<section class="wrv-admin-hero"><span style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#755e30">Private coaching dashboard</span><h1>Participant progress & reflections</h1><p>Select any enrolled participant and review their written reflections, daily leadership practice notes, coaching preparation and assessment evidence in one place.</p></section>
-<div class="wrv-admin-stats" id="adminStats"></div>
-<section class="wrv-admin-card" id="adminView"><div class="wrv-admin-empty">Loading client responses…</div></section>
-</div></main></div>
-<script src="admin.js?v=20260905-assessment2"></script>
+<body>
+<div class="dev-shell">
+<aside class="dev-side">
+  <div class="dev-brand"><img src="assets/fca-logo.webp" alt="Foundations Counselling Academy"><div><strong>Developer Portal</strong><span>Executive Leadership Programme</span></div></div>
+  <nav>
+    <button class="active" data-section="dashboard">⌂ <span>Dashboard</span></button>
+    <button data-section="preview">◫ <span>Programme Preview</span></button>
+    <button data-section="participants">◎ <span>Participants</span></button>
+    <button data-section="results">▥ <span>Results & Scores</span></button>
+    <button data-section="responses">✎ <span>Reflections & Outputs</span></button>
+    <button data-section="assessments">✓ <span>Assessments & Access</span></button>
+    <button data-section="activity">↻ <span>Activity Log</span></button>
+  </nav>
+  <div class="dev-safe"><strong>Developer mode</strong><span>Preview activity does not write to participant records.</span></div>
+</aside>
+<main class="dev-main">
+<header class="dev-top">
+  <div><span class="kicker">Foundations Counselling Academy</span><strong>Executive Leadership Developer Portal</strong></div>
+  <div class="dev-controls"><label>Participant <select id="participantSelect"><option value="">Select participant</option></select></label><button id="refreshBtn">Refresh</button><button id="signOutBtn">Sign out</button></div>
+</header>
+<section class="dev-content">
+  <div id="devStatus" class="dev-status">Checking administrator access…</div>
+  <div id="devView"></div>
+</section>
+</main>
+</div>
+<script src="developer.js?v=20260909-dev1"></script>
 </body></html>
