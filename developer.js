@@ -57,8 +57,25 @@ function dashboard(){
  bindJumps();
 }
 function preview(){
- document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Programme preview</span><h1>All-access learner view</h1></div><span class="pill">No participant writes</span></div><div class="preview-tools"><a href="/?developer=1" target="_blank">Open in new tab ↗</a><button id="reloadPreview">Reload preview</button></div><iframe class="preview-frame" id="previewFrame" src="/?developer=1" title="Executive Leadership Developer Preview"></iframe>`;
+ const modules=[
+  ['week1','Week 1','Leadership Identity'],
+  ['week2','Week 2','Executive Presence'],
+  ['week3','Week 3','Speaking with Clarity'],
+  ['assessment','Assessment','Mid-Course Assessment'],
+  ['week4','Week 4','Influence & Impact'],
+  ['week5','Week 5','Resilience & Self-Leadership'],
+  ['week6','Week 6','Leading Sustainable Change']
+ ];
+ document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Programme preview</span><h1>All-access developer view</h1></div><span class="pill">Developer only · all unlocked</span></div>
+ <div class="danger-note" style="margin-bottom:12px"><strong>Developer access:</strong> Weeks 1–6, all weekly tests and the assessment are available here regardless of learner progression. This does not change what participants can access.</div>
+ <div class="tabs dev-module-jump">${modules.map(([view,label,title])=>`<button data-dev-view="${view}"><strong>${label}</strong> · ${title}</button>`).join('')}</div>
+ <div class="preview-tools"><a href="/?developer=1" target="_blank">Open full programme ↗</a><button id="reloadPreview">Reload preview</button></div>
+ <iframe class="preview-frame" id="previewFrame" src="/?developer=1" title="Executive Leadership Developer Preview"></iframe>`;
  document.getElementById('reloadPreview').onclick=()=>document.getElementById('previewFrame').contentWindow.location.reload();
+ document.querySelectorAll('[data-dev-view]').forEach(b=>b.onclick=()=>{
+   const view=b.dataset.devView;
+   document.getElementById('previewFrame').src='/?developer=1&view='+encodeURIComponent(view);
+ });
 }
 function participantsView(){
  document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Participants</span><h1>Enrolment & progression</h1></div></div><section class="card table-wrap"><table class="dev-table"><thead><tr><th>Participant</th><th>Enrolled</th><th>Weeks</th><th>Current</th><th>First-half</th><th>Second-half</th><th>Latest overall</th></tr></thead><tbody>${participants.map(p=>`<tr><td><strong>${esc(p.full_name||'—')}</strong><br><span class="muted">${esc(p.email)}</span></td><td>${p.enrollment?.enrolled_at?new Date(p.enrollment.enrolled_at).toLocaleDateString():'—'}</td><td>${p.completedWeeks}/6</td><td><span class="pill dim">${esc(p.currentMilestone||'—')}</span></td><td>${Number(p.firstHalfWeighted||0).toFixed(1)}/30</td><td>${Number(p.secondHalfWeighted||0).toFixed(1)}/30</td><td>${p.latestOverallScore!=null?Number(p.latestOverallScore).toFixed(1)+'%':'—'}</td></tr>`).join('')}</tbody></table></section>`;
