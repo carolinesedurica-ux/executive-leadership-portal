@@ -5,3 +5,11 @@
 .video-live .video-meta{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px;color:#dbe7ee;background:#0e314c;font-size:12px}
 .video-live .video-meta span{padding:5px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.22)}
 @media(max-width:700px){.video-live video{max-height:none}.video-live .video-meta{justify-content:center}}
+
+
+.developer-preview-banner{position:sticky;top:0;z-index:9999;display:flex;align-items:center;justify-content:center;gap:14px;padding:9px 16px;background:#7b5a1c;color:#fff;font-family:"DM Sans",sans-serif;font-size:12px;box-shadow:0 2px 12px rgba(0,0,0,.14)}
+.developer-preview-banner strong{text-transform:uppercase;letter-spacing:.08em;color:#ffe3a2}
+.developer-preview-banner span{opacity:.92}
+.developer-preview-banner a{color:#fff;text-decoration:underline;font-weight:700}
+.developer-preview-active .topbar{top:37px}
+@media(max-width:700px){.developer-preview-banner{align-items:flex-start;flex-wrap:wrap;gap:6px}.developer-preview-active .topbar{top:60px}}
