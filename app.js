@@ -12,7 +12,7 @@ const programme={week1:{title:'Week 1 — Leadership Identity & Confidence',subt
 const assessmentDimensions=['Confidence in my leadership capability','Trust in my judgement','Leadership presence in meetings','Remaining composed when challenged','Communicating clearly and concisely','Speaking confidently with senior colleagues','Assertiveness','Expressing disagreement respectfully','Having difficult conversations','Setting boundaries and saying no','Handling another person’s defensiveness','Speaking without unnecessary over-explanation'];
 const baselineDefaults=[5,5,5,5,5,5,5,5,5,5,5,5];
 const developerParams=new URLSearchParams(location.search);
-const developerPreview=developerParams.get('developer')==='1';
+const developerPreview=window.ELRP_DEVELOPER_PREVIEW===true||developerParams.get('developer')==='1';
 const developerViewTarget=developerPreview?String(developerParams.get('view')||'home'):null;
 const stateStorageKey=developerPreview?'elrpDeveloperPreviewState':'elrpState';
 const state=JSON.parse(localStorage.getItem(stateStorageKey)||'{}');state.completed=state.completed||[];state.reflections=state.reflections||{};state.baseline=state.baseline||baselineDefaults;state.assessmentComplete=!!state.assessmentComplete;state.tools=state.tools||{};state.weeklyTests=state.weeklyTests||{};state.assessmentAttemptCount=state.assessmentAttemptCount||0;state.assessmentAttemptsRemaining=state.assessmentAttemptsRemaining??3;let backendAuthoritative=false;let backendEntitlements={};let backendValidatedCredentials=[];
