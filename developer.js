@@ -164,7 +164,7 @@ function programmeView(){
      </div>
      <div class="lesson-list">
        ${lessonItems.map(([focus,label,copy])=>`
-       <button type="button" class="lesson-row" data-open-week="${w.key}" data-focus="${focus}">
+       <button type="button" class="lesson-row" data-open-week="${focus==='test'?w.key+'-test':w.key}" data-focus="${focus==='test'?'':focus}">
          <span class="lesson-num">${String(lessonItems.findIndex(x=>x[0]===focus)+1).padStart(2,'0')}</span>
          <span class="lesson-copy"><strong>${label}</strong><small>${focus==='watch'?esc(w.video):focus==='output'?esc(w.output):focus==='lab'?esc(w.lab):copy}</small></span>
          <span class="lesson-arrow">Open →</span>
