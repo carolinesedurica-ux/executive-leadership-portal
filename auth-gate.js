@@ -1,7 +1,7 @@
 (()=>{
 const qs=new URLSearchParams(location.search);
 let role=qs.get('admin')==='1'?'admin':'client';
-const developerPreview=qs.get('developer')==='1';
+const developerPreview=window.ELRP_DEVELOPER_PREVIEW===true||qs.get('developer')==='1';
 let clientMode='signin';
 let lastSnapshot='';
 let syncing=false;
