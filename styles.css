@@ -13,3 +13,6 @@
 .developer-preview-banner a{color:#fff;text-decoration:underline;font-weight:700}
 .developer-preview-active .topbar{top:37px}
 @media(max-width:700px){.developer-preview-banner{align-items:flex-start;flex-wrap:wrap;gap:6px}.developer-preview-active .topbar{top:60px}}
+
+
+.developer-focus-target{outline:3px solid rgba(213,168,77,.55);outline-offset:4px;box-shadow:0 0 0 8px rgba(213,168,77,.08),0 12px 30px rgba(7,24,39,.12);transition:outline-color .25s ease,box-shadow .25s ease}
