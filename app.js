@@ -12,9 +12,10 @@ const programme={week1:{title:'Week 1 — Leadership Identity & Confidence',subt
 const assessmentDimensions=['Confidence in my leadership capability','Trust in my judgement','Leadership presence in meetings','Remaining composed when challenged','Communicating clearly and concisely','Speaking confidently with senior colleagues','Assertiveness','Expressing disagreement respectfully','Having difficult conversations','Setting boundaries and saying no','Handling another person’s defensiveness','Speaking without unnecessary over-explanation'];
 const baselineDefaults=[5,5,5,5,5,5,5,5,5,5,5,5];
 const developerPreview=new URLSearchParams(location.search).get('developer')==='1';
-const state=JSON.parse(localStorage.getItem('elrpState')||'{}');state.completed=state.completed||[];state.reflections=state.reflections||{};state.baseline=state.baseline||baselineDefaults;state.assessmentComplete=!!state.assessmentComplete;state.tools=state.tools||{};state.weeklyTests=state.weeklyTests||{};state.assessmentAttemptCount=state.assessmentAttemptCount||0;state.assessmentAttemptsRemaining=state.assessmentAttemptsRemaining??3;let backendAuthoritative=false;let backendEntitlements={};let backendValidatedCredentials=[];
+const stateStorageKey=developerPreview?'elrpDeveloperPreviewState':'elrpState';
+const state=JSON.parse(localStorage.getItem(stateStorageKey)||'{}');state.completed=state.completed||[];state.reflections=state.reflections||{};state.baseline=state.baseline||baselineDefaults;state.assessmentComplete=!!state.assessmentComplete;state.tools=state.tools||{};state.weeklyTests=state.weeklyTests||{};state.assessmentAttemptCount=state.assessmentAttemptCount||0;state.assessmentAttemptsRemaining=state.assessmentAttemptsRemaining??3;let backendAuthoritative=false;let backendEntitlements={};let backendValidatedCredentials=[];
 function toast(msg){let t=document.getElementById('saveToast');if(!t){t=document.createElement('div');t.id='saveToast';t.className='save-toast';document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),1400)}
-function saveState(msg){localStorage.setItem('elrpState',JSON.stringify(state));updateProgress();if(msg)toast(msg)}
+function saveState(msg){localStorage.setItem(stateStorageKey,JSON.stringify(state));updateProgress();if(msg)toast(msg)}
 function weekLearningContent(key){
  const w=programme[key];
  if(!w?.outcomes||!w?.brief)return '';
