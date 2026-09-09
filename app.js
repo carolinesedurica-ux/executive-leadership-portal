@@ -222,4 +222,4 @@ function setupEvents(){
  });
 }
 renderWeeks();renderWeeklyTests();renderAssessment();renderWeek4();attachGoButtons();setupEvents();renderAssessmentResults();updateProgress();
-if(developerPreview){const banner=document.createElement('div');banner.className='developer-preview-banner';banner.innerHTML='<strong>Developer Preview</strong><span>All programme areas are unlocked. Preview activity does not modify participant records.</span><a href="/developer.html" target="_top">Back to Developer Portal</a>';document.body.prepend(banner);}
+if(developerPreview){const banner=document.createElement('div');banner.className='developer-preview-banner';banner.innerHTML='<strong>Developer Preview</strong><span>All programme areas are unlocked. Preview activity does not modify participant records.</span><a href="/admin.html" target="_top">Back to Developer Portal</a>';document.body.prepend(banner);}
