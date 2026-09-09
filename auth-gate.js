@@ -192,7 +192,7 @@ function overlay(){
        const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:'admin',password:e.target.adminPassword.value})});
        const data=await r.json();
        if(!r.ok)throw new Error(data.error||'Unable to sign in');
-       location.href='/developer.html';
+       location.href='/admin.html';
        return;
      }
 
