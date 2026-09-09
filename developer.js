@@ -209,7 +209,7 @@ function programmeView(){
        </button>`).join('')}
      </div>
      <div class="programme-week-actions">
-       <button type="button" class="primary-dev-btn" data-open-week="${w.key}">Open full ${w.week}</button>
+       <a class="primary-dev-btn" href="${previewUrl(w.key)}" data-open-week="${w.key}">Open full ${w.week}</a>
        <button type="button" data-open-week="${w.key}-test">Open weekly test</button>
        ${w.videoUrl?`<a href="${w.videoUrl}" target="_blank" rel="noopener">Open video ↗</a>`:''}
      </div>
@@ -220,6 +220,7 @@ function programmeView(){
    <button type="button" class="primary-dev-btn" data-open-week="assessment">Open assessment →</button>
  </section>`;
  document.querySelectorAll('[data-open-week]').forEach(b=>b.onclick=e=>{
+   e.preventDefault();
    e.stopPropagation();
    openPreview(b.dataset.openWeek,b.dataset.focus||'');
  });
