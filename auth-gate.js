@@ -1,6 +1,7 @@
 (()=>{
 const qs=new URLSearchParams(location.search);
 let role=qs.get('admin')==='1'?'admin':'client';
+const developerPreview=qs.get('developer')==='1';
 let clientMode='signin';
 let lastSnapshot='';
 let syncing=false;
@@ -191,7 +192,7 @@ function overlay(){
        const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:'admin',password:e.target.adminPassword.value})});
        const data=await r.json();
        if(!r.ok)throw new Error(data.error||'Unable to sign in');
-       location.href='/admin.html';
+       location.href='/developer.html';
        return;
      }
 
@@ -379,6 +380,19 @@ async function establishPortalSessionFromSupabase(){
 }
 
 async function boot(){
+ if(developerPreview){
+   try{
+     const r=await fetch('/api/session',{cache:'no-store'});
+     const s=await r.json();
+     if(s.authenticated&&s.role==='admin'){
+       document.body.classList.add('developer-preview-active');
+       document.dispatchEvent(new CustomEvent('wrv:developer-preview-authenticated'));
+       return;
+     }
+   }catch{}
+   location.href='/?admin=1';
+   return;
+ }
  if(recoveryMode){
    recoveryOverlay();
    return;
