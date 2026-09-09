@@ -7,120 +7,175 @@ const reflectionQuestions={
  week5:['What happens to your behaviour when you are under significant pressure?','Identify one situation that regularly triggers a strong emotional reaction in you as a leader. Why does it affect you?','What practice would most improve your ability to remain effective during demanding periods?'],
  week6:['What is one organisational change you believe you would need to lead if you stepped into a CEO or senior executive role today?','Why might people resist this change?','As an executive leader, I want people to experience me as someone who…']
 };
+
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-let participants=[],detail=null,section='dashboard',participantId='',week='week4';
+let participants=[],detail=null,section='dashboard',recordParticipantId='',week='week4';
 
 const state=()=>detail?.workspace?.elrp_state||{};
 const tools=()=>state().tools||{};
+const selectedParticipant=()=>participants.find(p=>p.id===recordParticipantId)||null;
 
 async function api(){
- const r=await fetch('/api/data?developer=1'+(participantId?'&participantId='+encodeURIComponent(participantId):''),{cache:'no-store'});
+ const r=await fetch('/api/data?developer=1',{cache:'no-store'});
  const out=await r.json();
  if(!r.ok)throw new Error(out.error||'Unable to load developer data');
  participants=out.participants||[];
+ detail=null;
+ recordParticipantId='';
+ render();
+ document.getElementById('devStatus').textContent='Developer mode · no participant attached · refreshed '+new Date(out.generatedAt).toLocaleTimeString();
+}
+
+async function loadParticipant(id){
+ recordParticipantId=String(id||'');
+ detail=null;
+ if(!recordParticipantId){render();return}
+ const r=await fetch('/api/data?developer=1&participantId='+encodeURIComponent(recordParticipantId),{cache:'no-store'});
+ const out=await r.json();
+ if(!r.ok)throw new Error(out.error||'Unable to load participant record');
  detail=out.detail||null;
- if(!participantId&&participants[0]){participantId=participants[0].id;return api()}
- renderPicker();render();
- document.getElementById('devStatus').textContent='Administrator · live Supabase data · refreshed '+new Date(out.generatedAt).toLocaleTimeString();
+ render();
+ document.getElementById('devStatus').textContent='Developer mode · participant results view · '+new Date(out.generatedAt).toLocaleTimeString();
 }
-function renderPicker(){
- const s=document.getElementById('participantSelect');
- s.innerHTML='<option value="">Select participant</option>'+participants.map(p=>`<option value="${esc(p.id)}" ${p.id===participantId?'selected':''}>${esc(p.full_name||p.email)} · ${esc(p.email)}</option>`).join('');
-}
-function participant(){return participants.find(p=>p.id===participantId)||null}
-function stats(){
- const p=participant();
- const completed=p?.completedWeeks||0;
- const tests=detail?.weeklyTests||[];
- const avg=tests.length?tests.reduce((a,b)=>a+Number(b.score||0),0)/tests.length:0;
- const attempts=detail?.assessmentAttempts||[];
- const latest=attempts[attempts.length-1];
+
+function aggregateStats(){
+ const totalTests=participants.reduce((sum,p)=>sum+(p.weeklyTests?.length||0),0);
+ const assessmentAttempts=participants.reduce((sum,p)=>sum+Number(p.assessmentAttempts||0),0);
+ const completedWeeks=participants.reduce((sum,p)=>sum+Number(p.completedWeeks||0),0);
+ const possible=participants.length*6;
  return `<div class="stats">
- <div class="stat"><span>Participants</span><strong>${participants.length}</strong></div>
- <div class="stat"><span>Weeks completed</span><strong>${completed}/6</strong></div>
- <div class="stat"><span>Tests submitted</span><strong>${tests.length}/6</strong></div>
- <div class="stat"><span>Average test score</span><strong>${tests.length?avg.toFixed(1)+'%':'—'}</strong></div>
- <div class="stat"><span>Latest overall</span><strong>${latest?Number(latest.overall_score).toFixed(1)+'%':'—'}</strong></div>
+   <div class="stat"><span>Participants enrolled</span><strong>${participants.length}</strong></div>
+   <div class="stat"><span>Weekly tests submitted</span><strong>${totalTests}</strong></div>
+   <div class="stat"><span>Assessment attempts</span><strong>${assessmentAttempts}</strong></div>
+   <div class="stat"><span>Weeks completed</span><strong>${completedWeeks}${possible?'/'+possible:''}</strong></div>
+   <div class="stat"><span>Developer preview</span><strong style="font-size:17px">All unlocked</strong></div>
  </div>`;
 }
+
+function participantRecordPicker(copy='Select a participant to view their programme record.'){
+ return `<section class="card record-picker">
+   <div><span class="kicker">Participant results</span><h2>Choose a participant</h2><p class="muted">${esc(copy)}</p></div>
+   <select data-record-participant>
+     <option value="">Select participant…</option>
+     ${participants.map(p=>`<option value="${esc(p.id)}" ${p.id===recordParticipantId?'selected':''}>${esc(p.full_name||p.email)} · ${esc(p.email)}</option>`).join('')}
+   </select>
+ </section>`;
+}
+
+function bindRecordPicker(){
+ document.querySelectorAll('[data-record-participant]').forEach(select=>{
+   select.onchange=e=>loadParticipant(e.target.value).catch(showError);
+ });
+}
+
 function dashboard(){
- const p=participant();
- const completed=(detail?.progress||[]).filter(x=>x.status==='completed');
- const current=(detail?.progress||[]).filter(x=>['unlocked','in_progress'].includes(x.status)).sort((a,b)=>(b.milestoneKey||'').localeCompare(a.milestoneKey||''))[0];
  document.getElementById('devView').innerHTML=`
- <section class="hero"><div><span class="kicker" style="color:#e2c98f">Development command centre</span><h1>Build, inspect and monitor the programme.</h1><p>Preview the complete learner portal without progression restrictions, then switch to real participant records to review learning evidence and results.</p></div><span class="badge">Non-destructive preview enabled</span></section>
- ${stats()}
+ <section class="hero"><div><span class="kicker" style="color:#e2c98f">Development command centre</span><h1>Build and inspect the full programme.</h1><p>The development preview is completely separate from learner progression. Participant data is only loaded when you deliberately open a results area and choose a participant.</p></div><span class="badge">No learner attached</span></section>
+ ${aggregateStats()}
  <div class="grid2">
-  <section class="card"><h2>Selected participant</h2>${p?`<p><strong>${esc(p.full_name||p.email)}</strong><br><span class="muted">${esc(p.email)}</span></p><div class="answer"><div class="q">Current progression</div><div class="a">${esc(current?.milestoneTitle||'No active milestone')} · ${completed.length} milestones completed</div></div><div class="answer"><div class="q">First-half test contribution</div><div class="a">${Number(detail?.firstHalfWeighted||0).toFixed(1)} / 30</div></div><div class="answer"><div class="q">Second-half test contribution</div><div class="a">${Number(detail?.secondHalfWeighted||0).toFixed(1)} / 30</div></div>`:'<div class="empty">No participant selected.</div>'}</section>
-  <section class="card"><h2>Developer shortcuts</h2><p class="muted">These links are for programme development and review.</p><div class="preview-tools"><button data-jump="preview">Open full preview</button><button data-jump="results">Review scores</button><button data-jump="responses">Read reflections</button></div><div class="danger-note">Participant records are read-only here. Use learner accounts for genuine submissions; use Developer Preview for inspection and testing.</div></section>
+   <section class="card"><h2>Programme development</h2><p class="muted">Use Programme Preview to access every module without progression gates.</p><div class="preview-tools"><button data-jump="preview">Open full preview</button></div><div class="danger-note"><strong>Developer Preview:</strong> Weeks 1–6, weekly tests and the mid-course assessment are unlocked. Nothing you do in preview changes participant records.</div></section>
+   <section class="card"><h2>Learner records</h2><p class="muted">Participant records are separate from programme development.</p><div class="preview-tools"><button data-jump="results">Results & scores</button><button data-jump="responses">Reflections</button><button data-jump="assessments">Assessments</button></div><p class="muted">A participant is selected only after you enter one of these results areas.</p></section>
  </div>`;
  bindJumps();
 }
+
 function preview(){
+ detail=null;
+ recordParticipantId='';
  const modules=[
   ['week1','Week 1','Leadership Identity'],
+  ['week1-test','Week 1 Test','10% weekly assessment'],
   ['week2','Week 2','Executive Presence'],
+  ['week2-test','Week 2 Test','10% weekly assessment'],
   ['week3','Week 3','Speaking with Clarity'],
+  ['week3-test','Week 3 Test','10% weekly assessment'],
   ['assessment','Assessment','Mid-Course Assessment'],
   ['week4','Week 4','Influence & Impact'],
+  ['week4-test','Week 4 Test','10% weekly assessment'],
   ['week5','Week 5','Resilience & Self-Leadership'],
-  ['week6','Week 6','Leading Sustainable Change']
+  ['week5-test','Week 5 Test','10% weekly assessment'],
+  ['week6','Week 6','Leading Sustainable Change'],
+  ['week6-test','Week 6 Test','10% weekly assessment']
  ];
- document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Programme preview</span><h1>All-access developer view</h1></div><span class="pill">Developer only · all unlocked</span></div>
- <div class="danger-note" style="margin-bottom:12px"><strong>Developer access:</strong> Weeks 1–6, all weekly tests and the assessment are available here regardless of learner progression. This does not change what participants can access.</div>
+ document.getElementById('devView').innerHTML=`
+ <div class="section-title"><div><span class="kicker">Programme preview</span><h1>All-access developer view</h1></div><span class="pill">No participant attached</span></div>
+ <div class="danger-note" style="margin-bottom:12px"><strong>Developer access:</strong> This preview ignores all learner progression, score and credential locks. Participant access rules remain unchanged.</div>
  <div class="tabs dev-module-jump">${modules.map(([view,label,title])=>`<button data-dev-view="${view}"><strong>${label}</strong> · ${title}</button>`).join('')}</div>
  <div class="preview-tools"><a href="/?developer=1" target="_blank">Open full programme ↗</a><button id="reloadPreview">Reload preview</button></div>
  <iframe class="preview-frame" id="previewFrame" src="/?developer=1" title="Executive Leadership Developer Preview"></iframe>`;
  document.getElementById('reloadPreview').onclick=()=>document.getElementById('previewFrame').contentWindow.location.reload();
  document.querySelectorAll('[data-dev-view]').forEach(b=>b.onclick=()=>{
-   const view=b.dataset.devView;
-   document.getElementById('previewFrame').src='/?developer=1&view='+encodeURIComponent(view);
+   document.getElementById('previewFrame').src='/?developer=1&view='+encodeURIComponent(b.dataset.devView);
  });
+ document.getElementById('devStatus').textContent='Developer mode · programme preview · no participant attached';
 }
-function participantsView(){
- document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Participants</span><h1>Enrolment & progression</h1></div></div><section class="card table-wrap"><table class="dev-table"><thead><tr><th>Participant</th><th>Enrolled</th><th>Weeks</th><th>Current</th><th>First-half</th><th>Second-half</th><th>Latest overall</th></tr></thead><tbody>${participants.map(p=>`<tr><td><strong>${esc(p.full_name||'—')}</strong><br><span class="muted">${esc(p.email)}</span></td><td>${p.enrollment?.enrolled_at?new Date(p.enrollment.enrolled_at).toLocaleDateString():'—'}</td><td>${p.completedWeeks}/6</td><td><span class="pill dim">${esc(p.currentMilestone||'—')}</span></td><td>${Number(p.firstHalfWeighted||0).toFixed(1)}/30</td><td>${Number(p.secondHalfWeighted||0).toFixed(1)}/30</td><td>${p.latestOverallScore!=null?Number(p.latestOverallScore).toFixed(1)+'%':'—'}</td></tr>`).join('')}</tbody></table></section>`;
-}
+
 function results(){
- if(!detail)return empty();
+ const body=detail?renderResultsDetail():'<div class="card empty">Choose a participant above to review their results.</div>';
+ document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Results</span><h1>Weekly marks & progression</h1></div></div>${participantRecordPicker('Participant selection applies only to this results view and never to Programme Preview.')}${body}`;
+ bindRecordPicker();
+}
+
+function renderResultsDetail(){
  const tests=detail.weeklyTests||[];
  const progress=detail.progress||[];
- document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Results</span><h1>Weekly marks & progression</h1></div></div>${stats()}
+ const p=selectedParticipant();
+ return `<div class="card"><h2>${esc(p?.full_name||p?.email||'Participant')}</h2><p class="muted">${esc(p?.email||'')}</p></div>
  <div class="grid2"><section class="card"><h2>Weekly test results</h2>${tests.length?tests.map(t=>`<div class="score-row"><strong>${esc((t.milestoneKey||'').replace('week','Week '))}</strong><div class="score-bar"><i style="width:${Math.max(0,Math.min(100,Number(t.score||0)))}%"></i></div><span>${Number(t.score).toFixed(1)}%</span></div><div class="muted" style="margin:-5px 0 10px 172px">MCQ ${Number(t.mcq_score).toFixed(1)}/50 · Written ${Number(t.written_score).toFixed(1)}/50 · contribution ${Number(t.contribution).toFixed(1)}/10</div>`).join(''):'<div class="empty">No weekly tests submitted yet.</div>'}</section>
  <section class="card"><h2>Milestone status</h2>${progress.map(x=>`<div class="answer"><div class="q">${esc(x.milestoneTitle||x.milestoneKey)}</div><div class="a"><span class="pill ${x.status==='completed'?'':'dim'}">${esc(x.status)}</span> ${x.score!=null?' · score '+Number(x.score).toFixed(1)+'%':''}</div></div>`).join('')||'<div class="empty">No milestone progress yet.</div>'}</section></div>`;
 }
+
 function responses(){
- if(!detail)return empty();
- const s=state();const q=reflectionQuestions[week]||[];
- const outputEntries=Object.entries(tools()).filter(([k,v])=>k.startsWith(week+'-')&&String(v||'').trim());
- document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Learning evidence</span><h1>Reflections & executive outputs</h1></div></div><div class="tabs">${Object.keys(reflectionQuestions).map(k=>`<button data-week="${k}" class="${k===week?'active':''}">${k.replace('week','Week ')}</button>`).join('')}</div>
- <div class="grid2"><section class="card"><h2>Reflections</h2>${q.map((x,i)=>answer(x,s.reflections?.[week+'-'+i])).join('')}</section><section class="card"><h2>Saved tools & outputs</h2>${outputEntries.length?outputEntries.map(([k,v])=>answer(k.replace(week+'-','').replaceAll('-',' '),v)).join(''):'<div class="empty">No saved output fields for this week yet.</div>'}</section></div>`;
- document.querySelectorAll('[data-week]').forEach(b=>b.onclick=()=>{week=b.dataset.week;responses()});
+ const body=detail?renderResponsesDetail():'<div class="card empty">Choose a participant above to review their reflections and outputs.</div>';
+ document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Learning evidence</span><h1>Reflections & executive outputs</h1></div></div>${participantRecordPicker()}${body}`;
+ bindRecordPicker();
+ if(detail)document.querySelectorAll('[data-week]').forEach(b=>b.onclick=()=>{week=b.dataset.week;responses()});
 }
+function renderResponsesDetail(){
+ const s=state(),q=reflectionQuestions[week]||[];
+ const outputEntries=Object.entries(tools()).filter(([k,v])=>k.startsWith(week+'-')&&String(v||'').trim());
+ return `<div class="tabs">${Object.keys(reflectionQuestions).map(k=>`<button data-week="${k}" class="${k===week?'active':''}">${k.replace('week','Week ')}</button>`).join('')}</div>
+ <div class="grid2"><section class="card"><h2>Reflections</h2>${q.map((x,i)=>answer(x,s.reflections?.[week+'-'+i])).join('')}</section><section class="card"><h2>Saved tools & outputs</h2>${outputEntries.length?outputEntries.map(([k,v])=>answer(k.replace(week+'-','').replaceAll('-',' '),v)).join(''):'<div class="empty">No saved output fields for this week yet.</div>'}</section></div>`;
+}
+
 function assessments(){
- if(!detail)return empty();
+ const body=detail?renderAssessmentDetail():'<div class="card empty">Choose a participant above to review assessment attempts and access history.</div>';
+ document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Assessment control</span><h1>Assessment attempts & access credentials</h1></div></div>${participantRecordPicker()}${body}`;
+ bindRecordPicker();
+}
+function renderAssessmentDetail(){
  const attempts=detail.assessmentAttempts||[],creds=detail.credentials||[],results=detail.assessmentResults||[];
- document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Assessment control</span><h1>Assessment attempts & access credentials</h1></div></div>
- <div class="grid2"><section class="card"><h2>Assessment attempts</h2>${attempts.length?attempts.map(a=>`<div class="answer"><div class="q">Attempt ${a.attempt_number} · ${a.passed?'Passed':'Not passed'}</div><div class="a">Final assessment: ${Number(a.final_assessment_percent).toFixed(1)}% · weekly contribution: ${Number(a.weekly_weighted_score).toFixed(1)}/30 · overall: <strong>${Number(a.overall_score).toFixed(1)}%</strong><br>${new Date(a.submitted_at).toLocaleString()}</div></div>`).join(''):'<div class="empty">No assessment attempts yet.</div>'}</section>
+ return `<div class="grid2"><section class="card"><h2>Assessment attempts</h2>${attempts.length?attempts.map(a=>`<div class="answer"><div class="q">Attempt ${a.attempt_number} · ${a.passed?'Passed':'Not passed'}</div><div class="a">Final assessment: ${Number(a.final_assessment_percent).toFixed(1)}% · weekly contribution: ${Number(a.weekly_weighted_score).toFixed(1)}/30 · overall: <strong>${Number(a.overall_score).toFixed(1)}%</strong><br>${new Date(a.submitted_at).toLocaleString()}</div></div>`).join(''):'<div class="empty">No assessment attempts yet.</div>'}</section>
  <section class="card"><h2>Access credentials</h2><p class="muted">Secret credential values and hashes are intentionally not exposed.</p>${creds.length?creds.map(c=>`<div class="answer"><div class="q">${esc(c.milestoneTitle||c.milestoneKey)} · ${esc(c.status)}</div><div class="a">Issued: ${new Date(c.issued_at).toLocaleString()}<br>Expires: ${new Date(c.expires_at).toLocaleString()}<br>Used: ${c.used_at?new Date(c.used_at).toLocaleString():'No'}<br>Email sent: ${c.email_sent_at?'Yes':'No'}${c.email_last_error?'<br>Email error: '+esc(c.email_last_error):''}</div></div>`).join(''):'<div class="empty">No credentials issued yet.</div>'}</section></div>
  ${results.length?'<section class="card"><h2>Saved assessment result records</h2><div class="codeish">'+esc(JSON.stringify(results,null,2))+'</div></section>':''}`;
 }
+
 function activity(){
- if(!detail)return empty();
- const logs=detail.audit||[];
- document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Audit trail</span><h1>Participant activity</h1></div></div><section class="card"><div class="audit">${logs.length?logs.map(x=>`<div class="audit-item"><span>${new Date(x.created_at).toLocaleString()}</span><strong>${esc(x.event)}</strong><div><span class="muted">${esc(x.milestoneTitle||x.milestoneKey||'Programme')}</span><div class="codeish">${esc(JSON.stringify(x.metadata||{}))}</div></div></div>`).join(''):'<div class="empty">No activity logged yet.</div>'}</div></section>`;
+ const body=detail?renderActivityDetail():'<div class="card empty">Choose a participant above to review their activity log.</div>';
+ document.getElementById('devView').innerHTML=`<div class="section-title"><div><span class="kicker">Audit trail</span><h1>Participant activity</h1></div></div>${participantRecordPicker()}${body}`;
+ bindRecordPicker();
 }
+function renderActivityDetail(){
+ const logs=detail.audit||[];
+ return `<section class="card"><div class="audit">${logs.length?logs.map(x=>`<div class="audit-item"><span>${new Date(x.created_at).toLocaleString()}</span><strong>${esc(x.event)}</strong><div><span class="muted">${esc(x.milestoneTitle||x.milestoneKey||'Programme')}</span><div class="codeish">${esc(JSON.stringify(x.metadata||{}))}</div></div></div>`).join(''):'<div class="empty">No activity logged yet.</div>'}</div></section>`;
+}
+
 function answer(q,a){const has=String(a??'').trim();return `<div class="answer"><div class="q">${esc(q)}</div><div class="a">${has?esc(a):'<span class="muted">No response yet.</span>'}</div></div>`}
-function empty(){document.getElementById('devView').innerHTML='<div class="card empty">Select a participant to review their record.</div>'}
 function bindJumps(){document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>setSection(b.dataset.jump))}
-function setSection(s){section=s;document.querySelectorAll('.dev-side [data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===s));render()}
-function render(){({dashboard,preview,participants:participantsView,results,responses,assessments,activity}[section]||dashboard)()}
+function setSection(s){
+ section=s;
+ if(s==='preview'){detail=null;recordParticipantId=''}
+ document.querySelectorAll('.dev-side [data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===s));
+ render();
+}
+function render(){({dashboard,preview,results,responses,assessments,activity}[section]||dashboard)()}
+
 async function boot(){
  const r=await fetch('/api/session',{cache:'no-store'});const s=await r.json();
  if(!s.authenticated||s.role!=='admin'){location.href='/?admin=1';return}
  await api();
 }
 document.querySelectorAll('.dev-side [data-section]').forEach(b=>b.onclick=()=>setSection(b.dataset.section));
-document.getElementById('participantSelect').onchange=e=>{participantId=e.target.value;detail=null;api().catch(showError)};
 document.getElementById('refreshBtn').onclick=()=>api().catch(showError);
 document.getElementById('signOutBtn').onclick=async()=>{await fetch('/api/logout',{method:'POST'});location.href='/?admin=1'};
 function showError(err){document.getElementById('devStatus').textContent=err.message;document.getElementById('devView').innerHTML='<div class="card empty">'+esc(err.message)+'</div>'}
