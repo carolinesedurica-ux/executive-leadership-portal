@@ -17,6 +17,63 @@ const programmeCatalog=[
  {key:'week6',week:'Week 6',title:'Leading Sustainable Change',video:'From Vision to Reality: How Executives Lead Sustainable Change',lab:'Change Lab · Reality, Direction, Ownership, Measure',output:'My Executive Change Blueprint',videoUrl:'https://qxqravtajqj1esoa.public.blob.vercel-storage.com/executive-%20leadership%20part%202/Leading_Sustainable_Change.mp4'}
 ];
 
+const developerProgrammeContent={
+ week1:{
+  intro:'Leadership begins before the title. This week focuses on understanding who you are as a leader, recognising the strengths you already bring, and identifying the situations that cause you to hesitate or second-guess yourself.',
+  outcomes:['Articulate the leadership qualities and principles you want others to experience consistently.','Recognise the situations that trigger hesitation, over-checking or unnecessary self-doubt.','Distinguish personal worth from a single performance outcome or mistake.','Use evidence, judgement and reasonable risk assessment to make decisions with greater self-trust.','Translate leadership identity into visible workplace behaviour and follow-through.'],
+  brief:[['Identity comes before authority','Leadership identity is the internal answer to the question: “Who am I when responsibility increases?” A title can give formal authority, but it cannot create consistency, courage or judgement. People experience your leadership through the way you decide, communicate, handle pressure and take ownership.'],['Self-worth is not the same as performance','A strong leader can take performance seriously without turning every mistake or difficult meeting into a verdict on personal worth. Separating worth from performance creates room for accountability, learning and correction.'],['Confidence should be built from evidence','Past decisions, problems solved, conversations handled, expertise gained and challenges survived create a record of capability. Evidence-based confidence reduces the need for repeated reassurance.'],['Good judgement includes uncertainty','Leadership rarely offers perfect information. Responsible judgement means gathering enough relevant information, identifying risks, applying criteria, deciding and adjusting when new evidence appears.'],['Make your leadership visible','Intentions do not create a leadership reputation; repeated behaviour does. Values become credible when words and actions consistently point in the same direction.']],
+  outputs:[['My leadership identity','Complete: “As a leader, I am someone who…”'],['What I stand for','Which principles or standards will guide my decisions?'],['How I want people to experience me','What should colleagues consistently feel or observe when working with me?'],['Strengths I will lead from','Which existing strengths give me evidence that I can lead effectively?'],['My three leadership non-negotiables','Name three behaviours or standards you will protect even when pressure rises.']],
+  lab:{title:'Leadership Compass',intro:'Choose the leadership qualities you want people to consistently experience from you.',fields:[['Qualities','Calm · Clear · Decisive · Fair · Courageous · Empathetic · Strategic · Consistent · Curious · Accountable'],['Leadership identity anchor','What behaviour would make your chosen qualities visible in a real leadership moment?']]},
+  reflections:reflectionQuestions.week1,
+  challenge:'Choose one real workplace situation where you would normally hesitate, hold back or over-explain. Ask: “What does this situation need from me as a leader?” Then deliberately practise one leadership behaviour.'
+ },
+ week2:{
+  intro:'Leadership presence is not about being the loudest person in the room. It is the combination of composure, clarity, communication and personal authority that shapes how others experience your leadership.',
+  outcomes:['Regulate pace, posture, voice and response time so you remain composed when pressure rises.','Lead important communication with the key message or recommendation rather than unnecessary background detail.','Reduce over-explaining and use concise evidence to support your position.','Hold your position calmly while remaining open to relevant questions, feedback and new evidence.','Deliver a structured 60–90 second executive update with a clear close and next step.'],
+  brief:[['Presence is a leadership signal','Executive presence is the collection of signals people use to decide whether they can trust your judgement, follow your direction and stay confident when pressure rises.'],['Composure creates thinking space','A deliberate pause, controlled breathing and a slower speaking pace create cognitive space to think and protect judgement.'],['Lead with the point','Senior audiences usually need the message before the history. Start with your position, recommendation or decision, then explain the reason, evidence and next step.'],['Personal authority is calm, not rigid','Personal authority means being willing to state what you think, why you think it and what you recommend without becoming defensive or dominating.'],['Contribution matters more than approval','Shift attention from “How am I being judged?” to “What contribution does this situation need from me?”']],
+  outputs:[['Situation & audience','What is the context, and who needs to hear this message?'],['My key message','What is the single point, position or decision the audience must understand first?'],['Evidence & rationale','Which two or three facts, risks or reasons support your position?'],['Recommendation / next step','What do you recommend, need approved, or want to happen next?'],['My 60–90 second executive update','Write the spoken version: lead with the point, support it briefly, and close with the next step.']],
+  lab:{title:'Presence Lab',intro:'Choose one behaviour to practise in your next important meeting.',fields:[['Presence practice','Pause before answering · Slow my speaking pace · State my recommendation first · Use fewer words · Hold my position calmly'],['Rehearsal cue','Write the sentence you want to remember before the meeting.']]},
+  reflections:reflectionQuestions.week2,
+  challenge:'At your next important meeting, deliberately practise one presence behaviour and observe how it changes the quality of your communication.'
+ },
+ week3:{
+  intro:'Leadership sometimes requires saying what needs to be said even when the conversation may be uncomfortable. Assertiveness allows you to communicate clearly while maintaining respect and preserving dignity.',
+  outcomes:['Distinguish assertive communication from passive avoidance and aggressive confrontation.','Frame a difficult issue using observable facts rather than character judgement.','Use the CLEAR framework to prepare and lead a difficult workplace conversation.','Set a respectful boundary or expectation without apologising for the legitimate need behind it.','Respond to defensiveness while preserving composure, clarity, accountability and follow-up.'],
+  brief:[['Clarity reduces unnecessary conflict','Start with observable facts: what happened, what was expected and what impact followed. Clear issue framing reduces argument about interpretation.'],['Assertiveness is respect with a position','Assertive leadership communicates the issue, perspective, boundary or request clearly while recognising the other person’s dignity.'],['Listening does not require surrender','A leader can seek to understand another person without abandoning a justified position. Curiosity and firmness can exist together.'],['Boundaries make expectations usable','Effective boundaries are specific, proportionate and relevant to the work. Their purpose is to protect standards, roles, time, safety or respectful working relationships.'],['Close the accountability loop','A difficult conversation is not complete until action, ownership, standard, deadline and review point are clear.']],
+  outputs:[['The issue in observable facts','What happened, what was expected, and what impact has followed?'],['The outcome I need','What needs to be understood, decided, changed or agreed?'],['My opening statement','Write the first 2–3 sentences.'],['Likely resistance & my response','How might the other person react, and how will you stay calm and return to the issue?'],['Boundary, action & follow-up','What expectation or boundary must be clear, who owns the next action, and when will progress be reviewed?']],
+  lab:{title:'Conversation Lab · CLEAR Framework',intro:'Prepare one real difficult conversation.',fields:[['Clarify','What is the issue in observable facts?'],['Listen','What do you need to understand from the other person?'],['Explain','What is your position or expectation?'],['Agree','What action or boundary must be agreed?'],['Review','When and how will follow-up happen?']]},
+  reflections:reflectionQuestions.week3,
+  challenge:'Use the CLEAR framework in one real workplace conversation: Clarify the issue, Listen, Explain your position, Agree the action, Review and follow through.'
+ },
+ week4:{
+  intro:'Senior leadership depends on more than authority. This week develops the ability to build credibility, understand stakeholders, handle resistance and move people toward action through ethical influence.',
+  outcomes:['Distinguish positional authority from executive influence.','Identify the credibility, relationship, relevance and clarity factors that strengthen influence.','Adapt the framing of a recommendation to different stakeholder priorities without manipulating the message.','Respond to resistance with curiosity, evidence and composure rather than defensiveness.','Deliver a concise influence statement that makes the decision or action required clear.'],
+  brief:[['Authority can secure compliance; influence builds commitment','A title gives formal decision rights, but senior leaders routinely depend on colleagues, boards, clients, regulators and specialists they cannot simply instruct. Influence shapes thinking and action through credibility, trust, reasoning and relevance.'],['Credibility is accumulated before the important meeting','Preparation, competence, consistency, integrity and follow-through affect whether others trust your judgement. Credibility is a leadership account funded over time by reliable behaviour.'],['Relevance makes good ideas easier to hear','Finance may focus on cost and exposure, operations on implementation, employees on workload and certainty, and a board on governance and strategic risk. Ethical influence connects the same truth to the priorities of the audience without changing facts.'],['Resistance is information before it is opposition','Resistance may reflect budget pressure, risk, past experience, workload, loss of control or a flaw in the plan. Become curious before becoming defensive.'],['Influence becomes useful when it leads to action','Executive communication should clarify what is happening, why it matters, what you recommend, the organisational benefit or risk, and what decision or action is required.']],
+  outputs:[['The outcome I need','What decision, support or action am I trying to secure?'],['My three critical stakeholders','Who are they, and why does their support matter?'],['What matters to them','What priority, risk, concern or decision criterion matters most to each stakeholder?'],['Likely resistance & response','What may cause resistance, and what question or evidence will help address it?'],['My 60-second influence statement','State the situation, why it matters, your recommendation, the organisational benefit and the decision or action required.']],
+  lab:{title:'Influence Lab · Stakeholder, Priority, Resistance, Message',intro:'Use one stakeholder and test the logic of your influence approach.',fields:[['Stakeholder','Whose support do I need?'],['Priority','What matters most to them?'],['Resistance','What concern may block support?'],['Message','What is my clearest decision or action request?']]},
+  reflections:reflectionQuestions.week4,
+  challenge:'Choose one real proposal or decision you need to advance. Map the key stakeholder, identify what matters to them, anticipate one likely concern, then deliver a 60-second influence statement that ends with a clear decision or action request.'
+ },
+ week5:{
+  intro:'Executive responsibility brings ambiguity, criticism, competing demands and difficult decisions. This week develops the internal discipline to remain effective, thoughtful and behaviourally consistent when pressure rises.',
+  outcomes:['Recognise personal pressure patterns and early warning signs.','Use Pause, Name, Evaluate and Respond to create space between emotion and leadership behaviour.','Separate facts, assumptions and emotional reactions before making important decisions.','Use recovery, boundaries and delegation to protect judgement and sustainable performance.','Respond to mistakes and setbacks with accountability, learning and corrective action rather than rumination.'],
+  brief:[['Pressure reveals leadership patterns','Under pressure leaders often default to controlling, rushing, withdrawing, over-explaining, procrastinating or impatience. Self-leadership begins by recognising the pattern before it chooses the behaviour for you.'],['Create space between reaction and response','Pause. Name what you are feeling. Evaluate the facts, assumptions and outcome required. Then choose the response that serves the organisation.'],['Resilience is not unlimited absorption','Chronic overload narrows thinking, reduces patience and weakens judgement. Sustainable resilience includes delegation, protected thinking time, boundaries and recovery.'],['Reflection should produce learning','Reflection asks what happened, what was within your control and what you will change. Rumination replays the experience without useful movement.'],['Your regulation becomes part of the team climate','Panic can spread anxiety; blame can make people hide problems; calm accountability can make it safer to surface risk and solve problems.']],
+  outputs:[['My three leadership triggers','Which situations most reliably create defensiveness, urgency, impatience, withdrawal or over-control?'],['How I typically react','What changes in my communication, decisions, delegation or relationships?'],['My warning signs','What tells me that my leadership effectiveness is beginning to deteriorate?'],['My regulation strategy','How will I Pause, Name, Evaluate and Respond when triggered?'],['My recovery commitments','Which three practices will protect judgement, energy and sustainable performance?']],
+  lab:{title:'Pressure Reset Lab · Pause, Name, Evaluate, Respond',intro:'Use a real pressure moment and work through the four-step reset.',fields:[['Pause','What can wait long enough for you to think?'],['Name','What emotion or reaction is present?'],['Evaluate','What are the facts, assumptions and desired outcome?'],['Respond','What behaviour best serves the leadership outcome?']]},
+  reflections:reflectionQuestions.week5,
+  challenge:'Use Pause → Name → Evaluate → Respond in one real pressure moment. Record what triggered you, what you initially wanted to do, and what changed when you chose the response deliberately.'
+ },
+ week6:{
+  intro:'Executive leadership is ultimately measured by what changes because the leader was there. This week integrates identity, presence, communication, influence and self-leadership into the ability to move an organisation from intention to sustained behaviour.',
+  outcomes:['Build a compelling case for change that explains why action is necessary now.','Identify stakeholder support, resistance and the human impact of change.','Translate broad strategic intentions into specific behaviours, ownership, deadlines and measures.','Align leadership behaviour with the change being requested from others.','Reinforce progress until the new behaviour becomes part of normal organisational practice.'],
+  brief:[['Announcing change is not leading change','Statements such as “we need more accountability” describe aspirations, not implementation. Sustainable change requires clarity about why the change matters, what will be different, roles and measures.'],['A credible case for change begins with reality','Name the current reality honestly, explain the consequence of doing nothing and connect that reality to a clear future direction.'],['Resistance can improve the change plan','Resistance may reflect uncertainty, workload, history, trust, competence or personal impact. Listening helps leaders address avoidable barriers while remaining clear on direction.'],['Leadership consistency determines credibility','People pay close attention to what leaders model, reward, tolerate and follow through on. Change becomes credible when leadership behaviour and stated expectations align.'],['Execution needs ownership and reinforcement','Every strategic priority should answer: who owns it, what exactly will happen, by when, how progress will be measured and what happens if progress stalls.']],
+  outputs:[['Case for change','What needs to change, why now, and what happens if nothing changes?'],['Desired future','What should people or the organisation experience differently after successful implementation?'],['Stakeholder support & resistance','Who is affected, who may support the change, who may resist, and why?'],['Ownership, actions & measures','Who owns implementation, what are the first three actions, by when, and how will progress be measured?'],['The behaviour I must model','What must people consistently see from me for this change to remain credible?']],
+  lab:{title:'Change Lab · Reality, Direction, Ownership, Measure',intro:'Test whether your change idea is clear enough to execute.',fields:[['Reality','What is happening now?'],['Direction','What must be different?'],['Ownership','Who owns the first move?'],['Measure','How will you know progress is real?']]},
+  reflections:reflectionQuestions.week6,
+  challenge:'Choose one genuine organisational improvement and create a one-page change blueprint: case for change, desired future, key stakeholders, first three actions, owner, deadline, measure and the leadership behaviour you must personally model.'
+ }
+};
+
 const lessonItems=[
  ['watch','Watch','Explainer video'],
  ['outcomes','Outcomes','Weekly learning outcomes'],
@@ -96,44 +153,79 @@ function openPreview(view,focus=''){
  renderWeekWorkspace(view,focus);
 }
 
+function developerWeekMeta(key){
+ const base=programmeCatalog.find(x=>x.key===key);
+ const content=developerProgrammeContent[key];
+ return base&&content?{...base,...content}:null;
+}
+function developerVideo(meta){
+ if(!meta?.videoUrl)return `<div class="native-video-missing"><strong>${esc(meta?.video||'Explainer video')}</strong><span>Video link not currently attached in the Developer Portal.</span></div>`;
+ return `<div class="native-video"><video controls preload="metadata" playsinline><source src="${meta.videoUrl}" type="video/mp4">Your browser does not support HTML5 video.</video><div><strong>${esc(meta.video)}</strong><span>Developer preview · Vercel Blob</span></div></div>`;
+}
+function developerTestView(key){
+ const test=window.ELRP_WEEKLY_TESTS?.[key];
+ if(!test)return '<div class="native-empty">Weekly test configuration is not loaded.</div>';
+ return `<div class="native-test">
+   <div class="native-section-head"><span>Weekly Test · 10%</span><h2>${esc(test.title)}</h2><p>Developer view only. Answers are not submitted and no participant marks are changed.</p></div>
+   <div class="native-test-grid">
+    <section><h3>Part A · Multiple choice</h3>${test.mcq.map((q,i)=>`<div class="native-question"><strong>${i+1}. ${esc(q.prompt)}</strong>${q.options.map(opt=>`<label><input type="radio" name="dev-${key}-q${i}"> <span>${esc(opt)}</span></label>`).join('')}</div>`).join('')}</section>
+    <section><h3>Part B · Written answers</h3>${test.written.map((q,i)=>`<label class="native-written"><strong>${i+6}. ${esc(q)}</strong><textarea placeholder="Developer test response preview"></textarea></label>`).join('')}</section>
+   </div>
+  </div>`;
+}
+function developerAssessmentView(){
+ const dimensions=['Confidence in my leadership capability','Trust in my judgement','Leadership presence in meetings','Remaining composed when challenged','Communicating clearly and concisely','Speaking confidently with senior colleagues','Assertiveness','Expressing disagreement respectfully','Having difficult conversations','Setting boundaries and saying no','Handling another person’s defensiveness','Speaking without unnecessary over-explanation'];
+ return `<div class="native-lesson">
+   <section class="native-lesson-hero"><span>Mid-Course Assessment</span><h2>Leadership Assessment</h2><p>Weeks 1–3 weekly tests contribute 30%. This assessment contributes 70%. Overall pass mark: 80%. Maximum attempts: 3. Passing generates the 7-character Week 4 access credential for participants.</p></section>
+   <section class="native-lesson-card"><div class="native-section-head"><span>Assessment dimensions</span><h2>12 leadership capability ratings</h2></div><div class="native-outcomes">${dimensions.map((x,i)=>`<div><span>${String(i+1).padStart(2,'0')}</span><p>${esc(x)}</p></div>`).join('')}</div></section>
+   <section class="native-lesson-card"><div class="native-section-head"><span>Evidence of change</span><h2>Written reflection prompts</h2></div>
+    <div class="native-fields"><label><strong>Greatest improvement</strong><textarea placeholder="Developer preview"></textarea></label><label><strong>Evidence situation</strong><textarea placeholder="Developer preview"></textarea></label><label><strong>Remaining leadership challenge</strong><textarea placeholder="Developer preview"></textarea></label></div>
+   </section>
+  </div>`;
+}
+function developerLessonView(key){
+ const w=developerWeekMeta(key);
+ if(!w)return '<div class="native-empty">Week content not found.</div>';
+ return `<div class="native-lesson" data-native-week="${key}">
+   <section class="native-lesson-hero" id="dev-watch"><span>${w.week}</span><h2>${esc(w.title)}</h2><p>${esc(w.intro)}</p></section>
+   <section class="native-lesson-card"><div class="native-section-head"><span>01 · Watch</span><h2>${esc(w.video)}</h2></div>${developerVideo(w)}</section>
+   <section class="native-lesson-card" id="dev-outcomes"><div class="native-section-head"><span>Learning outcomes</span><h2>By the end of this week, the learner will be able to…</h2></div><div class="native-outcomes">${w.outcomes.map((x,i)=>`<div><span>${String(i+1).padStart(2,'0')}</span><p>${esc(x)}</p></div>`).join('')}</div></section>
+   <section class="native-lesson-card" id="dev-brief"><div class="native-section-head"><span>Leadership Brief</span><h2>Core executive learning</h2></div><div class="native-brief-grid">${w.brief.map(([title,body],i)=>`<article><span>0${i+1}</span><h3>${esc(title)}</h3><p>${esc(body)}</p></article>`).join('')}</div></section>
+   <section class="native-lesson-card" id="dev-output"><div class="native-section-head"><span>Executive Output</span><h2>${esc(w.output)}</h2><p>Developer preview of the learner deliverable.</p></div><div class="native-fields">${w.outputs.map(([label,prompt])=>`<label><strong>${esc(label)}</strong><small>${esc(prompt)}</small><textarea placeholder="${esc(prompt)}"></textarea></label>`).join('')}</div></section>
+   <section class="native-lesson-card" id="dev-lab"><div class="native-section-head"><span>Leadership Lab</span><h2>${esc(w.lab.title)}</h2><p>${esc(w.lab.intro)}</p></div><div class="native-fields native-lab-fields">${w.lab.fields.map(([label,prompt])=>`<label><strong>${esc(label)}</strong><small>${esc(prompt)}</small><textarea placeholder="${esc(prompt)}"></textarea></label>`).join('')}</div></section>
+   <section class="native-lesson-card" id="dev-reflect"><div class="native-section-head"><span>02 · Reflect</span><h2>Guided reflection</h2></div><div class="native-fields">${w.reflections.map((q,i)=>`<label><strong>${i+1}. ${esc(q)}</strong><textarea placeholder="Developer reflection preview"></textarea></label>`).join('')}</div></section>
+   <section class="native-lesson-split">
+    <article class="native-lesson-card" id="dev-coach"><div class="native-section-head"><span>03 · Live coaching</span><h2>Bring a real situation</h2></div><p>Your live session uses the learner’s reflections and an actual leadership situation from work.</p><div class="native-callout"><strong>Coach focus</strong><span>What does this situation need from you as a leader?</span></div></article>
+    <article class="native-lesson-card" id="dev-apply"><div class="native-section-head"><span>04 · Apply</span><h2>Leadership challenge</h2></div><p>${esc(w.challenge)}</p></article>
+   </section>
+   <section class="native-lesson-card" id="dev-checkin"><div class="native-section-head"><span>05 · Check in</span><h2>End-of-week completion check</h2></div><div class="native-checks">${['I watched the explainer','I completed my reflection','I attended live coaching','I completed the workplace challenge'].map(x=>`<label><input type="checkbox"> <span>${x}</span></label>`).join('')}</div></section>
+   <section class="native-test-launch"><div><span>06 · Weekly Test</span><h2>10 questions · 5 MCQ + 5 written · 10%</h2></div><button type="button" data-native-test="${key}">Open full ${w.week} Test →</button></section>
+  </div>`;
+}
 function renderWeekWorkspace(view='week1',focus=''){
  const weekMatch=String(view).match(/^(week[1-6])(?:-test)?$/);
  const weekKey=weekMatch?.[1]||null;
  const isTest=/-test$/.test(view);
  const meta=programmeCatalog.find(x=>x.key===weekKey);
- const title=view==='assessment'?'Mid-Course Leadership Assessment':meta?meta.week+' · '+meta.title:'Programme Preview';
- const lessonNav=meta?`
-   <div class="workspace-lesson-nav">
-     ${lessonItems.map(([f,label])=>`<button type="button" data-workspace-target="${f==='test'?meta.key+'-test':meta.key}" data-workspace-focus="${f==='test'?'':f}" class="${(isTest&&f==='test')||(!isTest&&focus===f)?'active':''}">${label}</button>`).join('')}
-   </div>`:'';
+ const title=view==='assessment'?'Mid-Course Leadership Assessment':meta?meta.week+' · '+meta.title:'Programme';
+ const body=view==='assessment'?developerAssessmentView():isTest?developerTestView(weekKey):developerLessonView(weekKey||'week1');
  document.getElementById('devView').innerHTML=`
-   <section class="developer-workspace">
-     <div class="workspace-toolbar">
-       <div class="workspace-title">
-         <button type="button" class="workspace-back" id="workspaceBack">← Programme & Lessons</button>
-         <span class="kicker">Developer Week Workspace</span>
-         <h1>${esc(title)}</h1>
-       </div>
-       <div class="workspace-actions">
-         <button type="button" id="workspaceReload">Reload</button>
-         <a href="${previewUrl(view,focus)}" target="_blank" rel="noopener">Open full screen ↗</a>
-       </div>
-     </div>
-     <div class="workspace-week-nav">
-       ${programmeCatalog.map(w=>`<button type="button" data-workspace-week="${w.key}" class="${w.key===weekKey?'active':''}">${w.week}</button>`).join('')}
-       <button type="button" data-workspace-week="assessment" class="${view==='assessment'?'active':''}">Mid-Course Assessment</button>
-     </div>
-     ${lessonNav}
-     <div class="workspace-frame-wrap">
-       <iframe id="workspaceFrame" class="workspace-frame" src="${previewUrl(view,focus)}" title="${esc(title)}"></iframe>
-     </div>
+   <section class="developer-workspace native-workspace">
+    <div class="workspace-toolbar">
+     <div class="workspace-title"><button type="button" class="workspace-back" id="workspaceBack">← Programme & Lessons</button><span class="kicker">Developer Week Workspace</span><h1>${esc(title)}</h1></div>
+     <div class="workspace-actions"><a href="${previewUrl(view,focus)}" target="_blank" rel="noopener">Open learner-style preview ↗</a></div>
+    </div>
+    <div class="workspace-week-nav">${programmeCatalog.map(w=>`<button type="button" data-workspace-week="${w.key}" class="${w.key===weekKey?'active':''}">${w.week}</button>`).join('')}<button type="button" data-workspace-week="assessment" class="${view==='assessment'?'active':''}">Mid-Course Assessment</button></div>
+    ${meta&&!isTest?`<div class="workspace-lesson-nav">${[['watch','Watch'],['outcomes','Outcomes'],['brief','Brief'],['output','Executive Output'],['lab','Leadership Lab'],['reflect','Reflect'],['coach','Coaching'],['apply','Apply'],['checkin','Check-in']].map(([id,label])=>`<button type="button" data-native-scroll="${id}">${label}</button>`).join('')}<button type="button" data-native-test="${weekKey}">Weekly Test</button></div>`:''}
+    <div class="native-workspace-body">${body}</div>
    </section>`;
  document.querySelectorAll('.dev-side [data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section==='programme'));
  document.getElementById('workspaceBack').onclick=()=>{section='programme';programmeView()};
- document.getElementById('workspaceReload').onclick=()=>document.getElementById('workspaceFrame').contentWindow.location.reload();
  document.querySelectorAll('[data-workspace-week]').forEach(b=>b.onclick=()=>renderWeekWorkspace(b.dataset.workspaceWeek));
- document.querySelectorAll('[data-workspace-target]').forEach(b=>b.onclick=()=>renderWeekWorkspace(b.dataset.workspaceTarget,b.dataset.workspaceFocus||''));
- document.getElementById('devStatus').textContent='Developer mode · '+title+' · all lessons unlocked';
+ document.querySelectorAll('[data-native-scroll]').forEach(b=>b.onclick=()=>document.getElementById('dev-'+b.dataset.nativeScroll)?.scrollIntoView({behavior:'smooth',block:'start'}));
+ document.querySelectorAll('[data-native-test]').forEach(b=>b.onclick=()=>renderWeekWorkspace(b.dataset.nativeTest+'-test'));
+ if(focus&&!isTest)setTimeout(()=>document.getElementById('dev-'+focus)?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+ document.getElementById('devStatus').textContent='Developer mode · '+title+' · native lesson workspace · no participant attached';
 }
 
 function bindRecordPicker(){
