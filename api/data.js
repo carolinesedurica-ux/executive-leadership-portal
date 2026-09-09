@@ -159,13 +159,12 @@ module.exports = async function handler(req, res) {
       if (developerMode) {
         const participants = await developerOverview();
         const requestedId = String(req.query?.participantId || '').trim();
-        const selectedId = requestedId || participants[0]?.id || null;
-        const detail = selectedId ? await developerDetail(selectedId) : null;
+        const detail = requestedId ? await developerDetail(requestedId) : null;
         return json(res, 200, {
           developer: true,
           participants,
           detail,
-          selectedParticipantId: selectedId,
+          selectedParticipantId: requestedId || null,
           generatedAt: new Date().toISOString(),
           cloudAvailable: true,
           backendAvailable: true
