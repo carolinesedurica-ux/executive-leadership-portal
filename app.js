@@ -14,6 +14,7 @@ const baselineDefaults=[5,5,5,5,5,5,5,5,5,5,5,5];
 const developerParams=new URLSearchParams(location.search);
 const developerPreview=window.ELRP_DEVELOPER_PREVIEW===true||developerParams.get('developer')==='1';
 const developerViewTarget=developerPreview?String(developerParams.get('view')||'home'):null;
+const developerFocusTarget=developerPreview?String(developerParams.get('focus')||''):'';
 const stateStorageKey=developerPreview?'elrpDeveloperPreviewState':'elrpState';
 const state=JSON.parse(localStorage.getItem(stateStorageKey)||'{}');state.completed=state.completed||[];state.reflections=state.reflections||{};state.baseline=state.baseline||baselineDefaults;state.assessmentComplete=!!state.assessmentComplete;state.tools=state.tools||{};state.weeklyTests=state.weeklyTests||{};state.assessmentAttemptCount=state.assessmentAttemptCount||0;state.assessmentAttemptsRemaining=state.assessmentAttemptsRemaining??3;let backendAuthoritative=false;let backendEntitlements={};let backendValidatedCredentials=[];
 function toast(msg){let t=document.getElementById('saveToast');if(!t){t=document.createElement('div');t.id='saveToast';t.className='save-toast';document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),1400)}
@@ -161,6 +162,36 @@ function renderAssessment(){
 function renderWeek4(){const el=document.getElementById('week4');if(developerPreview)return;const credentialValidated=!backendAuthoritative||backendValidatedCredentials.includes('week4');if(!state.assessmentComplete){el.innerHTML=`<div class="page-hero compact"><span class="eyebrow">Week 4</span><h1>Influence & Impact</h1><p>Complete the first-stage assessment to unlock the second half of your programme.</p></div><div class="card locked-preview"><div class="lock-orb">🔒</div><h2>Complete your progress review first</h2><p>Weeks 1–3 and the assessment must be complete before Week 4 opens.</p><button class="btn btn-gold" data-go="assessment">Complete assessment →</button></div>`;attachGoButtons();return}if(!credentialValidated){el.innerHTML=`<div class="page-hero compact"><span class="eyebrow">Week 4</span><h1>Influence & Impact</h1><p>Your assessment is complete. Enter the 7-character credential emailed to you to open the second half.</p></div><form class="card locked-preview" id="week4CredentialForm"><div class="lock-orb">🔐</div><h2>Enter your Week 4 access credential</h2><p>Use the 7-character credential sent to your registered email address.</p><label class="credential-entry"><span>Access credential</span><input name="credential" maxlength="7" minlength="7" pattern="[A-HJ-NP-Z2-9]{7}" autocomplete="one-time-code" autocapitalize="characters" required placeholder="7 characters"></label><button class="btn btn-gold" type="submit">Unlock Week 4 →</button><p class="form-note" id="week4CredentialMessage"></p></form>`}}
 function renderComingSoon(id,title,copy){document.getElementById(id).innerHTML=`<div class="page-hero compact"><span class="eyebrow">Coming next</span><h1>${title}</h1><p>${copy}</p></div><div class="card coming-soon"><div class="coming-icon">✦</div><h2>Next-stage content is in development</h2><p>This module will be added as your programme continues.</p></div>`}
 function showView(id){const testMatch=id.match(/^(week[1-6])-test$/);const entitlementKey=testMatch?testMatch[1]:id;if(developerPreview){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id)?.classList.add('active');document.querySelectorAll('.nav-link').forEach(n=>n.classList.toggle('active',n.dataset.view===id));document.querySelectorAll('.nav-test-link').forEach(n=>n.classList.toggle('active',id===n.dataset.testWeek+'-test'));window.scrollTo({top:0,behavior:'smooth'});document.getElementById('sidebar').classList.remove('open');return}if(backendAuthoritative&&testMatch?.[1]==='week4'&&!backendValidatedCredentials.includes('week4'))return toast('Enter your Week 4 access credential before taking this test.');if(backendAuthoritative&&['week2','week3','assessment','week5','week6'].includes(entitlementKey)&&!backendEntitlements[entitlementKey])return toast('Complete the previous milestone to unlock this step.');if(testMatch&&!state.weeklyTests?.[testMatch[1]]&&!weekReadyForTest(testMatch[1]))return toast('Finish all three reflections and the four end-of-week check-in items before taking the weekly test.');document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id)?.classList.add('active');document.querySelectorAll('.nav-link').forEach(n=>n.classList.toggle('active',n.dataset.view===id));document.querySelectorAll('.nav-test-link').forEach(n=>n.classList.toggle('active',id===n.dataset.testWeek+'-test'));window.scrollTo({top:0,behavior:'smooth'});document.getElementById('sidebar').classList.remove('open')}
+function focusDeveloperArea(view,focus){
+ if(!developerPreview||!focus||!view)return;
+ const root=document.getElementById(view);
+ if(!root)return;
+ const selectors={
+  watch:'.premium-video, .week-main > .step-card:first-child',
+  outcomes:'.week-outcomes',
+  brief:'.leadership-brief',
+  output:'.executive-output',
+  lab:'.interactive-card',
+  reflect:'.reflection-card-shell, .reflection-list',
+  coach:'.coaching-card',
+  apply:'.challenge',
+  checkin:'.checklist'
+ };
+ const selector=selectors[focus];
+ if(!selector)return;
+ const scroll=()=>{
+   const target=root.querySelector(selector);
+   if(!target)return false;
+   const box=target.closest('.card')||target;
+   box.scrollIntoView({behavior:'smooth',block:'start'});
+   box.classList.add('developer-focus-target');
+   setTimeout(()=>box.classList.remove('developer-focus-target'),1800);
+   return true;
+ };
+ if(!scroll())setTimeout(scroll,250);
+ setTimeout(scroll,800);
+}
+
 function attachGoButtons(){document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showView(b.dataset.go))}
 function applyAuthoritativeProgress(summary){if(!summary)return;backendAuthoritative=true;backendEntitlements=summary.entitlements||{};backendValidatedCredentials=summary.validatedCredentials||[];state.completed=(summary.completed||[]).filter(x=>/^week\d+$/.test(x));state.weeklyTests=summary.weeklyTests||{};state.weeklyWeightedScore=summary.weeklyWeightedScore||0;state.secondHalfWeeklyWeightedScore=summary.secondHalfWeeklyWeightedScore||0;state.assessmentComplete=!!summary.assessmentComplete;state.assessmentAttemptCount=summary.assessmentAttemptCount||0;state.assessmentAttemptsRemaining=summary.assessmentAttemptsRemaining??3;state.overallScore=summary.overallScore??null;state.finalAssessmentPercent=summary.finalAssessmentPercent??null;if(summary.midScores)state.midScores=summary.midScores;if(summary.assessmentReflection)state.assessmentReflection=summary.assessmentReflection;saveState();renderWeeks();renderWeeklyTests();renderAssessment();renderWeek4();renderAssessmentResults();attachGoButtons();updateProgress()}
 document.addEventListener('wrv:progress-authoritative',e=>applyAuthoritativeProgress(e.detail));
@@ -235,4 +266,4 @@ function setupEvents(){
  });
 }
 renderWeeks();renderWeeklyTests();renderAssessment();renderWeek4();attachGoButtons();setupEvents();renderAssessmentResults();updateProgress();
-if(developerPreview){const banner=document.createElement('div');banner.className='developer-preview-banner';banner.innerHTML='<strong>Developer Preview</strong><span>Weeks 1–6, weekly tests and assessment are unlocked for development. Participant progression rules remain unchanged.</span><a href="/admin.html" target="_top">Back to Developer Portal</a>';document.body.prepend(banner);if(document.getElementById(developerViewTarget))showView(developerViewTarget);}
+if(developerPreview){const banner=document.createElement('div');banner.className='developer-preview-banner';banner.innerHTML='<strong>Developer Preview</strong><span>Weeks 1–6, every lesson, weekly tests and assessment are unlocked for development. Participant progression rules remain unchanged.</span><a href="/admin.html" target="_top">Back to Developer Portal</a>';document.body.prepend(banner);if(document.getElementById(developerViewTarget)){showView(developerViewTarget);focusDeveloperArea(developerViewTarget,developerFocusTarget);}}
