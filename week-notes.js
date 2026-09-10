@@ -31,3 +31,12 @@ function enhanceAll(){Object.keys(prompts).forEach(enhanceWeek)}
 let timer;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(enhanceAll,60)}).observe(document.body,{childList:true,subtree:true});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhanceAll);else enhanceAll();
 })();
+
+(()=>{
+if(window.ELRP_DEVELOPER_PREVIEW===true)return;
+function load(src,done){
+ if(document.querySelector(`script[src^="${src.split('?')[0]}"]`)){done?.();return}
+ const s=document.createElement('script');s.src=src;s.onload=()=>done?.();document.body.appendChild(s);
+}
+load('midcourse-assessment-config.js?v=20260910-app1',()=>load('midcourse-assessment-ui.js?v=20260910-app1'));
+})();
