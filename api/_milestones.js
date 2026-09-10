@@ -2,7 +2,7 @@ const MILESTONES = {
   week1: { number: 1, title: 'Leadership Identity & Confidence', next: 'week2' },
   week2: { number: 2, title: 'Executive Presence & Personal Authority', next: 'week3' },
   week3: { number: 3, title: 'Assertiveness & Difficult Conversations', next: 'assessment' },
-  assessment: { number: 4, title: 'Mid-Course Leadership Assessment', next: 'week4' },
+  assessment: { number: 4, title: 'Mid-Course Leadership Application Assessment', next: 'week4' },
   week4: { number: 5, title: 'Influence & Impact', next: 'week5' },
   week5: { number: 6, title: 'Resilience & Self-Leadership', next: 'week6' },
   week6: { number: 7, title: 'Leading Sustainable Change', next: null }
@@ -34,15 +34,15 @@ function validateWeekEvidence(key, evidence = {}) {
 
 function validateAssessmentPayload(payload = {}) {
   const scores = Array.isArray(payload.scores) ? payload.scores.map(Number) : [];
-  if (scores.length !== 12 || scores.some(score => !Number.isFinite(score) || score < 1 || score > 10)) {
-    return { ok: false, error: 'Complete all assessment scores from 1 to 10.' };
+  if (scores.length !== 12 || scores.some(score => !Number.isFinite(score) || score < 0 || score > 10)) {
+    return { ok: false, error: 'Complete all 12 scored application scenarios.' };
   }
 
   const reflections = payload.reflections || {};
   const required = ['greatestImprovement', 'evidenceSituation', 'remainingChallenge'];
   const missing = required.filter(key => !String(reflections[key] || '').trim());
   if (missing.length) {
-    return { ok: false, error: 'Complete all assessment reflection questions before submitting.' };
+    return { ok: false, error: 'Complete all three evidence reflections before submitting.' };
   }
 
   return { ok: true, average: scores.reduce((sum, score) => sum + score, 0) / scores.length };
