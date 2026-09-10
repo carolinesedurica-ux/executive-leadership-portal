@@ -2,7 +2,10 @@
 const cfg={
  week1:{week:'WEEK 1',mood:'becoming',title:'Leadership Identity & Confidence',subtitle:'Think Like a Leader Before You Have the Title',heroQuote:'A stronger leadership you starts here.',rail:'The way you lead tomorrow starts with the questions you ask yourself today.',cue:'Be honest and specific. Consider how you want to show up in your team, organisation and broader professional network.'},
  week2:{week:'WEEK 2',mood:'presence',title:'Executive Presence & Personal Authority',subtitle:'Your Presence Speaks Before You Do',heroQuote:'Presence is the message before the words.',rail:'Authority grows when your presence becomes calm, deliberate and grounded.',cue:'Notice how your presence changes under pressure. Practise calm pace, clear structure and fewer words.'},
- week3:{week:'WEEK 3',mood:'courage',title:'Assertiveness & Difficult Conversations',subtitle:'Speak Clearly When the Conversation Is Difficult',heroQuote:'Clarity and courage can coexist.',rail:'Courage is not volume. It is the willingness to be clear when the conversation matters.',cue:'Choose clarity over avoidance. Name what matters, protect respect and stay anchored in the outcome you need.'}
+ week3:{week:'WEEK 3',mood:'courage',title:'Assertiveness & Difficult Conversations',subtitle:'Speak Clearly When the Conversation Is Difficult',heroQuote:'Clarity and courage can coexist.',rail:'Courage is not volume. It is the willingness to be clear when the conversation matters.',cue:'Choose clarity over avoidance. Name what matters, protect respect and stay anchored in the outcome you need.'},
+ week4:{week:'WEEK 4',mood:'influence',title:'Influence & Impact',subtitle:'Influence Without Forcing: How Executives Create Buy-In',heroQuote:'Influence grows when people understand both the direction and why it matters to them.',rail:'The strongest influence is not pressure. It is credibility, relevance and a clear path to action.',cue:'Become curious before becoming defensive. Listen for the priority, risk or concern underneath resistance, then return to the decision that needs to move.'},
+ week5:{week:'WEEK 5',mood:'resilience',title:'Resilience & Self-Leadership',subtitle:'The Leader Under Pressure',heroQuote:'Pressure does not remove leadership responsibility; it reveals how deliberately you can carry it.',rail:'Resilience is not absorbing everything. It is staying capable of leadership while pressure is present.',cue:'Notice your first pressure response. Pause long enough to name it, separate facts from assumptions, and choose the behaviour that best serves the leadership outcome.'},
+ week6:{week:'WEEK 6',mood:'change',title:'Leading Sustainable Change',subtitle:'From Vision to Reality: How Executives Lead Sustainable Change',heroQuote:'Change becomes credible when people can see what will be different, who owns it and how progress will be reinforced.',rail:'A vision matters only when leadership turns intention into sustained organisational behaviour.',cue:'Make the change concrete. Clarify the reality, direction, ownership, measures and the behaviour you personally must model.'}
 };
 
 function enhanceWeek(key){
@@ -103,7 +106,7 @@ function enhanceWeek(key){
  updateQuestion();
 }
 
-function enhance(){['week1','week2','week3'].forEach(enhanceWeek)}
+function enhance(){['week1','week2','week3','week4','week5','week6'].forEach(enhanceWeek)}
 let t;
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(enhance,60)}).observe(document.body,{childList:true,subtree:true});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhance);else enhance();
