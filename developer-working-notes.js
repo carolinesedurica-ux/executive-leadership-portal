@@ -26,3 +26,11 @@ function add(){
 let t;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(add,50)}).observe(document.body,{childList:true,subtree:true});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add);else add();
 })();
+
+(()=>{
+function load(src,done){
+ if(document.querySelector(`script[src^="${src.split('?')[0]}"]`)){done?.();return}
+ const s=document.createElement('script');s.src=src;s.onload=()=>done?.();document.body.appendChild(s);
+}
+load('midcourse-assessment-config.js?v=20260910-app1',()=>load('developer-midcourse-assessment.js?v=20260910-app1'));
+})();
