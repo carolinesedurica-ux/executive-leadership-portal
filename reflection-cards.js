@@ -14,10 +14,26 @@ const cues={
   'Identify your usual pattern when disagreement feels uncomfortable: avoid, soften, over-explain, defend or push harder.',
   'Name the real conversation or boundary you have been postponing because of the other person’s possible reaction.',
   'Consider the cost of continued avoidance for you, the relationship, the team and the organisation.'
+ ],
+ week4:[
+  'Focus on the approach you used, not only whether the other person eventually agreed. What helped or weakened your influence?',
+  'Think in stakeholder terms: what does each person protect, measure, fear losing or need evidence about before they can support you?',
+  'Notice your first internal response to resistance. What would curiosity, composure and evidence look like before you defend your position?'
+ ],
+ week5:[
+  'Look for your pressure pattern in behaviour: pace, tone, control, withdrawal, impatience, overworking or decision-making.',
+  'Name the trigger precisely. What meaning do you attach to this situation that makes the reaction stronger?',
+  'Choose one repeatable practice that protects your judgement under pressure, not merely one that makes you feel better temporarily.'
+ ],
+ week6:[
+  'Choose a change that is strategically important enough to require leadership attention, not simply a task-level improvement.',
+  'Separate resistance from disloyalty. What uncertainty, workload, history, trust issue or personal impact could sit underneath it?',
+  'Make the statement observable. Which three behaviours would prove to people that this is how you lead change?'
  ]
 };
 
-function getState(){try{return JSON.parse(localStorage.getItem('elrpState')||'{}')}catch{return {}}}
+function storageKey(){return window.ELRP_DEVELOPER_PREVIEW===true?'elrpDeveloperPreviewState':'elrpState'}
+function getState(){try{return JSON.parse(localStorage.getItem(storageKey())||'{}')}catch{return {}}}
 function esc(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function snippet(v){const t=v.trim().replace(/\s+/g,' ');return t.length>120?t.slice(0,117)+'…':t}
 function isComplete(v){return v.trim().length>=20}
@@ -30,7 +46,7 @@ function enhanceWeek(week){
  list.dataset.cardified='1'; host.classList.add('reflection-card-shell');
  const title=host.querySelector('h2'); if(title)title.textContent='Reflect one question at a time';
  const eyebrow=host.querySelector('.eyebrow');
- if(eyebrow)eyebrow.textContent='02 · Reflect';
+ if(eyebrow)eyebrow.textContent='03 · Reflect';
  const header=document.createElement('div'); header.className='reflection-card-header';
  header.innerHTML=`<div><h2>Reflect one question at a time</h2><p class="tool-copy">Take a few focused minutes. Your responses save automatically to your secure online coaching profile.</p></div><div class="reflection-progress"><span>Reflection progress</span><div class="reflection-progress-bar"><span></span></div></div>`;
  if(title)title.replaceWith(header); else host.prepend(header);
@@ -40,7 +56,7 @@ function enhanceWeek(week){
    const textarea=label.querySelector('textarea'); if(!textarea)return;
    const raw=[...label.childNodes].filter(n=>n!==textarea).map(n=>n.textContent).join(' ').trim().replace(/^\d+\.\s*/,'');
    const card=document.createElement('section'); card.className='reflection-card'; card.dataset.index=String(i);
-   card.innerHTML=`<div class="reflection-card-number">${i+1}</div><div class="reflection-question">${esc(raw)}</div><div class="reflection-cue">${esc((cues[week]||[])[i]||'Write what is most true for you right now. Keep it practical and specific.')}</div>`;
+   card.innerHTML=`<div class="reflection-card-number">${i+1}</div><div class="reflection-question">${esc(raw)}</div><div class="reflection-cue"><strong>Reflection prompt:</strong> ${esc((cues[week]||[])[i]||'Write what is most true for you right now. Keep it practical and specific.')}</div>`;
    textarea.remove(); textarea.maxLength=1000; textarea.placeholder='Take a few moments to reflect and write your thoughts here…'; card.appendChild(textarea); const count=document.createElement('span');count.className='reflection-char-count';count.textContent=`${textarea.value.length}/1000`;card.appendChild(count);
    const state=document.createElement('div'); state.className='reflection-save-state';
    state.innerHTML='<span>Autosaves as you type</span><strong></strong>'; card.appendChild(state);
@@ -69,7 +85,7 @@ function enhanceWeek(week){
  cards.forEach(card=>card.querySelector('textarea')?.addEventListener('input',()=>{render()}));
  render();
 }
-function enhanceAll(){['week1','week2','week3'].forEach(enhanceWeek)}
+function enhanceAll(){['week1','week2','week3','week4','week5','week6'].forEach(enhanceWeek)}
 let timer; const observer=new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(enhanceAll,40)}); observer.observe(document.body,{childList:true,subtree:true});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',enhanceAll);else enhanceAll();
 })();
