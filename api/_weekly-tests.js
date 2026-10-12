@@ -338,7 +338,16 @@ function validateTestAnswers(key, answers = {}) {
 
 function conceptMatched(text, alternatives) {
   const value = String(text || '').toLowerCase();
-  return alternatives.some(term => value.includes(term.toLowerCase()));
+  const keywordMatch = alternatives.some(term => value.includes(term.toLowerCase()));
+  if (keywordMatch) return true;
+  if (!alternatives.includes('deadline')) return false;
+  // A concrete deadline demonstrates the concept without naming the word 'deadline'.
+  const month = '(?:january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)';
+  const day = '(?:[1-9]|[12][0-9]|3[01])(?:st|nd|rd|th)?';
+  const calendarDate = new RegExp('\\b(?:' + day + '\\s+' + month + '|' + month + '\\s+' + day + ')\\b', 'i');
+  const numericDate = /\b(?:\d{4}-\d{1,2}-\d{1,2}|\d{1,2}[/.]\d{1,2}[/.]\d{2,4})\b/;
+  const namedDay = /\b(?:by|before|on|no later than)\s+(?:(?:next|this)\s+)?(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow)\b/;
+  return calendarDate.test(value) || numericDate.test(value) || namedDay.test(value);
 }
 
 function scoreWeeklyTest(key, answers = {}) {

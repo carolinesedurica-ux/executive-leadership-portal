@@ -155,10 +155,8 @@ test('Week 5 resilience assessment can award the full 10 percent contribution', 
   assert.equal(result.contribution, 10);
 });
 
-test('Week 6 sustainable-change assessment can award the full 10 percent contribution', () => {
-  const key = 'week6';
-  const answers = {
-    mcq: WEEKLY_TESTS[key].mcq.map(q => q.answer),
+const week6CompleteAnswers = {
+    mcq: WEEKLY_TESTS.week6.mcq.map(q => q.answer),
     written: [
       'The change is a stronger performance-management process. It needs to change now because missed accountability is affecting delivery. If nothing changes, risk and cost will continue; the opportunity is a clearer, more reliable future operating rhythm.',
       'The stakeholders are employees, managers and the board. Employees may support clearer expectations but resist workload or uncertainty. Managers may support better performance but worry about time. The board may support governance while questioning implementation risk and impact.',
@@ -167,7 +165,21 @@ test('Week 6 sustainable-change assessment can award the full 10 percent contrib
       'I must model consistent follow-through. Credibility depends on visible behaviour, so I will attend reviews, close my own actions and reinforce the same standard consistently rather than asking others to do what I do not model.'
     ]
   };
-  const result = scoreWeeklyTest(key, answers);
+
+test('Week 6 sustainable-change assessment can award the full 10 percent contribution', () => {
+  const result = scoreWeeklyTest('week6', week6CompleteAnswers);
   assert.equal(result.score, 100);
   assert.equal(result.contribution, 10);
+});
+
+
+test('Week 6 recognises a concrete deadline without requiring scoring keywords', () => {
+  for (const deadline of ['by 15 September', 'by September 15', 'by 2026-09-15', 'by 15/09/2026', 'by Friday']) {
+    const answers = structuredClone(week6CompleteAnswers);
+    answers.written[3] = `The owner is the operations director. The first action is to define the review standard ${deadline}. Progress will be measured by completion and overdue actions. If progress stalls, we will review obstacles, correct the plan and escalate ownership where required.`;
+    assert.equal(scoreWeeklyTest('week6', answers).score, 100, deadline);
+  }
+  const vague = structuredClone(week6CompleteAnswers);
+  vague.written[3] = 'The owner is the operations director. The first action is to define the review standard soon. Progress will be measured by completion and overdue actions. If progress stalls, we will review obstacles, correct the plan and escalate ownership where required.';
+  assert.equal(scoreWeeklyTest('week6', vague).score, 98.4);
 });

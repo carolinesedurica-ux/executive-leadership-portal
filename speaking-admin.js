@@ -1,10 +1,23 @@
 (()=>{
 const select=document.getElementById('participant'),detail=document.getElementById('detail'),status=document.getElementById('adminStatus');
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function renderProgrammeContent(){
+ const weeks=window.FCA_SPEAKING_WEEKS;
+ document.getElementById('courseContent').innerHTML=`<section class="card benefits"><span class="eyebrow dark">Facilitator programme guide</span><h2>Four weeks · Directed self-study + weekly live coaching</h2><p>Each week combines five lessons, a practical output, guided reflection, five days of short speaking practice and one 60-minute live coaching session. Use the participant’s assessment to agree priorities and adapt the practice.</p><p class="muted">All course content is available here before anyone enrols. This view does not create an enrolment or save participant progress.</p><nav class="facilitator-weeks" aria-label="Programme weeks">${weeks.map((w,i)=>`<button class="btn facilitator-tab ${i===0?'active':''}" data-course-week="${i+1}" aria-pressed="${i===0}">Week ${i+1} · ${esc(w.title)}</button>`).join('')}</nav></section>${weeks.map((w,i)=>`<article data-course-panel="${i+1}" ${i===0?'':'hidden'}><section class="card benefits"><span class="eyebrow dark">Week ${i+1}</span><h2>${esc(w.title)}</h2><p>${esc(w.subtitle)}</p><h3>Learning outcomes</h3><ul>${w.outcomes.map(o=>`<li>${esc(o)}</li>`).join('')}</ul><h3>Directed self-study lessons</h3>${w.lessons.map((l,j)=>`<details class="study-lesson" ${j===0?'open':''}><summary>${j+1}. ${esc(l.title)} <small>· ${esc(l.time)}</small></summary><div class="lesson-body"><p>${esc(l.body)}</p><div class="worked-example"><strong>Worked example</strong>${esc(l.example)}</div><p class="practice-prompt">Practice prompt: ${esc(l.task)}</p></div></details>`).join('')}</section><section class="card benefits"><h2>Practical planner and weekly output</h2><ul>${w.planner.map(([,q])=>`<li>${esc(q)}</li>`).join('')}</ul><h3>${esc(w.output)}</h3><p>${esc(w.outputPrompt)}</p><h3>Guided reflections</h3><ol>${w.reflections.map(q=>`<li>${esc(q)}</li>`).join('')}</ol><h3>Five days of focused practice</h3><ol>${w.days.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><h3>Workplace application</h3><p>${esc(w.challenge)}</p></section><section class="card benefits"><h2>Live coaching preparation and delivery</h2><p>${esc(w.coaching)}</p><h3>Suggested 60-minute session</h3><ul>${w.agenda.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p class="muted">Use specific communication evidence in feedback. Keep confidence separate from observed skill. Recording is optional and requires permission.</p></section></article>`).join('')}`;
+}
+function showFacilitatorView(view){
+ document.getElementById('courseContent').hidden=view!=='content';
+ document.getElementById('participantPanel').hidden=view!=='responses';
+ document.querySelectorAll('[data-facilitator-view]').forEach(b=>{const active=b.dataset.facilitatorView===view;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+}
+document.addEventListener('click',e=>{
+ const tab=e.target.closest('[data-facilitator-view]');if(tab)showFacilitatorView(tab.dataset.facilitatorView);
+ const week=e.target.closest('[data-course-week]');if(week){document.querySelectorAll('[data-course-panel]').forEach(p=>p.hidden=p.dataset.coursePanel!==week.dataset.courseWeek);document.querySelectorAll('[data-course-week]').forEach(b=>{const active=b===week;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});}
+});
 async function load(){
  status.textContent='Loading private programme responses…';detail.innerHTML='';
  try{const selected=select.value;const r=await fetch('/api/data?programme=speaking'+(selected?'&participantId='+encodeURIComponent(selected):''),{cache:'no-store'});const out=await r.json();if(r.status===401||r.status===403){location.href='/speaking.html?admin=1';return;}if(!r.ok)throw Error(out.error||'Unable to load.');select.innerHTML=out.participants.map(p=>`<option value="${esc(p.id)}">${esc(p.fullName)} · ${esc(p.email)}</option>`).join('');if(selected&&out.participants.some(p=>p.id===selected))select.value=selected;
- const data=out.data;if(!data){status.textContent='No speaking programme participants enrolled yet.';return;}
+ const data=out.data;if(!data){status.textContent='No speaking programme participants enrolled yet. The full course is available in Programme content.';return;}
  const state=data.elrpState||{},fields=state.fields||{};
  status.textContent=`${data.clientName} · Last saved: ${data.updatedAt?new Date(data.updatedAt).toLocaleString('en-GB',{timeZone:'Africa/Gaborone'})+' CAT':'not yet saved'} · ${(state.completed||[]).length} of 4 weekly learning cycles completed (participant check-ins).`;
  const answer=(label,key)=>`<h3>${esc(label)}</h3><div class="coach-readout">${esc(fields[key]||'No response yet.')}</div>`;
@@ -12,5 +25,5 @@ async function load(){
  }catch(e){status.textContent=e.message;}
 }
 select.onchange=load;document.getElementById('refresh').onclick=load;document.getElementById('logout').onclick=async()=>{await fetch('/api/logout',{method:'POST'});location.href='/speaking.html?admin=1';};
-(async()=>{try{const r=await fetch('/api/session',{cache:'no-store'});const s=await r.json();if(!s.authenticated||s.role!=='admin'){location.href='/speaking.html?admin=1';return;}await load();}catch(e){status.textContent='Unable to verify the administrator session. Refresh to retry.';}})();
+(async()=>{try{const r=await fetch('/api/session',{cache:'no-store'});const s=await r.json();if(!s.authenticated||s.role!=='admin'){location.href='/speaking.html?admin=1';return;}document.getElementById('authStatus').textContent='';renderProgrammeContent();showFacilitatorView('content');await load();}catch(e){document.getElementById('authStatus').textContent='Unable to verify the administrator session. Refresh to retry.';}})();
 })();
