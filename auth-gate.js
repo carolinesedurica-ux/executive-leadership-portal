@@ -5,6 +5,7 @@ const dataEndpoint=programme.dataEndpoint||'/api/data';
 const sessionEndpoint=programme.sessionEndpoint||'/api/supabase-session';
 const returnPath=programme.returnPath||'/';
 const storageKeys=programme.storageKeys||['elrpState','elrpDailyHabits','elrpPriorityFocus'];
+try{localStorage.setItem('fcaSelectedProgramme',returnPath==='/speaking.html'?'speaking':'leadership')}catch{}
 let role=qs.get('admin')==='1'?'admin':'client';
 const developerPreview=window.ELRP_DEVELOPER_PREVIEW===true||qs.get('developer')==='1';
 let clientMode='signin';
@@ -64,7 +65,7 @@ function recoveryOverlay(){
  el.innerHTML=`${authVisual()}
  <section class="wrv-auth-panel">
    <form class="wrv-auth-card" id="wrvRecovery">
-     <h2>Create a new password</h2>
+     <a href="/" class="wrv-programme-back">← All programmes</a><h2>Create a new password</h2>
      <p>Choose a password for future sign-ins. Once saved, you can return with your email and password without another sign-in link.</p>
      <label class="wrv-auth-field"><span>New password</span><input type="password" name="password" autocomplete="new-password" minlength="8" required placeholder="At least 8 characters"></label>
      <label class="wrv-auth-field"><span>Confirm new password</span><input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required placeholder="Repeat your password"></label>
@@ -111,7 +112,7 @@ function overlay(){
  el.innerHTML=`${authVisual()}
  <section class="wrv-auth-panel">
    <form class="wrv-auth-card" id="wrvLogin">
-     <h2>Welcome</h2>
+     <a href="/" class="wrv-programme-back">← Choose a different programme</a><h2>Welcome</h2>
      <p>${programme.title?'Access your Presentation &amp; Speaking Skills programme.':'Access your Executive Leadership Readiness Programme.'}</p>
      <div class="wrv-role-toggle"><button type="button" data-role="client">Participant</button><button type="button" data-role="admin">Administrator</button></div>
      <div class="wrv-client-mode wrv-client-field">
@@ -306,7 +307,7 @@ function addLogout(){
    await (programme.managedSync?window.FCA_SAVE_WORKSPACE?.():push(true));
    try{await getSupabase()?.auth.signOut()}catch{}
    await fetch('/api/logout',{method:'POST'});
-   location.href=returnPath;
+   location.href=programme.homePath||returnPath;
  };
  host.appendChild(b)
 }

@@ -292,7 +292,8 @@ There is currently no frontend framework or build framework.
 ```text
 /
 ├── api/                    # Authentication, sessions and cloud persistence
-├── index.html              # Client portal
+├── index.html              # Programme selection home
+├── executive-leadership.html # Executive Leadership client portal
 ├── admin.html              # Administrator portal
 ├── app.js                  # Programme state, navigation and core interactions
 ├── auth-gate.js            # Client authentication and cloud/local sync
@@ -577,3 +578,5 @@ The speaking API uses the existing data Function so the app retains its original
 Facilitator review opens on Programme content, with all four weekly curricula available before enrolment; a separate Participant responses tab retains read-only client review. Week 6 scoring recognises concrete calendar dates and named-day deadlines without requiring the literal words “deadline” or “date”. Existing stored results are unchanged (no Week 6 submissions existed when this fix was applied).
 
 Speaking explainer videos are configured independently in `speaking-video-config.js` and displayed in the matching participant week and facilitator Programme content view. All four weeks have their supplied public Blob MP4 links, native playback controls, mobile inline playback and a direct-link fallback. ELP video configuration is unchanged.
+
+The root `/` is the programme selection home page. Executive Leadership now lives at `/executive-leadership.html`; Presentation & Speaking Skills remains at `/speaking.html`. The home page loads no participant data or authentication API until a programme is selected. Existing root email callback, recovery, admin, developer and cloud links forward to the appropriate programme route. Both sign-in forms and participant portals link back to the programme chooser.
