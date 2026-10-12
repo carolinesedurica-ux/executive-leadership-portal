@@ -1,5 +1,10 @@
 (()=>{
 const qs=new URLSearchParams(location.search);
+const programme=window.FCA_PROGRAMME||{};
+const dataEndpoint=programme.dataEndpoint||'/api/data';
+const sessionEndpoint=programme.sessionEndpoint||'/api/supabase-session';
+const returnPath=programme.returnPath||'/';
+const storageKeys=programme.storageKeys||['elrpState','elrpDailyHabits','elrpPriorityFocus'];
 let role=qs.get('admin')==='1'?'admin':'client';
 const developerPreview=window.ELRP_DEVELOPER_PREVIEW===true||qs.get('developer')==='1';
 let clientMode='signin';
@@ -38,14 +43,15 @@ function paintIdentity(participant){
 function isolateParticipant(participant){
   const id=String(participant?.id||'');
   if(!id)return false;
-  const previous=localStorage.getItem('elrpActiveParticipantId');
+  const previous=localStorage.getItem(programme.participantKey||'elrpActiveParticipantId');
   if(previous===id)return false;
-  ['elrpState','elrpDailyHabits','elrpPriorityFocus'].forEach(key=>localStorage.removeItem(key));
-  localStorage.setItem('elrpActiveParticipantId',id);
+  storageKeys.forEach(key=>localStorage.removeItem(key));
+  localStorage.setItem(programme.participantKey||'elrpActiveParticipantId',id);
   return true;
 }
 
 function authVisual(){
+ if(programme.title)return `<section class="wrv-auth-visual"><div class="wrv-auth-brand"><div class="wrv-auth-logo"><img src="assets/fca-logo.webp" alt="Foundations Counselling Academy"></div><small>Presentation &amp; Speaking Skills</small></div><div class="wrv-auth-copy"><span class="kicker">Prepare · Practise · Speak</span><h1>Your message deserves to be heard.</h1><p>Four weeks of guided study, deliberate speaking practice and individual live coaching.</p></div></section>`;
  return `<section class="wrv-auth-visual">
    <div class="wrv-auth-brand"><div class="wrv-auth-logo"><img src="assets/fca-logo.webp" alt="Foundations Counselling Academy"></div><small>Executive Leadership Coaching</small></div>
    <div class="wrv-auth-copy"><span class="kicker">Reflect · Grow · Lead</span><h1>Build the leader your next chapter requires.</h1><p>A private coaching space for deliberate practice, reflection, communication growth and measurable leadership development.</p></div>
@@ -65,7 +71,7 @@ function recoveryOverlay(){
      <button class="wrv-auth-submit" type="submit">Save password & continue →</button>
      <p class="wrv-auth-success" id="wrvAuthSuccess"></p>
      <p class="wrv-auth-error" id="wrvAuthError"></p>
-     <p class="wrv-auth-foot">Foundations Counselling Academy · Executive Leadership Coaching</p>
+     <p class="wrv-auth-foot">Foundations Counselling Academy · ${programme.title||'Executive Leadership Coaching'}</p>
    </form>
  </section>`;
  document.body.prepend(el);
@@ -106,7 +112,7 @@ function overlay(){
  <section class="wrv-auth-panel">
    <form class="wrv-auth-card" id="wrvLogin">
      <h2>Welcome</h2>
-     <p>Access your Executive Leadership Readiness Programme.</p>
+     <p>${programme.title?'Access your Presentation &amp; Speaking Skills programme.':'Access your Executive Leadership Readiness Programme.'}</p>
      <div class="wrv-role-toggle"><button type="button" data-role="client">Participant</button><button type="button" data-role="admin">Administrator</button></div>
      <div class="wrv-client-mode wrv-client-field">
        <button type="button" data-client-mode="signin">Sign in</button>
@@ -123,7 +129,7 @@ function overlay(){
      <button class="wrv-auth-submit" type="submit">Sign in →</button>
      <p class="wrv-auth-success" id="wrvAuthSuccess"></p>
      <p class="wrv-auth-error" id="wrvAuthError"></p>
-     <p class="wrv-auth-foot">Foundations Counselling Academy · Executive Leadership Coaching</p>
+     <p class="wrv-auth-foot">Foundations Counselling Academy · ${programme.title||'Executive Leadership Coaching'}</p>
    </form>
  </section>`;
  document.body.prepend(el);
@@ -170,7 +176,7 @@ function overlay(){
    try{
      const client=getSupabase();
      const {error:resetError}=await client.auth.resetPasswordForEmail(email,{
-       redirectTo:location.origin+'/?recovery=1'
+       redirectTo:location.origin+returnPath+'?recovery=1'
      });
      if(resetError)throw resetError;
      success.textContent='Check your inbox for the password-reset email. This is only needed when you forget or have not yet created a password.';
@@ -192,7 +198,7 @@ function overlay(){
        const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({role:'admin',password:e.target.adminPassword.value})});
        const data=await r.json();
        if(!r.ok)throw new Error(data.error||'Unable to sign in');
-       location.href='/admin.html';
+       location.href=programme.adminPath||'/admin.html';
        return;
      }
 
@@ -214,7 +220,7 @@ function overlay(){
          password,
          options:{
            data:{full_name:fullName},
-           emailRedirectTo:location.origin+'/'
+           emailRedirectTo:location.origin+returnPath
          }
        });
        if(signupError)throw signupError;
@@ -256,9 +262,9 @@ function overlay(){
 
 function readLocal(){
  let a={},b={},c={};
- try{a=JSON.parse(localStorage.getItem('elrpState')||'{}')}catch{}
- try{b=JSON.parse(localStorage.getItem('elrpDailyHabits')||'{}')}catch{}
- try{c=JSON.parse(localStorage.getItem('elrpPriorityFocus')||'{}')}catch{}
+ try{a=JSON.parse(localStorage.getItem(storageKeys[0])||'{}')}catch{}
+ try{b=JSON.parse(localStorage.getItem(storageKeys[1])||'{}')}catch{}
+ try{c=JSON.parse(localStorage.getItem(storageKeys[2])||'{}')}catch{}
  return{elrpState:a,elrpDailyHabits:b,elrpPriorityFocus:c}
 }
 function snapshot(){return JSON.stringify(readLocal())}
@@ -275,7 +281,7 @@ async function push(force=false){
  syncing=true;markSync('Syncing…');
  try{
    const payload=JSON.parse(current);
-   const r=await fetch('/api/data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+   const r=await fetch(dataEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
    let out={};try{out=await r.json()}catch{}
    if(!r.ok)throw new Error(out.error||'Online sync failed');
    lastSnapshot=current;markSync('Online');return true;
@@ -297,17 +303,17 @@ function addLogout(){
  const host=document.querySelector('.user-chip');if(!host||host.querySelector('.wrv-logout'))return;
  const b=document.createElement('button');b.className='wrv-logout';b.textContent='Sign out';
  b.onclick=async()=>{
-   await push(true);
+   await (programme.managedSync?window.FCA_SAVE_WORKSPACE?.():push(true));
    try{await getSupabase()?.auth.signOut()}catch{}
    await fetch('/api/logout',{method:'POST'});
-   location.href='/';
+   location.href=returnPath;
  };
  host.appendChild(b)
 }
 
 async function activateClient(el){
  try{
-   const r=await fetch('/api/data',{cache:'no-store'});
+   const r=await fetch(dataEndpoint,{cache:'no-store'});
    const out=await r.json();
    if(!r.ok)throw new Error(out.error||'Unable to load online participant data');
 
@@ -326,10 +332,12 @@ async function activateClient(el){
      };
      const serverSnap=JSON.stringify(serverPayload);
      const localSnap=JSON.stringify(local);
-     if(serverSnap!==localSnap&&!qs.has('cloud')){
-       localStorage.setItem('elrpState',JSON.stringify(serverPayload.elrpState));
-       localStorage.setItem('elrpDailyHabits',JSON.stringify(serverPayload.elrpDailyHabits));
-       localStorage.setItem('elrpPriorityFocus',JSON.stringify(serverPayload.elrpPriorityFocus));
+     if(programme.managedSync){
+       storageKeys.forEach((key,i)=>localStorage.setItem(key,JSON.stringify([serverPayload.elrpState,serverPayload.elrpDailyHabits,serverPayload.elrpPriorityFocus][i])));
+     }else if(serverSnap!==localSnap&&!qs.has('cloud')){
+       localStorage.setItem(storageKeys[0],JSON.stringify(serverPayload.elrpState));
+       localStorage.setItem(storageKeys[1],JSON.stringify(serverPayload.elrpDailyHabits));
+       localStorage.setItem(storageKeys[2],JSON.stringify(serverPayload.elrpPriorityFocus));
        const u=new URL(location.href);u.searchParams.set('cloud','1');location.replace(u.toString());return;
      }
      lastSnapshot=serverSnap;
@@ -344,11 +352,12 @@ async function activateClient(el){
    markSync('Sync error');
  }
  el.remove();
- document.dispatchEvent(new CustomEvent('wrv:client-authenticated'));
- setTimeout(()=>{if(!document.querySelector('.wrv-sync-chip'))markSync('Online');addLogout()},100);
+ document.dispatchEvent(new CustomEvent('wrv:client-authenticated',{detail:{cloudAvailable}}));
+ setTimeout(()=>{if(!document.querySelector('.wrv-sync-chip'))markSync(cloudAvailable?'Online':'Sync error');addLogout()},100);
+ if(programme.managedSync)return;
  setInterval(()=>{if(cloudAvailable)push(false)},5000);
  document.addEventListener('visibilitychange',()=>{if(cloudAvailable&&document.visibilityState==='hidden')push(true)});
- window.addEventListener('beforeunload',()=>{if(!cloudAvailable)return;const payload=snapshot();try{navigator.sendBeacon('/api/data',new Blob([payload],{type:'application/json'}))}catch{push(true)}})
+ window.addEventListener('beforeunload',()=>{if(!cloudAvailable)return;const payload=snapshot();try{navigator.sendBeacon(dataEndpoint,new Blob([payload],{type:'application/json'}))}catch{push(true)}})
 }
 
 async function establishPortalSessionFromSupabase(){
@@ -357,7 +366,7 @@ async function establishPortalSessionFromSupabase(){
    const {data}=await client.auth.getSession();
    const accessToken=data?.session?.access_token;
    if(!accessToken)return 'none';
-   const r=await fetch('/api/supabase-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken})});
+   const r=await fetch(sessionEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken})});
    const out=await r.json();
    if(!r.ok)throw new Error(out.error||'Unable to verify email session');
 
@@ -408,7 +417,7 @@ async function boot(){
    const r=await fetch('/api/session',{cache:'no-store'});
    const s=await r.json();
    if(s.authenticated){
-     if(s.role==='admin'){location.href='/admin.html';return}
+     if(s.role==='admin'){location.href=programme.adminPath||'/admin.html';return}
      await activateClient(gate);
    }
  }catch{}
