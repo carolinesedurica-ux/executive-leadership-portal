@@ -575,3 +575,5 @@ No Week 4 credential is generated for a failed final-assessment attempt.
 The speaking API uses the existing data Function so the app retains its original 12 deployable Function routes.
 
 Facilitator review opens on Programme content, with all four weekly curricula available before enrolment; a separate Participant responses tab retains read-only client review. Week 6 scoring recognises concrete calendar dates and named-day deadlines without requiring the literal words “deadline” or “date”. Existing stored results are unchanged (no Week 6 submissions existed when this fix was applied).
+
+Speaking explainer videos are configured independently in `speaking-video-config.js` and displayed in the matching participant week and facilitator Programme content view. All four weeks have their supplied public Blob MP4 links, native playback controls, mobile inline playback and a direct-link fallback. ELP video configuration is unchanged.
