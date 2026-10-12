@@ -564,10 +564,12 @@ No Week 4 credential is generated for a failed final-assessment attempt.
 - Participant route: `/speaking.html`; facilitator review: `/speaking-admin.html` (read-only).
 - Shares the existing Supabase Auth account and signed portal cookie, but never uses ELP milestones, workspace or enrolment writes.
 - `speaking_enrolments` is independently keyed by verified Auth user ID. RLS permits owners to read their own records; workspace writes use the session-authenticated server API with field validation. Administrator access comes from the existing signed admin session.
-- `/api/speaking?action=session` verifies the Auth access token and creates only a speaking enrolment. `/api/speaking` loads and saves the participant's own workspace; admin GET reviews speaking participants.
+- `/api/data?programme=speaking&action=session` verifies the Auth access token and creates only a speaking enrolment. `/api/data?programme=speaking` delegates to `api/_speaking-handler.js` and loads and saves the participant's own workspace; admin GET reviews speaking participants.
 - Browser cache keys are `speakingState`, `speakingDailyHabits`, `speakingPriorityFocus` and `speakingActiveParticipantId`, isolated from ELP. Online load failure disables editing; online save errors remain visible and retry automatically.
 - Course content in `speaking-content.js`: four weekly units, each with five directed lessons, a practical planner/output, three reflections, five daily practice tasks, coaching preparation and a 60-minute live-session agenda.
 - Orange programme styling lives in `speaking.css`, loaded only by speaking pages. Shared auth-gate configuration defaults to the existing ELP behaviour.
 - Completed weeks represent participant-reported study, rehearsal, reflections, live-session attendance and workplace application. They are not verified skill scores or certification. Starting/final domain self-ratings and confidence remain separate.
 - Live coaching is arranged directly with the facilitator. No unconfigured booking link, video placeholder or client assessment is published. Recording is optional.
 - Migration: `supabase/migrations/20261012094923_presentation_speaking_programme.sql`.
+
+The speaking API uses the existing data Function so the app retains its original 12 deployable Function routes.

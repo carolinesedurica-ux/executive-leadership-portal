@@ -14,7 +14,7 @@ function changed(){revision++;derive();localStorage.setItem('speakingState',JSON
 async function save(){
  if(!ready||pending||savedRevision===revision)return;
  pending=true;const atRevision=revision;const snapshot=JSON.stringify(state);message('Saving online…');
- try{const r=await fetch('/api/speaking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({elrpState:JSON.parse(snapshot)})});const out=await r.json();if(!r.ok)throw Error(out.error||'Unable to save.');savedRevision=atRevision;message('Saved online · your private speaking workspace');}
+ try{const r=await fetch('/api/data?programme=speaking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({elrpState:JSON.parse(snapshot)})});const out=await r.json();if(!r.ok)throw Error(out.error||'Unable to save.');savedRevision=atRevision;message('Saved online · your private speaking workspace');}
  catch(e){message(`${e.message} Your changes remain on this device until you retry.`,true);}
  finally{pending=false;if(revision!==atRevision)saveTimer=setTimeout(save,700);}
 }
@@ -42,7 +42,7 @@ function tick(){if(seconds>0)seconds--;document.getElementById('timerDisplay').t
  document.getElementById('menuBtn').onclick=()=>{const side=document.getElementById('sidebar');side.classList.toggle('open');document.getElementById('menuBtn').setAttribute('aria-expanded',String(side.classList.contains('open')));};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('sidebar').classList.remove('open');document.getElementById('menuBtn').setAttribute('aria-expanded','false');}});
  document.addEventListener('wrv:client-authenticated',e=>{ready=e.detail?.cloudAvailable!==false;if(ready){try{const stored=JSON.parse(localStorage.getItem('speakingState')||'{}');state={fields:stored.fields||{},checks:stored.checks||{},ratings:stored.ratings||{},completed:stored.completed||[]};}catch{}derive();message('Loaded online · your private speaking workspace');}else message('Your online workspace could not be loaded. Refresh to retry before editing.',true);render(view);});
- window.addEventListener('pagehide',()=>{if(ready&&savedRevision!==revision)navigator.sendBeacon('/api/speaking',new Blob([JSON.stringify({elrpState:state})],{type:'application/json'}));});
+ window.addEventListener('pagehide',()=>{if(ready&&savedRevision!==revision)navigator.sendBeacon('/api/data?programme=speaking',new Blob([JSON.stringify({elrpState:state})],{type:'application/json'}));});
  setInterval(()=>{if(ready&&savedRevision!==revision&&!pending)save();},10000);
  window.FCA_SAVE_WORKSPACE=async()=>{clearTimeout(saveTimer);while(pending)await new Promise(resolve=>setTimeout(resolve,50));await save();};
  render();

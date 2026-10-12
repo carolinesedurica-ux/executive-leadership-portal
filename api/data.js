@@ -143,6 +143,7 @@ async function developerDetail(participantId) {
 }
 
 module.exports = async function handler(req, res) {
+  if (req.query?.programme === 'speaking') return require('./_speaking-handler')(req, res);
   try {
     const current = session(req);
     if (!current) return json(res, 401, { error: 'Sign in required.' });
