@@ -143,6 +143,7 @@ async function developerDetail(participantId) {
 }
 
 module.exports = async function handler(req, res) {
+  if (req.query?.action === 'invitation') return require('./_access').accessHandler(req, res);
   if (req.query?.programme === 'speaking') return require('./_speaking-handler')(req, res);
   try {
     const current = session(req);
@@ -227,7 +228,7 @@ module.exports = async function handler(req, res) {
 
     return json(res, 405, { error: 'Method not allowed' });
   } catch (error) {
-    return json(res, 500, {
+    return json(res, error.status || 500, {
       error: error.message || 'Unable to access participant coaching data.',
       cloudAvailable: false
     });

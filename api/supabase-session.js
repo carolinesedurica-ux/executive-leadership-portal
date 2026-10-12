@@ -22,6 +22,8 @@ module.exports = async function handler(req, res) {
       return json(res, 403, { error: 'Confirm your email before entering the coaching portal.' });
     }
 
+    if (!backendConfigured()) return json(res, 503, { error: 'Programme access is temporarily unavailable.' });
+    await require('./_access').requireProgrammeAccess(data.user.id, 'executive-leadership-readiness', req.body?.invitationCode, email);
     let participant = null;
     if (backendConfigured()) participant = await ensureParticipantFromAuthUser(data.user);
 
@@ -43,6 +45,6 @@ module.exports = async function handler(req, res) {
       backendAvailable: backendConfigured()
     });
   } catch (error) {
-    return json(res, 500, { error: error.message || 'Unable to establish portal session.' });
+    return json(res, error.status || 500, { code: error.code, error: error.message || 'Unable to establish portal session.' });
   }
 };

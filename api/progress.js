@@ -10,6 +10,6 @@ module.exports = async function handler(req, res) {
     const context = await contextFromSession(current);
     return json(res, 200, { ok: true, backendAvailable: true, summary: await getSummary(context) });
   } catch (error) {
-    return json(res, 500, { backendAvailable: true, error: error.message || 'Unable to load programme progress.' });
+    return json(res, error.status || 500, { backendAvailable: true, error: error.message || 'Unable to load programme progress.' });
   }
 };

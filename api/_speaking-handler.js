@@ -1,6 +1,7 @@
 const { session, setSession, json } = require('./_lib');
 const { supabaseClient, supabaseAdminClient, backendConfigured } = require('./_supabase');
 const { validateState } = require('./_speaking');
+const { requireProgrammeAccess } = require('./_access');
 
 const TABLE = 'speaking_enrolments';
 function payload(row) {
@@ -19,6 +20,7 @@ module.exports = async function handler(req, res) {
       const user = data?.user;
       if (error || !user?.email) return json(res, 401, { error: 'Sign in again to continue.' });
       if (!user.email_confirmed_at && !user.confirmed_at) return json(res, 403, { error: 'Confirm your email before entering the programme.' });
+      await requireProgrammeAccess(user.id, 'presentation-speaking-skills', req.body?.invitationCode, user.email);
       // Separate enrolment: this never creates or updates an ELP profile, milestone or workspace.
       const { error: insertError } = await db.from(TABLE).upsert({ user_id: user.id,
         full_name: String(user.user_metadata?.full_name || user.email.split('@')[0]).slice(0, 120),
@@ -39,6 +41,7 @@ module.exports = async function handler(req, res) {
       return json(res, 200, { participants: rows.map(r => ({ id: r.user_id, fullName: r.full_name, email: r.email, completed: r.workspace?.completed || [], updatedAt: r.updated_at })), data: row ? payload(row) : null });
     }
     if (current.role !== 'client' || !current.userId) return json(res, 403, { error: 'Participant access required.' });
+    await requireProgrammeAccess(current.userId, 'presentation-speaking-skills');
     const { data: row, error } = await db.from(TABLE).select('*').eq('user_id', current.userId).maybeSingle();
     if (error) throw error;
     if (!row) return json(res, 403, { error: 'Sign in through the Presentation & Speaking Skills programme to enrol.' });
@@ -54,6 +57,6 @@ module.exports = async function handler(req, res) {
     return json(res, 405, { error: 'Method not allowed.' });
   } catch (error) {
     console.error('Speaking programme storage failed', error.message);
-    return json(res, 500, { error: 'Unable to access online programme data. Please retry.', cloudAvailable: false });
+    return json(res, error.status || 500, { code: error.code, error: error.status === 403 ? error.message : 'Unable to access online programme data. Please retry.', cloudAvailable: false });
   }
 };

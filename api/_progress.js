@@ -5,6 +5,8 @@ const { storeCredential, readCredential, deleteCredential } = require('./_creden
 const { sendMilestoneAccessToken } = require('./_email');
 const { scoreWeeklyTest } = require('./_weekly-tests');
 
+const { requireProgrammeAccess } = require('./_access');
+
 const PROGRAMME_SLUG = 'executive-leadership-readiness';
 
 function db() { return supabaseAdminClient(); }
@@ -30,6 +32,7 @@ async function ensureParticipantFromAuthUser(user) {
   if (!user?.id || !user?.email) throw new Error('Verified Supabase user is required');
   if (!user.email_confirmed_at && !user.confirmed_at) throw new Error('Confirm your email before entering the coaching portal.');
 
+  await requireProgrammeAccess(user.id, PROGRAMME_SLUG);
   const email = String(user.email).trim().toLowerCase();
   const metadataName = String(user.user_metadata?.full_name || user.user_metadata?.name || '').trim();
   const fallbackName = email.split('@')[0];
@@ -96,6 +99,7 @@ async function contextFromSession(current) {
   if (!backendConfigured()) return null;
   if (!current || current.role !== 'client') throw new Error('Client session required');
 
+  await requireProgrammeAccess(current.userId, PROGRAMME_SLUG);
   let query = db().from('profiles').select('*');
   if (current.participantId) query = query.eq('id', current.participantId);
   else if (current.userId) query = query.eq('user_id', current.userId);

@@ -123,7 +123,7 @@ function overlay(){
      <label class="wrv-auth-field wrv-client-field"><span>Email address</span><input type="email" name="email" autocomplete="email" placeholder="you@example.com"></label>
      <label class="wrv-auth-field wrv-client-field"><span>Password</span><input type="password" name="clientPassword" autocomplete="current-password" minlength="8" placeholder="Your password"></label>
      <label class="wrv-auth-field wrv-client-field wrv-signup-only"><span>Confirm password</span><input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" placeholder="Repeat your password"></label>
-     <p class="wrv-auth-helper wrv-client-field wrv-signin-only">Returning participants sign in with email and password. No verification or magic-link email is sent.</p>
+     <label class="wrv-auth-field wrv-client-field"><span>Programme invitation code <small>(first access only)</small></span><input name="invitationCode" type="text" autocomplete="off" maxlength="40" placeholder="Enter the code from your facilitator"></label><p class="wrv-auth-helper wrv-client-field">New participants need an invitation for this programme. Existing enrolled participants can leave the code blank. Confirm your email before redeeming your invitation.</p><p class="wrv-auth-helper wrv-client-field wrv-signin-only">Returning participants sign in with email and password. No verification or magic-link email is sent.</p>
      <p class="wrv-auth-helper wrv-client-field wrv-signup-only">New participants confirm their email once after creating an account. Future sign-ins use email and password.</p>
      <button type="button" class="wrv-auth-link wrv-client-field wrv-signin-only" id="wrvForgotPassword">Forgot or need to create your password?</button>
      <label class="wrv-auth-field wrv-admin-field"><span>Access code</span><input type="password" name="adminPassword" autocomplete="current-password" placeholder="Enter your private access code"></label>
@@ -351,6 +351,8 @@ async function activateClient(el){
    console.error('FCA online load failed',err);
    cloudAvailable=false;
    markSync('Sync error');
+   const error=el.querySelector('#wrvAuthError');if(error)error.textContent=err.message||'Unable to load your programme. Please retry.';
+   return;
  }
  el.remove();
  document.dispatchEvent(new CustomEvent('wrv:client-authenticated',{detail:{cloudAvailable}}));
@@ -367,7 +369,7 @@ async function establishPortalSessionFromSupabase(){
    const {data}=await client.auth.getSession();
    const accessToken=data?.session?.access_token;
    if(!accessToken)return 'none';
-   const r=await fetch(sessionEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken})});
+   const r=await fetch(sessionEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken,invitationCode:document.querySelector('input[name="invitationCode"]')?.value||''})});
    const out=await r.json();
    if(!r.ok)throw new Error(out.error||'Unable to verify email session');
 
@@ -385,7 +387,7 @@ async function establishPortalSessionFromSupabase(){
    return 'authenticated';
  }catch(err){
    console.error('Supabase portal session failed',err);
-   return 'none';
+   throw err;
  }
 }
 
@@ -421,7 +423,7 @@ async function boot(){
      if(s.role==='admin'){location.href=programme.adminPath||'/admin.html';return}
      await activateClient(gate);
    }
- }catch{}
+ }catch(err){const error=gate.querySelector('#wrvAuthError');if(error)error.textContent=err.message||'Unable to check your programme access.';}
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
