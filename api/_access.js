@@ -26,7 +26,10 @@ async function accessHandler(req, res) {
     const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
     const { error } = await supabaseAdminClient().from('programme_invitations').insert({ email, programme, code_hash: hashCode(code), expires_at: expiresAt });
     if (error) throw error;
-    return json(res, 200, { code: code.match(/.{1,4}/g).join('-'), email, programme, expiresAt });
+    const formattedCode=code.match(/.{1,4}/g).join('-');
+    const path=programme==='presentation-speaking-skills'?'/speaking.html':'/executive-leadership.html';
+    const invitationUrl='https://coaching.workreadyvault.com'+path+'#'+new URLSearchParams({invite:formattedCode,email}).toString();
+    return json(res, 200, { code: formattedCode, invitationUrl, email, programme, expiresAt });
   } catch (error) { return json(res, 500, { error: 'Unable to create the invitation. Please retry.' }); }
 }
 module.exports = { requireProgrammeAccess, accessHandler, hashCode, PROGRAMMES };

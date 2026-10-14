@@ -8,7 +8,27 @@ const storageKeys=programme.storageKeys||['elrpState','elrpDailyHabits','elrpPri
 try{localStorage.setItem('fcaSelectedProgramme',returnPath==='/speaking.html'?'speaking':'leadership')}catch{}
 let role=qs.get('admin')==='1'?'admin':'client';
 const developerPreview=window.ELRP_DEVELOPER_PREVIEW===true||qs.get('developer')==='1';
-let clientMode='signin';
+const inviteKey='fcaInvitation:'+returnPath;
+const fragment=new URLSearchParams(location.hash.slice(1));
+let personalInvitation=null;
+try{
+ const code=qs.get('invite')||fragment.get('invite');
+ const email=qs.get('email')||fragment.get('email');
+ if(code && /^[A-Fa-f0-9-]{24,40}$/.test(code) && email && email.includes('@')){
+   personalInvitation={code,email:email.toLowerCase()};
+   sessionStorage.setItem(inviteKey,JSON.stringify(personalInvitation));
+   const clean=new URL(location.href);clean.searchParams.delete('invite');clean.searchParams.delete('email');
+   if(fragment.has('invite'))clean.hash='';
+   history.replaceState({},document.title,clean.pathname+clean.search+clean.hash);
+ }else personalInvitation=JSON.parse(sessionStorage.getItem(inviteKey)||'null');
+}catch{}
+let clientMode=personalInvitation?'signup':'signin';
+function confirmationReturn(){
+ if(!personalInvitation)return location.origin+returnPath;
+ const u=new URL(returnPath,location.origin);
+ u.searchParams.set('invite',personalInvitation.code);u.searchParams.set('email',personalInvitation.email);
+ return u.href;
+}
 let lastSnapshot='';
 let syncing=false;
 let cloudAvailable=true;
@@ -163,6 +183,13 @@ function overlay(){
    $('#wrvAuthError',el).textContent='';
    $('#wrvAuthSuccess',el).textContent='';
  };
+ if(personalInvitation){
+   $('input[name="email"]',el).value=personalInvitation.email;
+   $('input[name="invitationCode"]',el).value=personalInvitation.code;
+   $('input[name="invitationCode"]',el).closest('label').classList.remove('wrv-client-field');
+   $('input[name="invitationCode"]',el).closest('label').hidden=true;
+   $('h2',el).textContent='Your programme invitation';
+ }
  paint();
 
  el.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{role=b.dataset.role;paint()});
@@ -221,7 +248,7 @@ function overlay(){
          password,
          options:{
            data:{full_name:fullName},
-           emailRedirectTo:location.origin+returnPath
+           emailRedirectTo:confirmationReturn()
          }
        });
        if(signupError)throw signupError;
@@ -369,10 +396,12 @@ async function establishPortalSessionFromSupabase(){
    const {data}=await client.auth.getSession();
    const accessToken=data?.session?.access_token;
    if(!accessToken)return 'none';
-   const r=await fetch(sessionEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken,invitationCode:document.querySelector('input[name="invitationCode"]')?.value||''})});
+   const r=await fetch(sessionEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({accessToken,invitationCode:personalInvitation?.code||document.querySelector('input[name="invitationCode"]')?.value||''})});
    const out=await r.json();
    if(!r.ok)throw new Error(out.error||'Unable to verify email session');
 
+   try{sessionStorage.removeItem(inviteKey)}catch{}
+   personalInvitation=null;
    if(out.participant){
      if(isolateParticipant(out.participant)){
        location.reload();
